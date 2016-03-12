@@ -1,0 +1,102 @@
+from mock import MagicMock, patch
+from whylog_vim.gui import get_gui_object
+from whylog.front import Front
+from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
+from whylog.front.const import states
+from whylog_vim.const import LOG_FILE, WHYLOG_OUTPUT
+from whylog_vim.front_output import SimpleOutputFormater
+
+
+
+class WhylogMain():
+    def __init__(self, config={}):
+        self.whylog_front = Front(config=config)
+        self.output_formater = SimpleOutputFormater()
+        self.gui = get_gui_object()
+
+    def check_state(self):
+        if not self.gui._is_output_open():
+            self.whylog_front.end_client()
+
+    def client_skip_to_cause(self):
+        current_line = self.gui.get_current_line()
+        # output formatter
+        match = self.output_formater.match_output_line(current_line)
+        print match
+        if match is not False:
+            file_name, offset = match
+            self.gui.open_cause_window(file_name, offset)
+        else:
+            self.whylog_front.end_client()
+            self.gui.close_output_window()
+
+    def mock_query_output(self):
+        if self.gui.get_cursor_offset() == 34:
+            return [FrontInput(
+                21, '2 root cause',
+                LocallyAccessibleLogOpener(self.gui.input_window.filename))
+            ]
+        else:
+            return []
+
+    def get_front_input(self):
+        filename = self.gui.get_current_filename()
+        resource_location = LocallyAccessibleLogOpener(filename)
+        cursor_position = self.gui.get_cursor_offset()
+        line_content = self.gui.get_current_line()
+
+        return FrontInput(cursor_position, line_content, resource_location)
+
+    def client_query(self):
+        self.gui.init_gui()
+        front_input = self.get_front_input()
+
+        # Mock
+        with patch('whylog.client.Client.get_causes') as mock:
+            mock.return_value = self.mock_query_output()
+            query_output = self.whylog_front.get_causes(front_input)
+
+        contents = self.output_formater.write_query(front_input, query_output)
+        self.gui.set_output(contents, line=4)
+        self.gui.go_to_output_window()
+        return True
+
+    def new_effect(self):
+        self.gui.init_gui()
+        front_input = self.get_front_input()
+
+        contents = self.output_formater.teacher_init(front_input)
+        teacher = self.whylog_front.add_effect(front_input)
+        self.gui.set_output(contents, line=4)
+        self.gui.go_to_output_window()
+
+
+whylog_main = WhylogMain()
+
+
+def whylog_2():
+    whylog_main.check_state()
+    whylog_state = whylog_main.whylog_front.get_state()
+
+    if whylog_state == states.EDITOR_NORMAL:
+        whylog_main.new_effect()
+    elif whylog_state == states.CLIENT_QUERY:
+        pass
+
+
+def whylog_1():
+    whylog_main.check_state()
+    whylog_state = whylog_main.whylog_front.get_state()
+
+    if whylog_state == states.EDITOR_NORMAL:
+        whylog_main.client_query()
+    elif whylog_state == states.CLIENT_QUERY:
+        window_type = whylog_main.gui.get_window_type()
+        if window_type == WHYLOG_OUTPUT:
+            whylog_main.client_skip_to_cause()
+        else:
+            # closing whylog client
+            whylog_main.whylog_front.end_client()
+            whylog_main.gui.close_output_window()
+    elif whylog_state == states.ACCEPT_EFFECT:
+        whylog_main.gui.go_to_input_window()
