@@ -10,24 +10,22 @@ from whylog_vim.front_output import SimpleOutputFormater
 
 class WhylogMain():
     def __init__(self, config={}):
-        self.whylog_front = Front(config=config)
+        self.front = Front(config=config)
         self.output_formater = SimpleOutputFormater()
         self.gui = get_gui_object()
 
-    def check_state(self):
+    def check_if_state_is_expired(self):
         if not self.gui._is_output_open():
-            self.whylog_front.end_client()
+            self.front.end_client()
 
     def client_skip_to_cause(self):
         current_line = self.gui.get_current_line()
-        # output formatter
         match = self.output_formater.match_output_line(current_line)
-        print match
         if match is not False:
             file_name, offset = match
             self.gui.open_cause_window(file_name, offset)
         else:
-            self.whylog_front.end_client()
+            self.front.end_client()
             self.gui.close_output_window()
 
     def mock_query_output(self):
@@ -54,7 +52,7 @@ class WhylogMain():
         # Mock
         with patch('whylog.client.Client.get_causes') as mock:
             mock.return_value = self.mock_query_output()
-            query_output = self.whylog_front.get_causes(front_input)
+            query_output = self.front.get_causes(front_input)
 
         contents = self.output_formater.write_query(front_input, query_output)
         self.gui.set_output(contents, line=4)
@@ -66,37 +64,63 @@ class WhylogMain():
         front_input = self.get_front_input()
 
         contents = self.output_formater.teacher_init(front_input)
-        teacher = self.whylog_front.add_effect(front_input)
+        teacher = self.front.add_effect(front_input)
         self.gui.set_output(contents, line=4)
         self.gui.go_to_output_window()
+
+    def add_cause(self):
+        front_input = self.get_front_input()
+
+        self.front.add_cause(front_input)
+        causes = self.front.causes
+        effect = self.front.effect
+        contents = self.output_formater.add_causes(effect, causes)
+
+        self.gui.set_output(contents, line=4)
+        self.gui.go_to_output_window()
+
+    def warning_message(self, message):
+        print message
+
+    def add_dependences(self):
+        teacher = self.front.new_teacher()
 
 
 whylog_main = WhylogMain()
 
 
+def whylog_1():
+    whylog_main.check_if_state_is_expired()
+    whylog_state = whylog_main.front.get_state()
+    window_type = whylog_main.gui.get_window_type()
+
+    if whylog_state == states.EDITOR_NORMAL:
+        whylog_main.client_query()
+    elif whylog_state == states.CLIENT_QUERY:
+        if window_type == WHYLOG_OUTPUT:
+            whylog_main.client_skip_to_cause()
+        else:
+            # closing whylog client
+            whylog_main.front.end_client()
+            whylog_main.gui.close_output_window()
+    elif whylog_state == states.ADD_CAUSES:
+        whylog_main.gui.go_to_input_window()
+
+
 def whylog_2():
-    whylog_main.check_state()
-    whylog_state = whylog_main.whylog_front.get_state()
+    whylog_main.check_if_state_is_expired()
+    whylog_state = whylog_main.front.get_state()
+    window_type = whylog_main.gui.get_window_type()
 
     if whylog_state == states.EDITOR_NORMAL:
         whylog_main.new_effect()
     elif whylog_state == states.CLIENT_QUERY:
         pass
-
-
-def whylog_1():
-    whylog_main.check_state()
-    whylog_state = whylog_main.whylog_front.get_state()
-
-    if whylog_state == states.EDITOR_NORMAL:
-        whylog_main.client_query()
-    elif whylog_state == states.CLIENT_QUERY:
-        window_type = whylog_main.gui.get_window_type()
-        if window_type == WHYLOG_OUTPUT:
-            whylog_main.client_skip_to_cause()
+    elif whylog_state == states.ADD_CAUSES:
+        if window_type != WHYLOG_OUTPUT:
+            whylog_main.add_cause()
         else:
-            # closing whylog client
-            whylog_main.whylog_front.end_client()
-            whylog_main.gui.close_output_window()
-    elif whylog_state == states.ACCEPT_EFFECT:
-        whylog_main.gui.go_to_input_window()
+            if whylog_main.front.causes == []:
+                whylog_main.warning_message('No line selected as cause')
+            else:
+                whylog_main.add_dependences()
