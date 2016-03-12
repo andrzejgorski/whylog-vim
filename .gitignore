@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 __init__$py.class
+*$py.class
 
 # C extensions
 *.so
@@ -45,10 +46,14 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *,cover
+.hypothesis/
 
 # Translations
 *.mo
 *.pot
+
+# Django stuff:
+*.log
 
 # Sphinx documentation
 docs/_build/
@@ -58,5 +63,12 @@ target/
 
 # Pycharm
 .idea/
+
+#Ipython Notebook
+.ipynb_checkpoints
+
 build/
 dist/
+
+#Ipython Notebook
+.ipynb_checkpoints
