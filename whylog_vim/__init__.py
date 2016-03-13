@@ -1,11 +1,9 @@
 from mock import MagicMock, patch
 from whylog_vim.gui import get_gui_object
-from whylog.front import Front
+from whylog.front import Whylog
 from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
-from whylog.front.const import states
 from whylog_vim.const import LOG_FILE, WHYLOG_OUTPUT
 from whylog_vim.front_output import SimpleOutputFormater
-
 
 
 class WhylogMain():
@@ -86,10 +84,10 @@ class WhylogMain():
         teacher = self.front.new_teacher()
 
 
-whylog_main = WhylogMain()
+# whylog_main = WhylogMain()
 
 
-def whylog_1():
+def _whylog_1():
     whylog_main.check_if_state_is_expired()
     whylog_state = whylog_main.front.get_state()
     window_type = whylog_main.gui.get_window_type()
@@ -107,7 +105,7 @@ def whylog_1():
         whylog_main.gui.go_to_input_window()
 
 
-def whylog_2():
+def _whylog_2():
     whylog_main.check_if_state_is_expired()
     whylog_state = whylog_main.front.get_state()
     window_type = whylog_main.gui.get_window_type()
@@ -124,3 +122,14 @@ def whylog_2():
                 whylog_main.warning_message('No line selected as cause')
             else:
                 whylog_main.add_dependences()
+
+
+whylog = Whylog(config={}, editor=get_gui_object())
+
+
+def whylog_1():
+    whylog.signal_1()
+
+
+def whylog_2():
+    whylog.signal_2()

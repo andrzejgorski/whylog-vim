@@ -1,6 +1,8 @@
+from mock import MagicMock, patch
 import os.path
 import vim
-from whylog_vim.const import LOG_FILE, WHYLOG_OUTPUT
+from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
+from whylog.front import const
 
 
 class Window():
@@ -33,12 +35,20 @@ class VimGUI(object): #(AbstractGUI):
         False: 'nomodifiable',
     }
 
+    def get_front_input(self):
+        filename = self.get_current_filename()
+        resource_location = LocallyAccessibleLogOpener(filename)
+        cursor_position = self.get_cursor_offset()
+        line_content = self.get_current_line()
+
+        return FrontInput(cursor_position, line_content, resource_location)
+
     def init_gui(self):
         self.set_input_window()
         self.create_output_window()
 
     def create_output_window(self):
-        if not self._is_output_open():
+        if not self.is_output_open():
             self._open_output_window()
         self.output_window_context = OutputWindowContext(self)
 
@@ -81,7 +91,7 @@ class VimGUI(object): #(AbstractGUI):
         assert range_.start == range_.end
         return range_.start
 
-    def _is_output_open(self):
+    def is_output_open(self):
         return self._get_output_window_id() is not None
 
     def go_to_window(self, id_):
@@ -93,9 +103,9 @@ class VimGUI(object): #(AbstractGUI):
 
     def get_window_type(self):
         if self.triggered_from_output_window():
-            return WHYLOG_OUTPUT
+            return const.window_types.WHYLOG_OUTPUT
         else:
-            return LOG_FILE
+            return const.window_types.LOG_FILE
 
     def _normal(self, command):
         vim.command("normal %s" % (command,))
