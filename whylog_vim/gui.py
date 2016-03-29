@@ -1,21 +1,15 @@
+from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
+
 from mock import MagicMock, patch
 import os.path
 import vim
-from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
-from whylog.front import const
-
-
-class Window():
-
-    def __init__(self, gui, filename, window_id):
-        self.filename = filename
-        self.window_id = window_id
 
 
 class OutputWindowContext(object):
     def __init__(self, gui):
         self.gui = gui
         self.origin_window_id = gui.get_current_window_id()
+        self.origin_window_name = gui.get_current_filename()
 
     def __enter__(self):
         self.gui.go_to_output_window()
@@ -27,35 +21,37 @@ class OutputWindowContext(object):
         self.gui.go_to_window(self.origin_window_id)
 
 
-class VimGUI(object): #(AbstractGUI):
-    TEMPORARY_BUFFER_NAME = 'whylog_output'
+class VimEditor():
+    """
+    Class witch is an implementation of AbstractEditor.
+    This class provide all communication between Whylog and Vim.
+    """
 
+    TEMPORARY_BUFFER_NAME = 'whylog_output'
     WINDOW_WRITEABILITY_STATE_DICT = {
         True: 'modifiable',
         False: 'nomodifiable',
     }
 
-    def get_front_input(self):
-        filename = self.get_current_filename()
-        resource_location = LocallyAccessibleLogOpener(filename)
-        cursor_position = self.get_cursor_offset()
-        line_content = self.get_current_line()
-
-        return FrontInput(cursor_position, line_content, resource_location)
-
-    def init_gui(self):
-        self.set_input_window()
-        self.create_output_window()
-
     def create_output_window(self):
+        """
+        Method witch close window where is an output of the Whylog.
+        """
         if not self.is_output_open():
             self._open_output_window()
         self.output_window_context = OutputWindowContext(self)
 
-    def set_input_window(self):
-        filename = self.get_current_filename()
-        window_id = self.get_current_window_id()
-        self.input_window = Window(self, filename, window_id)
+    def set_output(self, contents, line=None):
+        """
+        This method set content of the output window.
+        """
+        with self.output_window_context as output_buffer:
+            output_buffer[:] = contents.split('\n')
+            if line is not None:
+                self._go_to_line(line)
+
+    def set_window_writability(self, state):
+        vim.command(':setlocal %s' % self.WINDOW_WRITEABILITY_STATE_DICT[state])
 
     def _get_output_window_id(self):
         for id_, window in enumerate(vim.windows):
@@ -69,11 +65,10 @@ class VimGUI(object): #(AbstractGUI):
                 return int(id_)
         return None
 
-    def close_output_window(self):
-        self.go_to_output_window()
-        vim.command(':q')
-
     def get_current_line(self):
+        """
+        Method returns content of the line where cursor is.
+        """
         return vim.current.line
 
     def get_current_filename(self):
@@ -83,6 +78,11 @@ class VimGUI(object): #(AbstractGUI):
         return int(vim.eval('winnr()'))
 
     def get_cursor_offset(self):
+        """
+        This method return offset -
+        byte of the first char of the line
+        where is cursor, when the method is called.
+        """
         return int(vim.eval('line2byte(line("."))'))
 
     def get_cursor_position(self):
@@ -91,21 +91,41 @@ class VimGUI(object): #(AbstractGUI):
         assert range_.start == range_.end
         return range_.start
 
+    def get_input_window_file_name(self):
+        """
+        This method returns path of the window
+        called as input window.
+        """
+        return self.output_window_context.origin_window_name
+
+    def get_front_input(self):
+        """
+        This method return Front Input object of the line where cursor is,
+        which is implemented in the whylog.front.utils.py file.
+        """
+        filename = self.get_current_filename()
+        resource_location = LocallyAccessibleLogOpener(filename)
+        cursor_position = self.get_cursor_offset()
+        line_content = self.get_current_line()
+
+        return FrontInput(cursor_position, line_content, resource_location)
+
+    def close_output_window(self):
+        """
+        Same as name of the function. Closing window where is output of the Whylog.
+        """
+        self.go_to_output_window()
+        vim.command(':q')
+
     def is_output_open(self):
         return self._get_output_window_id() is not None
 
-    def go_to_window(self, id_):
-        assert id_ is not None
-        vim.command('%dwincmd w' % id_)
+    def go_to_window(self, window_id):
+        assert window_id is not None
+        vim.command('%dwincmd w' % window_id)
 
-    def triggered_from_output_window(self):
+    def cursor_at_output(self):
         return self.get_current_window_id() == self._get_output_window_id()
-
-    def get_window_type(self):
-        if self.triggered_from_output_window():
-            return const.window_types.WHYLOG_OUTPUT
-        else:
-            return const.window_types.LOG_FILE
 
     def _normal(self, command):
         vim.command("normal %s" % (command,))
@@ -117,18 +137,31 @@ class VimGUI(object): #(AbstractGUI):
         vim.command(':go %d' % (byte_offset,))
 
     def go_to_output_window(self):
+        """
+        After call of this function cursor
+        is moving to the output window.
+        """
         self.go_to_window(self._get_output_window_id())
 
     def go_to_input_window(self):
-        self.go_to_window(self.input_window.window_id)
+        """
+        After call of this function cursor
+        is moving to the input window.
+        """
+        self.go_to_window(self.output_window_context.origin_window_id)
 
     def open_file_at_line(self, filename, line):
         vim.command(':edit %s' % (filename,))
         self._go_to_line(line)
 
     def open_cause_window(self, filename, offset):
+        """
+        This function move cursor to the file,
+        specified by filename variable.
+        If the window of this file is not open it creates new window.
+        """
         self.go_to_input_window()
-        if not self.input_window.filename.endswith(filename):
+        if not self.output_window_context.origin_window_name.endswith(filename):
             vim.command(':vsplit {}'.format(filename))
         self._go_to_offset(offset)
 
@@ -138,16 +171,3 @@ class VimGUI(object): #(AbstractGUI):
         vim.command(':resize 10')
         vim.command(':setlocal nomodifiable')
         vim.command(':wincmd k')
-
-    def set_output(self, contents, line=None):
-        with self.output_window_context as output_buffer:
-            output_buffer[:] = contents.split('\n')
-            if line is not None:
-                self._go_to_line(line)
-
-    def set_window_writability(self, state):
-        vim.command(':setlocal %s' % self.WINDOW_WRITEABILITY_STATE_DICT[state])
-
-
-def get_gui_object():
-    return VimGUI()
