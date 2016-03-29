@@ -5,21 +5,7 @@ _regex_str = '^--- .+ \[(.+) offset (\d+)\]:$'
 _output_str = '--- {} [{} offset {}]:'
 
 
-# http://stackoverflow.com/questions/24804453/how-can-i-copy-a-python-string
-def copy_str(input_):
-    return (input_ + '.')[:-1]
-
-
-class AbstractClientOutputFormater():
-
-    def match_output_line(self, line_content):
-        raise NotImplemented()
-
-    def format_query(self, front_input, query_output):
-        raise NotImplemented()
-
-
-class SimpleClientOutputFormater(AbstractClientOutputFormater):
+class LogReaderOutput():
 
     def __init__(self, regex_str=_regex_str, output_str=_output_str):
         self.regex = regex_str
@@ -38,7 +24,7 @@ class SimpleClientOutputFormater(AbstractClientOutputFormater):
 
     def _format_single_line(self, message, line_fi_style):
         result_prefix = (
-            copy_str(self.output_str)
+            self.output_str
             .format(
                 message,
                 line_fi_style.resource_location,

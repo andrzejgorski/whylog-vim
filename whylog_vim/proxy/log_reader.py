@@ -1,7 +1,7 @@
 from mock import MagicMock, patch
 from whylog.log_reader import LogReader
 from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
-from whylog_vim.output_formater.log_reader_formater import SimpleClientOutputFormater
+from whylog_vim.output_formater.log_reader_formater import LogReaderOutput
 
 
 class LogReaderProxy():
@@ -9,7 +9,7 @@ class LogReaderProxy():
     def __init__(self, editor):
         self.editor = editor
         self._log_reader = LogReader({})
-        self.output_formater = SimpleClientOutputFormater()
+        self.output_formater = LogReaderOutput()
 
     def new_query(self):
         self.editor.create_output_window()
