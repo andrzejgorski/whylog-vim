@@ -1,14 +1,14 @@
 from mock import MagicMock, patch
-from whylog.client import Client
+from whylog.log_reader import LogReader
 from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
-from whylog.front.client_interact.formater_output import SimpleClientOutputFormater
+from whylog_vim.output_formater.log_reader_formater import SimpleClientOutputFormater
 
 
-class ClientProxy():
+class LogReaderProxy():
 
     def __init__(self, editor):
         self.editor = editor
-        self._client = Client({})
+        self._log_reader = LogReader({})
         self.output_formater = SimpleClientOutputFormater()
 
     def new_query(self):
@@ -16,9 +16,9 @@ class ClientProxy():
         front_input = self.editor.get_front_input()
 
         # Mock
-        with patch('whylog.client.Client.get_causes') as mock:
+        with patch('whylog.log_reader.LogReader.get_causes') as mock:
             mock.return_value = self.mock_query_output()
-            query_output = self._client.get_causes(front_input)
+            query_output = self._log_reader.get_causes(front_input)
 
         contents = self.output_formater.format_query(front_input, query_output)
         self.editor.set_output(contents, line=4)

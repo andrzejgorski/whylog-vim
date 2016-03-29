@@ -1,4 +1,4 @@
-from whylog.front.teacher_interact.formater_output import TeacherMenu
+from whylog_vim.output_formater.teacher_formater import TeacherMenu
 
 
 class TeacherProxy():

@@ -1,12 +1,12 @@
 from whylog.teacher import Teacher
 from whylog_vim.proxy.teacher import TeacherProxy
-from whylog_vim.proxy.client import ClientProxy
+from whylog_vim.proxy.log_reader import LogReaderProxy
 
 
 class states:
     # Editor states
     EDITOR_NORMAL = 0
-    CLIENT = 1
+    LOG_READER = 1
     TEACHER = 2
 
 
@@ -24,10 +24,10 @@ class WhylogProxy():
     def signal_1(self):
         self._update_state()
         if self._state == states.EDITOR_NORMAL:
-            self._state = states.CLIENT
-            self.client.new_query()
-        elif self._state == states.CLIENT:
-            self.client.signal_1()
+            self._state = states.LOG_READER
+            self.log_reader.new_query()
+        elif self._state == states.LOG_READER:
+            self.log_reader.signal_1()
         elif self._state == states.TEACHER:
             self.teacher.signal_1()
 
@@ -36,13 +36,13 @@ class WhylogProxy():
         if self._state == states.EDITOR_NORMAL:
             self._state = states.TEACHER
             self.teacher.new_lesson()
-        elif self._state == states.CLIENT:
-            self.client.signal_2()
+        elif self._state == states.LOG_READER:
+            self.log_reader.signal_2()
         elif self._state == states.TEACHER:
             self.teacher.signal_2()
 
     def __init__(self, editor, **opening_params):
         self._state = states.EDITOR_NORMAL
         self.editor = editor
-        self.client = ClientProxy(editor)
+        self.log_reader = LogReaderProxy(editor)
         self.teacher = TeacherProxy(editor)
