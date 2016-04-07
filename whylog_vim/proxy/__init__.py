@@ -1,6 +1,9 @@
-from whylog.teacher import Teacher
+from whylog.front.whylog_factory import whylog_factory
 from whylog_vim.proxy.teacher import TeacherProxy
 from whylog_vim.proxy.log_reader import LogReaderProxy
+
+
+WHYLOG_PATH = '/home/andrzej/.whylog/config'
 
 
 class states:
@@ -41,8 +44,10 @@ class WhylogProxy():
         elif self._state == states.TEACHER:
             self.teacher.signal_2()
 
-    def __init__(self, editor, **opening_params):
+    def __init__(self, editor, path=WHYLOG_PATH, **opening_params):
+        log_reader, teacher_generator = whylog_factory(path)
         self._state = states.EDITOR_NORMAL
         self.editor = editor
-        self.log_reader = LogReaderProxy(editor)
-        self.teacher = TeacherProxy(editor)
+        self.teacher_generator = teacher_generator
+        self.log_reader = LogReaderProxy(editor, log_reader)
+        self.teacher = TeacherProxy(editor, self.teacher_generator.next())

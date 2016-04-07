@@ -1,49 +1,55 @@
 import re
 
 
-_regex_str = '^--- .+ \[(.+) offset (\d+)\]:$'
-_output_str = '--- {} [{} offset {}]:'
+EFFECT_LINE = 0
 
 
-class AbstractTeacherMenu():
-
-    def format_effect(self, front_input):
-        raise NotImplemented()
-
-    def format_effect_and_causes():
-        raise NotImplemented()
+_output_str = '=== {} [file: {}, offset: {}, line_id: {}]:'
 
 
-# http://stackoverflow.com/questions/24804453/how-can-i-copy-a-python-string
-def copy_str(input_):
-    return (input_ + '.')[:-1]
+class TeacherOutput():
 
-
-class TeacherMenu(AbstractTeacherMenu):
-
-    def __init__(self, regex_str=_regex_str, output_str=_output_str):
-        self.regex = regex_str
+    def __init__(self, output_str=_output_str):
         self.output_str = output_str
 
-    def match_output_line(self, line_content):
-        if line_content.startswith('--- '):
-            matcher = re.match(self.regex, line_content)
-            assert matcher is not None, 'malformed line: %s' % (line_content)
-
-            return matcher.group(1), int(matcher.group(2))
-        else:
-            return False
-
-    def _format_single_line(self, message, line_fi_style):
+    def _format_single_line(self, message, line_fi_style, line_id):
         result_prefix = (
-            copy_str(self.output_str)
+            self.output_str
             .format(
                 message,
                 line_fi_style.resource_location,
-                line_fi_style.offset
+                line_fi_style.offset,
+                line_id,
             )
         )
         return result_prefix + '\n' + line_fi_style.line_content + '\n'
+
+    def _print_effect_line(self, teacher, effect_id):
+        return self._format_single_line(
+                'effect line',
+                teacher._lines[effect_id],
+                effect_id,
+            )
+
+    def _print_causes(self, teacher, effect_id):
+        result = []
+        causes_lines = teacher._lines.keys()
+        causes_lines.remove(effect_id)
+        for line_id in causes_lines:
+            result.append(self._format_single_line(
+                    'cause line',
+                    teacher._lines[line_id],
+                    line_id,
+                ))
+        return result
+
+    def print_teacher(self, teacher):
+        result = ['# You are using whylog teacher.']
+        effect_id = teacher.rule_intent.effect_id
+        result.append(self._print_effect_line(teacher, effect_id))
+        result += self._print_causes(teacher, effect_id)
+        result = '\n'.join(result)
+        return result
 
     def format_effect(self, front_input):
         result = []

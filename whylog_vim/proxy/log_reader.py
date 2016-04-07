@@ -2,17 +2,19 @@ from mock import MagicMock, patch
 from whylog.log_reader import LogReader
 from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
 from whylog_vim.output_formater.log_reader_formater import LogReaderOutput
+from whylog_vim.input_reader.log_reader import QueryInputReader
 
 
 class LogReaderProxy():
 
-    def __init__(self, editor):
+    def __init__(self, editor, log_reader):
         self.editor = editor
-        self._log_reader = LogReader({})
+        self._log_reader = log_reader
         self.output_formater = LogReaderOutput()
+        self.input_reader = QueryInputReader()
 
     def new_query(self):
-        self.editor.create_output_window()
+        self.editor.create_query_window()
         front_input = self.editor.get_front_input()
 
         # Mock
@@ -27,7 +29,7 @@ class LogReaderProxy():
 
     def _handle_signal_on_output(self):
         current_line = self.editor.get_current_line()
-        match = self.output_formater.match_output_line(current_line)
+        match = self.input_reader.match_output_line(current_line)
         if match is not False:
             file_name, offset = match
             self.editor.open_cause_window(file_name, offset)

@@ -3,6 +3,7 @@ from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
 from mock import MagicMock, patch
 import os.path
 import vim
+from whylog_vim.input_reader import get_button_name
 
 
 class OutputWindowContext(object):
@@ -33,13 +34,26 @@ class VimEditor():
         False: 'nomodifiable',
     }
 
-    def create_output_window(self):
+    def create_query_window(self):
         """
         Method witch close window where is an output of the Whylog.
         """
         if not self.is_output_open():
-            self._open_output_window()
+            self._open_query_window()
         self.output_window_context = OutputWindowContext(self)
+
+    def create_teacher_window(self):
+        """
+        Method witch close window where is an output of the Whylog.
+        """
+        if not self.is_output_open():
+            self._open_teacher_window()
+        self.output_window_context = OutputWindowContext(self)
+
+    def get_button_name(self):
+        line_content = self.get_current_line()
+        offset = self.get_col()
+        return get_button_name(line_content, offset)
 
     def set_output(self, contents, line=None):
         """
@@ -84,6 +98,9 @@ class VimEditor():
         where is cursor, when the method is called.
         """
         return int(vim.eval('line2byte(line("."))'))
+
+    def get_col(self):
+        return int(vim.eval('col(".")'))
 
     def get_cursor_position(self):
         line = vim.current.line
@@ -165,9 +182,14 @@ class VimEditor():
             vim.command(':vsplit {}'.format(filename))
         self._go_to_offset(offset)
 
-    def _open_output_window(self):
+    def _open_query_window(self):
         vim.command(':rightbelow split %s' % self.TEMPORARY_BUFFER_NAME)
         vim.command(':setlocal buftype=nowrite')
         vim.command(':resize 10')
         vim.command(':setlocal nomodifiable')
+        vim.command(':wincmd k')
+
+    def _open_teacher_window(self):
+        vim.command(':rightbelow split %s' % self.TEMPORARY_BUFFER_NAME)
+        vim.command(':setlocal buftype=nowrite')
         vim.command(':wincmd k')

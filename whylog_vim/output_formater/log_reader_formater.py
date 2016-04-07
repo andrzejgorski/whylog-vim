@@ -1,26 +1,13 @@
 import re
 
 
-_regex_str = '^--- .+ \[(.+) offset (\d+)\]:$'
 _output_str = '--- {} [{} offset {}]:'
 
 
 class LogReaderOutput():
 
-    def __init__(self, regex_str=_regex_str, output_str=_output_str):
-        self.regex = regex_str
+    def __init__(self, output_str=_output_str):
         self.output_str = output_str
-
-    def match_output_line(self, line_content):
-        if line_content.startswith('--- '):
-            matcher = re.match(self.regex, line_content)
-            assert matcher is not None, 'malformed line: %s' % (line_content,)
-
-            # TODO consider if try except block is necessary here
-            # return file name and line
-            return matcher.group(1), int(matcher.group(2))
-        else:
-            return False
 
     def _format_single_line(self, message, line_fi_style):
         result_prefix = (
