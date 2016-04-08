@@ -190,6 +190,8 @@ class VimEditor():
         vim.command(':wincmd k')
 
     def _open_teacher_window(self):
+
         vim.command(':rightbelow split %s' % self.TEMPORARY_BUFFER_NAME)
         vim.command(':setlocal buftype=nowrite')
+        vim.command(':resize 100')
         vim.command(':wincmd k')

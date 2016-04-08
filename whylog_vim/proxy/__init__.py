@@ -38,7 +38,7 @@ class WhylogProxy():
         self._update_state()
         if self._state == states.EDITOR_NORMAL:
             self._state = states.TEACHER
-            self.teacher.new_lesson()
+            self.teacher.signal_2()
         elif self._state == states.LOG_READER:
             self.log_reader.signal_2()
         elif self._state == states.TEACHER:
