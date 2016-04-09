@@ -83,4 +83,5 @@ class TeacherOutput():
         effect_id = raw_output.effect_id
         result.append(self._format_effect_line(raw_output, effect_id))
         result += self._format_causes(raw_output, effect_id)
+        # result += self._format_constraing(raw_output.)
         return '\n'.join(result)
