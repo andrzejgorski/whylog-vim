@@ -1,4 +1,0 @@
-
-
-LOG_FILE = 0
-WHYLOG_OUTPUT = 1

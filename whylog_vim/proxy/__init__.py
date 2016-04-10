@@ -21,7 +21,7 @@ class WhylogProxy():
     """
 
     def _update_state(self):
-        if not self.editor.is_output_open():
+        if not self.editor.is_whylog_window_open():
             self._state = states.EDITOR_NORMAL
 
     def signal_1(self):
@@ -50,4 +50,9 @@ class WhylogProxy():
         self.editor = editor
         self.teacher_generator = teacher_generator
         self.log_reader = LogReaderProxy(editor, log_reader)
-        self.teacher = TeacherProxy(editor, self.teacher_generator.next())
+        self.teacher = TeacherProxy(self.editor, self.teacher_generator.next(), self)
+
+    def new_teacher(self):
+        self.teacher.close()
+        self.teacher = TeacherProxy(self.editor, self.teacher_generator.next(), self)
+        self._state = states.EDITOR_NORMAL
