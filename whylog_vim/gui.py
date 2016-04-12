@@ -93,8 +93,8 @@ class VimEditor():
     }
 
     def get_input_content(self):
-        go_to_line(0)
-        return get_current_line()
+        with self.output_window_context as output_buffer:
+            return output_buffer[:]
 
     def go_to_file(self, file_name, offset):
         id_ = self.get_files_window_id(file_name)
