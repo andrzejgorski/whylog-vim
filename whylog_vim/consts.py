@@ -1,7 +1,7 @@
 
 
 class GlobalConsts():
-    BUTTONS_HEADER = '=== Buttons:'
+    BUTTONS_HEADER = '--- Buttons:'
     EMPTY_LINE = ''
     END_BRACKET = '<<<'
     MAIN_BUTTONS = '[save] [test_rule] [return_to_file] [give_up_rule]'
@@ -10,15 +10,18 @@ class GlobalConsts():
 
 class ButtonsMetaConsts():
     CONSTRAINT = 'constraint'
-    GROUP = 'group'
+    CONSTRAINT_GROUP = 'constraint_group'
+    GROUP = 'group_id'
     LOG_TYPE = 'log_type'
     PARAM = 'param'
-    PARSER = 'parser'
+    PARSER = 'parser_id'
     PRIMARY_KEY = 'primary_key'
 
 
 class ParserOutputConsts():
-    GROUP_CONVERTER = '[edit] group_converter %s: %s, match: %s'
+    # TODO Delete this
+    GROUP_CONVERTER_ = '[edit] group_converter %s: %s, match: %s'
+    GROUP_CONVERTER = 'group %s: %s, match: %s'
     LINE_BUTTONS = '[edit_content] [copy_line] [delete_line]'
     LOG_TYPE = '[edit] log type name: %s'
     MESSAGE_CONTENT = '=== %s %s: %s'
@@ -27,6 +30,7 @@ class ParserOutputConsts():
     PRIMARY_KEY = '[edit] primary key groups: %s'
     REGEX_BUTTONS = '[edit_regex_name] [edit_regex] [guess_regex]'
     REGEX_HEAD = '--- Regex: %s'
+    LINE_CONTENT = '--- Line %s: %s'
 
 
 class ConstraintsOutputConsts():
@@ -37,6 +41,7 @@ class ConstraintsOutputConsts():
     PARAM = '[edit] param %s: %s'
     PARAMS_HEADER = '--- Params:'
     TYPE = '--- Constraint: %s'
+    PARAM_SIMPLE = '%s: %s'
 
 
 class Messages():

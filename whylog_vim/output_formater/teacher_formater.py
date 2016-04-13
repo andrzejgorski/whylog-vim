@@ -37,14 +37,32 @@ class ParserFormater():
         output.add(POC.REGEX_BUTTONS)
         output.set_buttons_meta({BMC.PARSER: parser._id})
         output.add(GlobalConsts.EMPTY_LINE)
-        self._format_converters(output, parser.groups, parser._id)
+        self._format_converters_(output, parser.groups, parser._id)
         output.add(GlobalConsts.EMPTY_LINE)
 
-    def _format_converters(self, output, groups, parser_id):
+    # TODO delete this function after adding
+    def _format_converters_(self, output, groups, parser_id):
+        for group in groups.keys():
+            output.add(POC.GROUP_CONVERTER_ %
+                (group, groups[group].converter, groups[group].content))
+            output.set_buttons_meta({BMC.PARSER: parser_id, BMC.GROUP: group})
+
+    def format_line_headers(self, output, parser):
+        output.add(POC.LINE_CONTENT % (parser._id, parser.line_content))
+        output.add(POC.META % (parser.line_resource_location, parser.line_offset))
+
+    def format_converters(self, output, groups, parser_id):
         for group in groups.keys():
             output.add(POC.GROUP_CONVERTER %
                 (group, groups[group].converter, groups[group].content))
             output.set_buttons_meta({BMC.PARSER: parser_id, BMC.GROUP: group})
+
+    def format_regexes_message(self, output, parser):
+        output.add(POC.REGEX_HEAD % parser.pattern_name)
+        output.add(parser.pattern)
+        output.add(GlobalConsts.EMPTY_LINE)
+        self.format_converters(output, parser.groups, parser._id)
+        output.add(GlobalConsts.EMPTY_LINE)
 
     def _format_line_info(self, output, message, parser):
         output.add(POC.MESSAGE_CONTENT % (message, parser._id, parser.line_content))
@@ -68,6 +86,12 @@ class ParserFormater():
         output.add(GlobalConsts.EMPTY_LINE)
         output.add(GlobalConsts.END_BRACKET)
 
+    def format_constraint_message(self, output, parsers):
+        for parser in parsers:
+            self.format_line_headers(output, parser)
+            self.format_converters(output, parser.groups, parser._id)
+            output.add(GlobalConsts.EMPTY_LINE)
+
 
 class ConstraintsFormater():
 
@@ -89,7 +113,7 @@ class ConstraintsFormater():
         for group in constraint.groups:
             output.add(COC.GROUP % (group[0], group[1]))
             # FIXME
-            output.set_buttons_meta({BMC.CONSTRAINT: constraint, BMC.GROUP: group})
+            output.set_buttons_meta({BMC.CONSTRAINT: constraint, BMC.CONSTRAINT_GROUP: group})
         if constraint.params:
             self._format_params(output, constraint)
         output.add(GlobalConsts.EMPTY_LINE)
@@ -102,15 +126,29 @@ class ConstraintsFormater():
             self._format_single(output, constraint)
         output.add(GlobalConsts.END_BRACKET)
 
+    def format_constraint(self, output, constraint):
+        output.add(COC.TYPE % constraint.type)
+        output.add(COC.CONSTR_BUTTONS)
+        # TODO in this line should be constraint id
+        output.set_buttons_meta({BMC.CONSTRAINT: constraint})
+        # FIXME
+        for group in constraint.groups:
+            output.add(COC.GROUP % (group[0], group[1]))
+            # FIXME
+            output.set_buttons_meta({BMC.CONSTRAINT: constraint, BMC.GROUP: group})
+        if constraint.params:
+            self._format_params(output, constraint)
+        output.add(GlobalConsts.EMPTY_LINE)
+
 
 class TeacherOutput():
 
     def __init__(self):
-        self.parser_formater = ParserFormater()
-        self.constraints_formater = ConstraintsFormater()
+        self.parser = ParserFormater()
+        self.constraint = ConstraintsFormater()
 
     def _format_effect_line(self, output, raw_output, effect_id):
-        self.parser_formater.format(
+        self.parser.format(
                 output,
                 Messages.EFFECT,
                 raw_output.parsers[effect_id],
@@ -121,7 +159,7 @@ class TeacherOutput():
         causes_lines = rule.parsers.keys()
         causes_lines.remove(effect_id)
         for line_id in causes_lines:
-            self.parser_formater.format(
+            self.parser.format(
                     output,
                     Messages.CAUSE,
                     rule.parsers[line_id],
@@ -134,8 +172,16 @@ class TeacherOutput():
         effect_id = rule_intent.effect_id
         self._format_effect_line(output, rule_intent, effect_id)
         self._format_causes(output, rule_intent, effect_id)
-        self.constraints_formater.format(output, rule_intent.constraints)
+        self.constraint.format(output, rule_intent.constraints)
         output.add(GlobalConsts.BUTTONS_HEADER)
         output.add(GlobalConsts.MAIN_BUTTONS)
-        output.add(GlobalConsts.END_BRACKET)
         return output
+
+    def format_param(self, param, param_value):
+        return COC.PARAM_SIMPLE % (param, param_value)
+
+    def format_match(self, group):
+        return 'match: %s' % group.content
+
+    def format_key_groups(self, primary_key_groups):
+        return ', '.join(map(str, primary_key_groups))

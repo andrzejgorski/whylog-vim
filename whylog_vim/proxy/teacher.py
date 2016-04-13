@@ -1,20 +1,26 @@
+import re
+
 from whylog.teacher import Teacher
 from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
 
-from whylog_vim.output_formater.teacher_formater import TeacherOutput
+from whylog_vim.output_formater.teacher_formater import TeacherOutput, OutputAgregator
 from whylog_vim.input_reader.teacher_reader import get_button_name
-from whylog_vim.gui import set_syntax_folding, get_line_number, get_current_line, go_to_offset, get_current_filename, resize
+from whylog_vim.gui import set_syntax_folding, get_line_number, get_current_line, go_to_offset, get_current_filename, resize, go_to_offset, normal, get_offset
 from whylog_vim.consts import ButtonsMetaConsts as BMC, get_constraint_template
 
 
 # TODO move this function to utils file
 def naturals_generator():
-    i = 1
+    i = 0
     while True:
         yield i
         i += 1
 
-naturals = naturals_generator()
+
+parsers_ids = naturals_generator()
+
+
+# TODO add error message.
 
 
 # TODO move it to the consts file
@@ -23,10 +29,13 @@ EFFECT_ADDED = 'efect added'
 BEGIN = 'begin'
 NORMAL = 'normal'
 FUNCTION = 'function'
+CHECK_FUNCTION = 'check_function'
 PARSER = 'parser'
 GROUP = 'group'
 CONSTRAINT = 'constraint'
 PARAM = 'param'
+PARAM_KEY = '<param_key>'
+PARAM_VALUE = '<param_value>'
 
 
 # TODO Move this function to teacher utils file
@@ -40,7 +49,6 @@ class ReadInputInfo():
         self.content = content
 
 
-# TODO add message window to input
 # TODO add lines_button parsed
 # TODO add docsstrings
 
@@ -51,12 +59,12 @@ class TeacherProxy():
         self.editor = editor
         self.teacher = teacher
         self.output_formater = TeacherOutput()
-        self._effect_is_added = False
         self._prepare_buttons()
         self.main_proxy = proxy
         self._state = BEGIN
 
     def _press_button(self):
+        self._set_cursor_position()
         name = self.editor.get_button_name()
         meta = self.output.get_button_meta(get_line_number())
         try:
@@ -68,31 +76,55 @@ class TeacherProxy():
                 # TODO add WhylogVIMException
                 print 'Cannot execute "%s" with params %s, %s' % (name, meta, tuple(meta.keys()))
                 print '%s' % self.buttons.keys()
-        self._return_info = {}
-        func(**meta)
+            else:
+                self._return_info = {}
+                func(**meta)
+        else:
+            self._return_info = {}
+            func(**meta)
+        if self._state == NORMAL:
+            self._return_cursor_to_position()
+
+    def _warning(self, message):
+        print 'Warning! % s' % message
 
     def _read_input(self):
-        function = self.read_input_info.function
         self.read_input_info.set_content(self.editor.get_input_content())
+        function = self.read_input_info.function
         function(self.read_input_info)
-        # self.editor.change_to_teacher_window()
-        self._print_teacher()
-        self._state = NORMAL
-        del self.read_input_info
 
-    # TODO implement this function
-    def _return_cursor(self):
-        pass
+        self.editor.close_message_window()
+        self.editor.change_to_teacher_window()
+        self._print_teacher()
+        self._return_cursor_to_position()
+
+        del self.read_input_info
+        self._return_cursor_to_position()
+
+    def _set_cursor_position(self):
+        self._return_offset = get_offset()
+
+    def _return_cursor_to_position(self):
+        try:
+            go_to_offset(self._return_offset)
+        except Exception:
+            # Can't go to the offset. Nothing to do.
+            pass
+        else:
+            try:
+                normal('zo')
+            except Exception:
+                # Fold opening error. Nothing to do.
+                pass
 
     def signal_1(self):
-        if self.editor.cursor_at_output():
+        if self.editor.cursor_at_teacher():
             if self._state == NORMAL:
                 self._press_button()
-            elif self._state == INPUT:
-                self._read_input()
             # self.editor.go_to_input_window()
-        else:
-            pass
+        elif self.editor.cursor_at_input():
+            if self._state == INPUT:
+                self._read_input()
 
     def signal_2(self):
         if not self.editor.cursor_at_output():
@@ -105,16 +137,17 @@ class TeacherProxy():
 
     def _new_lesson(self):
         front_input = self.editor.get_front_input()
-        self.teacher.add_line(0, front_input)
-        self._effect_is_added = True
+        self.teacher.add_line(next(parsers_ids), front_input)
         self.origin_file_name = get_current_filename()
+
         self._state = EFFECT_ADDED
+        # TODO Add consts dialoges
         print '### WHYLOG ### You added line {} as effect. Select cause and press <F4>.'
 
     def _add_cause(self):
-        self.editor.create_teacher_window()
         front_input = self.editor.get_front_input()
-        self.teacher.add_line(naturals.next() , front_input)
+        self.teacher.add_line(next(parsers_ids) , front_input)
+        self.editor.create_teacher_window()
         self._print_teacher()
 
     def _print_teacher(self):
@@ -133,6 +166,7 @@ class TeacherProxy():
 
     # Teacher buttons
     def _prepare_buttons(self):
+        # TODO refactor
         self.buttons = {
             'edit_content': self.edit_content,
             'copy_line': self.copy_line,
@@ -140,14 +174,14 @@ class TeacherProxy():
             'edit_regex_name': self.edit_regex_name,
             'edit_regex': self.edit_regex,
             'guess_regex': self.guess_regex,
-            ('edit', (BMC.PARSER, BMC.GROUP)): self.edit_group,
-            ('edit', (BMC.PARSER, BMC.LOG_TYPE)): self.edit_log_type,
+            ('edit', (BMC.GROUP, BMC.PARSER)): self.edit_group,
+            ('edit', (BMC.LOG_TYPE, BMC.PARSER)): self.edit_log_type,
             'new_log_type': self.new_log_type,
-            ('edit', (BMC.PARSER, BMC.PRIMARY_KEY)): self.edit_primary_key_groups,
+            ('edit', (BMC.PRIMARY_KEY, BMC.PARSER)): self.edit_primary_key_groups,
             'add_constraint': self.add_constraint,
             'delete_constraint': self.delete_constraint,
             'add_param': self.add_param,
-            ('edit', (BMC.GROUP, BMC.CONSTRAINT)): self.edit_constraint_group,
+            ('edit', (BMC.CONSTRAINT_GROUP, BMC.CONSTRAINT)): self.edit_constraint_group,
             ('edit', (BMC.PARAM, BMC.CONSTRAINT)): self.edit_constraint_param,
             'save': self.save,
             'test_rule': self.test_rule,
@@ -155,133 +189,169 @@ class TeacherProxy():
             'give_up_rule': self.give_up_rule,
         }
 
-    def edit_content(self, parser):
-        self.editor.create_input_window(self.raw_output.parsers[parser].line_content)
-        self.teacher.remove_line(parser)
-        meta_info = {PARSER: parser}
-        self.read_input_info = ReadInputInfo(self.back_edit_content, meta_info)
+    def _set_read_input_info(self, function, meta_info):
+        self.read_input_info = ReadInputInfo(function, meta_info)
         self._state = INPUT
-        print 'edit_content executed with parser: %s' % parser
+
+    def edit_content(self, parser_id):
+        default_content = self.raw_output.parsers[parser_id].line_content
+        self.editor.create_input_window(default_content)
+        # TODO uncomment this funciton
+        # self.teacher.remove_line(parser)
+        meta_info = {PARSER: parser_id}
+        self._set_read_input_info(self.back_edit_content, meta_info)
+        print 'edit_content executed with parser: %s' % parser_id
 
     def back_edit_content(self, read_input_info):
-        parser = read_input_info.meta_info[PARSER]
+        parser_id = read_input_info.meta_info[PARSER]
         # TODO parser input
         content = read_input_info.content
         front_input = FrontInput(0, content, None)
-        self.teacher.add_line(parser, front_input)
+        self.teacher.add_line(parser_id, front_input)
         print 'back_edit_content, %s' % content
 
-    def copy_line(self, parser):
-        # TODO id_generator
-        new_id = naturals.next()
-        self.teacher.add_line(new_id, self.teacher._lines[parser])
+    def copy_line(self, parser_id):
+        new_id = next(parsers_ids)
+        self.teacher.add_line(new_id, self.teacher._lines[parser_id])
         self._reprint_teacher()
-        print 'copy_line executed with parser: %s, new_id = %s ' % (parser, new_id)
+        print 'copy_line executed with parser_id: %s, new_id = %s ' % (parser_id, new_id)
 
-    def delete_line(self, parser):
-        self.teacher.remove_line(parser)
+    def delete_line(self, parser_id):
+        self.teacher.remove_line(parser_id)
         self._reprint_teacher()
-        print 'delete_line executed with parser: %s' % parser
+        print 'delete_line executed with parser_id: %s' % parser_id
 
-    def edit_regex_name(self, parser):
-        # TODO add message with content and pattern
-        self.editor.create_input_window(self.raw_output.parsers[parser].pattern_name)
-        meta_info = {PARSER: parser}
-        self.read_input_info = ReadInputInfo(self.back_edit_regex_name, meta_info)
-        self._state = INPUT
-        print 'edit_regex_name executed with parser: %s' % parser
+    def edit_regex_name(self, parser_id):
+        parser = self.raw_output.parsers[parser_id]
+
+        output = OutputAgregator()
+        self.output_formater.parser.format_regexes_message(output, parser)
+        default_content = parser.pattern_name
+        self.editor.create_input_window(default_content, output.get_content())
+
+        meta_info = {PARSER: parser_id}
+        self._set_read_input_info(self.back_edit_regex_name, meta_info)
+        print 'edit_regex_name executed with parser_id: %s' % parser_id
 
     def back_edit_regex_name(self, read_input_info):
-        parser = read_input_info.meta_info[PARSER]
-        # TODO parser input
+        parser_id = read_input_info.meta_info[PARSER]
         regex_name = read_input_info.content
-        # TODO tell Ewa to implement this function
-        # self.teacher.update_pattern_name(parser, regex_name)
+        self.teacher.update_pattern_name(parser_id, regex_name)
         print 'back_edit_regex_name %s ' % regex_name
 
-    def edit_regex(self, parser):
-        # TODO add message with pattern name and content
-        self.editor.create_input_window(self.raw_output.parsers[parser].pattern)
-        meta_info = {PARSER: parser}
-        self.read_input_info = ReadInputInfo(self.back_edit_regex, meta_info)
-        self._state = INPUT
-        print 'edit_regex executed with parser: %s' % parser
+    def edit_regex(self, parser_id):
+        parser = self.raw_output.parsers[parser_id]
+
+        default_content = parser.pattern
+        message = parser.line_content
+        self.editor.create_input_window(default_content, message)
+
+        meta_info = {PARSER: parser_id, CHECK_FUNCTION: self.check_regex}
+        self._set_read_input_info(self.back_edit_regex, meta_info)
+        print 'edit_regex executed with parser_id: %s' % parser_id
 
     def back_edit_regex(self, read_input_info):
-        parser = read_input_info.meta_info[PARSER]
-        # TODO parser input
+        parser_id = read_input_info.meta_info[PARSER]
+        # TODO parse input
         regex = read_input_info.content
-        self.teacher.update_pattern(parser, regex)
+        self.teacher.update_pattern(parser_id, regex)
         print 'back_edit_regex %s ' % regex
 
-    def guess_regex(self, parser):
-        self.teacher.guess_pattern(parser)
-        self._reprint_teacher()
-        print 'guess_regex executed with parser: %s' % parser
+    def check_regex(self, read_input_info):
+        parser_id = read_input_info.meta_info[PARSER]
+        regex = read_input_info.content[0]
+        line_content = self.raw_output.parsers[parser_id].line_content
+        if re.match(re.compile(regex), line_content):
+            return True
+        else:
+            self._warning('Regex doen\' match to line content.')
+            return False
 
-    def edit_group(self, parser, group):
-        # TODO add message with parser pattern and match
-        self.editor.create_input_window(self.raw_output.parsers[parser].groups[group].converter)
-        meta_info = {PARSER: parser, GROUP: group}
-        self.read_input_info = ReadInputInfo(self.back_edit_group, meta_info)
-        self._state = INPUT
-        print 'edit executed with parser: %s and group %s' % (parser, group)
+    def guess_regex(self, parser_id):
+        self.teacher.guess_pattern(parser_id)
+        self._reprint_teacher()
+        print 'guess_regex executed with parser_id: %s' % parser_id
+
+    def edit_group(self, parser_id, group_id):
+        # TODO chose type from enum type
+        group = self.raw_output.parsers[parser_id].groups[group_id]
+
+        default_content = group.converter
+        message = self.output_formater.format_match(group)
+        self.editor.create_input_window(default_content, message)
+
+        meta_info = {PARSER: parser_id, GROUP: group_id}
+        self._set_read_input_info(self.back_edit_group, meta_info)
+        print 'edit executed with parser: %s and group %s' % (parser_id, group_id)
 
     def back_edit_group(self, read_input_info):
-        parser = read_input_info.meta_info[PARSER]
-        group = read_input_info.meta_info[GROUP]
+        parser_id = read_input_info.meta_info[PARSER]
+        group_id = read_input_info.meta_info[GROUP]
         # TODO parse input
-        group_type = read_input_info.content
-        # TODO tells Ewa to implement this function
-        # self.teacher.update_group(parser, group, group_type)
+        converter = read_input_info.content
+        self.teacher.set_converter(parser_id, group_id, converter)
         print 'back_edit_group %s ' % group_type
 
-    def edit_log_type(self, parser, log_type):
+    def edit_log_type(self, parser_id, log_type):
         # TODO chose logtype from list
-        # TODO add message window with pattern and content
-        self.editor.create_input_window(self.raw_output.parsers[parser].log_type_name)
-        meta_info = {PARSER: parser}
-        self.read_input_info = ReadInputInfo(self.back_edit_log_type, meta_info)
-        self._state = INPUT
-        print 'edit_log_type executed with parser: %s' % parser
+        parser = self.raw_output.parsers[parser_id]
+
+        defaut_content = parser.log_type_name
+        output = OutputAgregator()
+        self.output_formater.parser.format_line_headers(output, parser)
+        self.output_formater.parser.format_regexes_message(output, parser)
+        self.editor.create_input_window(defaut_content, output.get_content())
+
+        meta_info = {PARSER: parser_id}
+        self._set_read_input_info(self.back_edit_log_type, meta_info)
+        print 'edit_log_type executed with parser_id: %s' % parser_id
 
     def back_edit_log_type(self, read_input_info):
-        parser = read_input_info.meta_info[PARSER]
+        parser_id = read_input_info.meta_info[PARSER]
         # TODO parse input
         log_type = read_input_info.content
-        self.teacher.set_log_type(parser, log_type)
+        self.teacher.set_log_type(parser_id, log_type)
         print 'back_edit_log_type %s ' % log_type
 
     # TODO implement this function
-    def new_log_type(self, parser):
+    def new_log_type(self, parser_id):
         print 'new_log_type executed'
 
-    def edit_primary_key_groups(self, parser, primary_key):
-        # TODO add message with content and pattern
-        self.editor.create_input_window(str(self.raw_output.parsers[parser].primary_key_groups[0]))
-        meta_info = {PARSER: parser}
-        self.read_input_info = ReadInputInfo(self.back_edit_primary_key, meta_info)
-        self._state = INPUT
-        print 'edit_primary_key_groups executed with parser: %s' % parser
+    def edit_primary_key_groups(self, parser_id, primary_key):
+        parser = self.raw_output.parsers[parser_id]
+
+        defaut_content = self.output_formater.format_key_groups(parser.primary_key_groups)
+        output = OutputAgregator()
+        self.output_formater.parser.format_line_headers(output, parser)
+        self.output_formater.parser.format_regexes_message(output, parser)
+
+        self.editor.create_input_window(defaut_content, output.get_content())
+
+        meta_info = {PARSER: parser_id}
+        self._set_read_input_info(self.back_edit_primary_key, meta_info)
+        print 'edit_primary_key_groups executed with parser_id: %s' % parser_id
 
     def back_edit_primary_key(self, read_input_info):
-        parser = read_input_info.meta_info[PARSER]
+        parser_id = read_input_info.meta_info[PARSER]
         # TODO parsr input
         groups = read_input_info.content
-        # TODO tells Ewa that this funciton takse only 1 arg
-        # self.teacher.set_primary_key(parser, groups)
+        # self.teacher.set_primary_key(parser_id, groups)
         print 'back_edit_primary_key %s ' % groups
 
     def add_constraint(self):
-        # TODO add message with info of lines
         # TODO add select window between teacher and input window
-        self.editor.create_input_window(get_constraint_template())
-        self.read_input_info = ReadInputInfo(self.back_add_constraint, {})
-        self._state = INPUT
+        output = OutputAgregator()
+        parsers = self.raw_output.parsers.values()
+        self.output_formater.parser.format_constraint_message(output, parsers)
+        content = get_constraint_template()
+        self.editor.create_input_window(content, output.get_content())
+
+        self._set_read_input_info(self.back_add_constraint, {})
         print 'add_constraint executed'
 
     def back_add_constraint(self, read_input_info):
         raw_constraint = read_input_info.content
+        # TODO add parse constraint
         # constraint = self.input_reader.parse_constraint(raw_constraint)
         # self.teacher.register_constraint(constraint)
         print 'back_add_constraint %s ' % raw_constraint
@@ -292,61 +362,73 @@ class TeacherProxy():
         print 'delete_constraint executed with constraint %s' % constraint
 
     def add_param(self, constraint):
-        # TODO add message window with groups and matches
-        self.editor.create_input_window('')
+        output = OutputAgregator()
+
+        content = self.output_formater.format_param(PARAM_KEY, PARAM_VALUE)
+        self.output_formater.constraint.format_constraint(output, constraint)
+
+        self.editor.create_input_window(content, output.get_content())
         meta_info = {CONSTRAINT: constraint}
-        self.read_input_info = ReadInputInfo(self.back_add_param, meta_info)
-        self._state = INPUT
+        self._set_read_input_info(self.back_add_param, meta_info)
         print 'add_param executed with constraint %s' % constraint
 
     def back_add_param(self, read_input_info):
         param = read_input_info.content
-        # TODO parser param
+        # TODO parse param
         constraint = read_input_info.meta_info[CONSTRAINT]
         # self.teacher.register_constraint(constraint)
         print 'back_add_param %s ' % param
 
-    def edit_constraint_group(self, constraint, group):
-        # TODO add message window with groups of all lines
-        self.editor.create_input_window(str(group))
-        meta_info = {CONSTRAINT: constraint, GROUP: group}
-        self.read_input_info = ReadInputInfo(self.back_edit_constraint_group, meta_info)
-        self._state = INPUT
-        print 'edit_constraint executed with %s and %s ' % (constraint, group)
+    def edit_constraint_group(self, constraint, constraint_group):
+        output = OutputAgregator()
+        parsers = self.raw_output.parsers.values()
+        self.output_formater.constraint.format_constraint(output, constraint)
+        self.output_formater.parser.format_constraint_message(output, parsers)
+        self.editor.create_input_window(str(constraint_group), output.get_content())
+
+        meta_info = {CONSTRAINT: constraint, GROUP: constraint_group}
+        self._set_read_input_info(self.back_edit_constraint_group, meta_info)
+        print 'edit_constraint executed with %s and %s ' % (constraint, constraint_group)
 
     def back_edit_constraint_group(self, read_input_info):
         group_content = read_input_info.content
         # TODO parse group
         constraint = read_input_info.meta_info[CONSTRAINT]
-        group = read_input_info.meta_info[GROUP]
-        self.teacher.update_constraint_group(constraint, group_id, group_content)
-        print 'back_edit_constraint_group %s' % group
+        constraint_group = read_input_info.meta_info[GROUP]
+        # TODO nowy constraint
+        # self.teacher.update_constraint_group(constraint, group_id, group_content)
+        print 'back_edit_constraint_group %s' % constraint_group
 
     def edit_constraint_param(self, constraint, param):
         # TODO add message window with constraint
-        self.editor.create_input_window('%s: %s' % (param, constraint.params[param]))
+        output = OutputAgregator()
+        content = self.output_formater.format_param(param, constraint.params[param])
+        self.output_formater.constraint.format_constraint(output, constraint)
+        self.editor.create_input_window(content, output.get_content())
+
         meta_info = {CONSTRAINT: constraint, PARAM: param}
-        self.read_input_info = ReadInputInfo(self.back_edit_constraint_param, meta_info)
-        self._state = INPUT
+        self._set_read_input_info(self.back_edit_constraint_param, meta_info)
         print 'edit_constraint_param executed with %s and %s' % (constraint, param)
 
     def back_edit_constraint_param(self, read_input_info):
         param_content = read_input_info.content
         # TODO parse param content
         constraint = read_input_info.meta_info[CONSTRAINT]
-        # TODO tells Ewa to implement this function
         # self.teacher.update_constraint_param(constraint, param, param_content)
         print 'back_edit_constraint_param %s' % param_content
 
     # TODO add buttons and implement funcitons:
     # 1. Delete param
     # 2. Delete group
+    # Usunac constrainta dodac nowego
 
     def save(self):
         self.teacher.save()
         print 'save executed'
 
+    # TODO check rule
     def test_rule(self):
+        # TODO ?? test_rule
         print 'test rule executed'
 
     def return_to_file(self):

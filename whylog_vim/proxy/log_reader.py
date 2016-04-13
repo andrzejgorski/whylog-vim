@@ -15,12 +15,12 @@ class LogReaderProxy():
         self.input_reader = QueryInputReader()
 
     def new_query(self):
-        self.editor.create_query_window()
         front_input = self.editor.get_front_input()
+        self.editor.create_query_window()
 
         # Mock
         with patch('whylog.log_reader.LogReader.get_causes') as mock:
-            mock.return_value = self.mock_query_output()
+            mock.return_value = self.mock_query_output(front_input)
             query_output = self._log_reader.get_causes(front_input)
 
         contents = self.output_formater.format_query(front_input, query_output)
@@ -50,8 +50,8 @@ class LogReaderProxy():
         raise NotImplemented()
 
     # TOFIX
-    def mock_query_output(self):
-        if self.editor.get_cursor_offset() == 34:
+    def mock_query_output(self, front_input):
+        if front_input.offset == 34:
             return [FrontInput(
                 21, '2 root cause',
                 LocallyAccessibleLogOpener(
