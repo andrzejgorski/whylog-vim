@@ -1,5 +1,13 @@
 
 
+class WindowTypes():
+    QUERY = 'whylog_query_output'
+    TEACHER = 'whylog_teacher'
+    INPUT = 'whylog_input'
+    MESSAGE = 'whylog_message'
+    CASE = 'whylog_case'
+
+
 class GlobalConsts():
     BUTTONS_HEADER = '--- Buttons:'
     EMPTY_LINE = ''
@@ -16,19 +24,20 @@ class ButtonsMetaConsts():
     PARAM = 'param'
     PARSER = 'parser_id'
     PRIMARY_KEY = 'primary_key'
+    BUTTON = 'button'
+    FUNCTION = 'function'
 
 
 class ParserOutputConsts():
     # TODO Delete this
-    GROUP_CONVERTER_ = '[edit] group_converter %s: %s, match: %s'
     GROUP_CONVERTER = 'group %s: %s, match: %s'
-    LINE_BUTTONS = '[edit_content] [copy_line] [delete_line]'
-    LOG_TYPE = '[edit] log type name: %s'
+    LINE_BUTTONS = '[copy_line] [delete_line]'
+    LOG_TYPE = 'log type: %s'
     MESSAGE_CONTENT = '=== %s %s: %s'
     META = 'file: %s, offset: %s'
     OTHERS_HEAD = '--- Other:'
-    PRIMARY_KEY = '[edit] primary key groups: %s'
-    REGEX_BUTTONS = '[edit_regex_name] [edit_regex] [guess_regex]'
+    PRIMARY_KEY = 'primary key groups: %s'
+    REGEX_BUTTONS = '[guess_regex]'
     REGEX_HEAD = '--- Regex: %s'
     LINE_CONTENT = '--- Line %s: %s'
 
@@ -36,12 +45,20 @@ class ParserOutputConsts():
 class ConstraintsOutputConsts():
     BUTTONS = '[add_constraint]'
     CONSTR_BUTTONS = '[delete_constraint] [add_param]'
-    GROUP = '[edit] parser <%s> group <%s>'
+    GROUP = 'parser: %s, group: %s'
     HEADER = '=== Rule Constraints:'
-    PARAM = '[edit] param %s: %s'
+    PARAM = '%s: %s'
     PARAMS_HEADER = '--- Params:'
     TYPE = '--- Constraint: %s'
     PARAM_SIMPLE = '%s: %s'
+
+
+class LogTypeConsts():
+    NAME = '--- name: %s'
+    HOST_PATTERN = 'host pattern: %s'
+    PATH_PATTERN = 'path pattern: %s'
+    FILE_NAME_MATCHER = 'file name matcher: %s'
+    ADD_LOGTYPE = '[add_log_type]'
 
 
 class Messages():
@@ -49,12 +66,13 @@ class Messages():
     EFFECT = 'effect line'
 
 
-def get_constraint_template():
-    result = []
-    result.append(ConstraintsOutputConsts.TYPE)
-    result.append(ConstraintsOutputConsts.GROUP)
-    result.append(ConstraintsOutputConsts.GROUP)
-    result.append(GlobalConsts.EMPTY_LINE)
-    result.append(ConstraintsOutputConsts.PARAMS_HEADER)
-    result.append(ConstraintsOutputConsts.PARAM)
-    return '\n'.join(result)
+class WarningMessages():
+    REGEX_NOT_MATCH = '!! Warning Message: Regex doen\'t match to the line.!!'
+
+
+class Input():
+    EMPTY_GROUP = '(?P<content>.+)'
+    GROUP1 = '(?P<content1>.+)'
+    GROUP2 = '(?P<content2>.+)'
+    INT_GROUP1 = '(?P<int1>\d+)'
+    INT_GROUP2 = '(?P<int2>\d+)'

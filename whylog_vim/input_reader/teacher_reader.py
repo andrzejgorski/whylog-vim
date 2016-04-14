@@ -1,5 +1,6 @@
 import re
-from whylog_vim.consts import ButtonsMetaConsts as BMC
+from whylog.config.log_type import LogType
+from whylog_vim.consts import ButtonsMetaConsts as BMC, LogTypeConsts as LTC, Input, ConstraintsOutputConsts as COC
 
 
 def get_button_name(line, offset):
@@ -9,3 +10,76 @@ def get_button_name(line, offset):
             return match.group(0)[1:-1]
     else:
         return None
+
+
+def prepare_regex(pattern):
+    return ('^' + pattern + '$') % Input.EMPTY_GROUP
+
+
+def parse_log_type(lines):
+    # TODO catche errors
+    pattern = re.compile(prepare_regex(LTC.NAME))
+    name = pattern.match(lines[0]).group(1)
+    pattern = re.compile(prepare_regex(LTC.HOST_PATTERN))
+    host_pattern = pattern.match(lines[1]).group(1)
+    pattern = re.compile(prepare_regex(LTC.PATH_PATTERN))
+    path_pattern = pattern.match(lines[2]).group(1)
+    pattern = re.compile(prepare_regex(LTC.FILE_NAME_MATCHER))
+    file_name_matcher = pattern.match(lines[3]).group(1)
+    return LogType(name, host_pattern, path_pattern, file_name_matcher)
+
+
+def parse_primary_key_groups(content):
+    return map(int, content[0].split(', '))
+
+
+def parse_constraint_group(content):
+    result = content[0].split(', ')
+    if len(result) == 2:
+        return map(int, result)
+    else:
+        # TODO add parse exceptions WhylogVIMParseExceptions
+        raise Exception()
+
+
+def parse_param(content):
+    return content[0].split(': ')
+
+
+def parse_constraint(lines):
+    # TODO Add errors handler
+    pattern = re.compile(prepare_regex(COC.TYPE))
+    constr_type = pattern.match(lines[0]).group(1)
+    regex = '^' + COC.GROUP2 % (Input.INT_GROUP1, Input.INT_GROUP2) + '$'
+    pattern = re.compile(regex)
+    groups = []
+    for line in range(1, len(lines)):
+        match = pattern.match(lines[line])
+        # print line
+        if match:
+            groups.append((match.group('int1'), match.group('int2')))
+        else:
+            go_line = line + 1
+            break
+        # print line, lines[line]
+    else:
+        return constr_type, groups, {}
+
+    pattern = re.compile('^' + COC.PARAMS_HEADER + '$')
+    while pattern.match(lines[go_line]):
+        go_line += 1
+
+    pattern = re.compile('^' + COC.PARAM_SIMPLE % (Input.GROUP1, Input.GROUP2) + '$')
+
+    params = {}
+    match = pattern.match(lines[go_line])
+    # print lines[go_line], match
+    while match:
+        params[match.group('content1')] = match.group('content2')
+        go_line += 1
+        if go_line >= len(lines):
+            break
+        match = pattern.match(lines[go_line])
+
+    return constr_type, groups, params
+

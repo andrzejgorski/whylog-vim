@@ -4,9 +4,11 @@ from whylog.teacher import Teacher
 from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
 
 from whylog_vim.output_formater.teacher_formater import TeacherOutput, OutputAgregator
-from whylog_vim.input_reader.teacher_reader import get_button_name
+from whylog_vim.input_reader.teacher_reader import get_button_name, parse_log_type, parse_primary_key_groups, parse_param, parse_constraint, parse_constraint_group
 from whylog_vim.gui import set_syntax_folding, get_line_number, get_current_line, go_to_offset, get_current_filename, resize, go_to_offset, normal, get_offset
-from whylog_vim.consts import ButtonsMetaConsts as BMC, get_constraint_template
+from whylog_vim.consts import ButtonsMetaConsts as BMC
+
+from whylog_vim.mocks import converter_returner, log_type_returner, constraint_returner
 
 
 # TODO move this function to utils file
@@ -34,8 +36,10 @@ PARSER = 'parser'
 GROUP = 'group'
 CONSTRAINT = 'constraint'
 PARAM = 'param'
-PARAM_KEY = '<param_key>'
-PARAM_VALUE = '<param_value>'
+PARAM_KEY = 'param_name'
+PARAM_VALUE = 'value'
+LOAD_METHOD = 'load_method'
+CONTENT = 'content'
 
 
 # TODO Move this function to teacher utils file
@@ -58,16 +62,26 @@ class TeacherProxy():
     def __init__(self, editor, teacher, proxy):
         self.editor = editor
         self.teacher = teacher
-        self.output_formater = TeacherOutput()
+        self.output_formater = TeacherOutput(self)
         self._prepare_buttons()
         self.main_proxy = proxy
         self._state = BEGIN
 
     def _press_button(self):
         self._set_cursor_position()
-        name = self.editor.get_button_name()
-        meta = self.output.get_button_meta(get_line_number())
+        line_number = get_line_number()
+        meta = self.output.get_button_meta(line_number)
         try:
+            func = meta[FUNCTION]
+        except KeyError:
+            pass
+        else:
+            del meta[FUNCTION]
+            func(**meta)
+            return
+
+        try:
+            name = self.editor.get_button_name()
             func = self.buttons[name]
         except KeyError:
             try:
@@ -88,18 +102,27 @@ class TeacherProxy():
     def _warning(self, message):
         print 'Warning! % s' % message
 
-    def _read_input(self):
-        self.read_input_info.set_content(self.editor.get_input_content())
-        function = self.read_input_info.function
-        function(self.read_input_info)
+    def load_content_input(self):
+        try:
+            method = self.read_input_info.meta_info[LOAD_METHOD]
+        except KeyError:
+            self.read_input_info.set_content(self.editor.get_input_content())
+        else:
+            self.read_input_info.set_content(method())
 
+    def _open_teacher_window(self):
         self.editor.close_message_window()
         self.editor.change_to_teacher_window()
         self._print_teacher()
-        self._return_cursor_to_position()
 
         del self.read_input_info
         self._return_cursor_to_position()
+
+    def _read_input(self):
+        self.load_content_input()
+        function = self.read_input_info.function
+        if function(self.read_input_info):
+            self._open_teacher_window()
 
     def _set_cursor_position(self):
         self._return_offset = get_offset()
@@ -125,6 +148,9 @@ class TeacherProxy():
         elif self.editor.cursor_at_input():
             if self._state == INPUT:
                 self._read_input()
+        elif self.editor.cursor_at_case():
+            if self._state == INPUT:
+                self._read_input()
 
     def signal_2(self):
         if not self.editor.cursor_at_output():
@@ -142,7 +168,7 @@ class TeacherProxy():
 
         self._state = EFFECT_ADDED
         # TODO Add consts dialoges
-        print '### WHYLOG ### You added line {} as effect. Select cause and press <F4>.'
+        print '### WHYLOG ### You added line \'%s\' as effect. Select cause and press <F4>.' % front_input.line_content
 
     def _add_cause(self):
         front_input = self.editor.get_front_input()
@@ -168,20 +194,12 @@ class TeacherProxy():
     def _prepare_buttons(self):
         # TODO refactor
         self.buttons = {
-            'edit_content': self.edit_content,
             'copy_line': self.copy_line,
             'delete_line': self.delete_line,
-            'edit_regex_name': self.edit_regex_name,
-            'edit_regex': self.edit_regex,
             'guess_regex': self.guess_regex,
-            ('edit', (BMC.GROUP, BMC.PARSER)): self.edit_group,
-            ('edit', (BMC.LOG_TYPE, BMC.PARSER)): self.edit_log_type,
-            'new_log_type': self.new_log_type,
-            ('edit', (BMC.PRIMARY_KEY, BMC.PARSER)): self.edit_primary_key_groups,
             'add_constraint': self.add_constraint,
             'delete_constraint': self.delete_constraint,
             'add_param': self.add_param,
-            ('edit', (BMC.CONSTRAINT_GROUP, BMC.CONSTRAINT)): self.edit_constraint_group,
             ('edit', (BMC.PARAM, BMC.CONSTRAINT)): self.edit_constraint_param,
             'save': self.save,
             'test_rule': self.test_rule,
@@ -209,6 +227,7 @@ class TeacherProxy():
         front_input = FrontInput(0, content, None)
         self.teacher.add_line(parser_id, front_input)
         print 'back_edit_content, %s' % content
+        return True
 
     def copy_line(self, parser_id):
         new_id = next(parsers_ids)
@@ -236,8 +255,9 @@ class TeacherProxy():
     def back_edit_regex_name(self, read_input_info):
         parser_id = read_input_info.meta_info[PARSER]
         regex_name = read_input_info.content
-        self.teacher.update_pattern_name(parser_id, regex_name)
+        # self.teacher.update_pattern_name(parser_id, regex_name)
         print 'back_edit_regex_name %s ' % regex_name
+        return True
 
     def edit_regex(self, parser_id):
         parser = self.raw_output.parsers[parser_id]
@@ -246,7 +266,7 @@ class TeacherProxy():
         message = parser.line_content
         self.editor.create_input_window(default_content, message)
 
-        meta_info = {PARSER: parser_id, CHECK_FUNCTION: self.check_regex}
+        meta_info = {PARSER: parser_id}
         self._set_read_input_info(self.back_edit_regex, meta_info)
         print 'edit_regex executed with parser_id: %s' % parser_id
 
@@ -256,16 +276,7 @@ class TeacherProxy():
         regex = read_input_info.content
         self.teacher.update_pattern(parser_id, regex)
         print 'back_edit_regex %s ' % regex
-
-    def check_regex(self, read_input_info):
-        parser_id = read_input_info.meta_info[PARSER]
-        regex = read_input_info.content[0]
-        line_content = self.raw_output.parsers[parser_id].line_content
-        if re.match(re.compile(regex), line_content):
-            return True
-        else:
-            self._warning('Regex doen\' match to line content.')
-            return False
+        return True
 
     def guess_regex(self, parser_id):
         self.teacher.guess_pattern(parser_id)
@@ -273,88 +284,157 @@ class TeacherProxy():
         print 'guess_regex executed with parser_id: %s' % parser_id
 
     def edit_group(self, parser_id, group_id):
-        # TODO chose type from enum type
         group = self.raw_output.parsers[parser_id].groups[group_id]
 
-        default_content = group.converter
+        default_content = self.output_formater.to_buttons(converter_returner())
         message = self.output_formater.format_match(group)
-        self.editor.create_input_window(default_content, message)
+        self.editor.create_case_window(default_content, message)
 
-        meta_info = {PARSER: parser_id, GROUP: group_id}
+        meta_info = {
+            PARSER: parser_id,
+            GROUP: group_id,
+            LOAD_METHOD: self.editor.get_button_name,
+        }
         self._set_read_input_info(self.back_edit_group, meta_info)
         print 'edit executed with parser: %s and group %s' % (parser_id, group_id)
 
     def back_edit_group(self, read_input_info):
         parser_id = read_input_info.meta_info[PARSER]
         group_id = read_input_info.meta_info[GROUP]
-        # TODO parse input
         converter = read_input_info.content
-        self.teacher.set_converter(parser_id, group_id, converter)
-        print 'back_edit_group %s ' % group_type
+        # self.teacher.set_converter(parser_id, group_id, converter)
+        return True
 
     def edit_log_type(self, parser_id, log_type):
-        # TODO chose logtype from list
         parser = self.raw_output.parsers[parser_id]
 
-        defaut_content = parser.log_type_name
+        log_types_menu = self.output_formater.format_log_type(log_type_returner())
         output = OutputAgregator()
         self.output_formater.parser.format_line_headers(output, parser)
-        self.output_formater.parser.format_regexes_message(output, parser)
-        self.editor.create_input_window(defaut_content, output.get_content())
+        self.editor.create_case_window(log_types_menu.get_content(), output.get_content())
 
-        meta_info = {PARSER: parser_id}
+        meta_info = {
+            PARSER: parser_id,
+            CONTENT: log_types_menu,
+            LOAD_METHOD: self._log_type_reader,
+        }
         self._set_read_input_info(self.back_edit_log_type, meta_info)
         print 'edit_log_type executed with parser_id: %s' % parser_id
 
+    def _log_type_reader(self):
+        content = self.read_input_info.meta_info[CONTENT]
+        line_number = get_line_number()  # self.editor.get_line_number()
+        log_type = content.get_button_meta(line_number)[BMC.LOG_TYPE]
+        return log_type
+
     def back_edit_log_type(self, read_input_info):
         parser_id = read_input_info.meta_info[PARSER]
-        # TODO parse input
-        log_type = read_input_info.content
-        self.teacher.set_log_type(parser_id, log_type)
-        print 'back_edit_log_type %s ' % log_type
+        content = read_input_info.content
+        if content == BMC.BUTTON:
+            # new log type
+            parser = self.raw_output.parsers[parser_id]
 
-    # TODO implement this function
-    def new_log_type(self, parser_id):
-        print 'new_log_type executed'
+            log_types_menu = self.output_formater.get_log_type_template()
+            output = OutputAgregator()
+            self.output_formater.parser.format_line_headers(output, parser)
+            self.editor.create_input_window(log_types_menu, output.get_content())
+            meta_info = {
+                PARSER: parser_id,
+                LOAD_METHOD: self._load_new_log_type,
+            }
+            self._set_read_input_info(self.back_new_log_type, meta_info)
+            return False
+        else:
+            # content is logtype
+            self.teacher.set_log_type(parser_id, content)
+            print 'back_edit_log_type %s ' % content._name
+            print 'back_edit_log_type %s ' % content._name
+            return True
+
+    def _load_new_log_type(self):
+        content = self.editor.get_input_content()
+        log_type = parse_log_type(content)
+        return log_type
+
+    def back_new_log_type(self, read_input_info):
+        log_type = self.read_input_info.content
+        # self.teacher.config.add_new_log_type(log_type)
+        print log_type
+        print log_type
+        return True
 
     def edit_primary_key_groups(self, parser_id, primary_key):
         parser = self.raw_output.parsers[parser_id]
 
-        defaut_content = self.output_formater.format_key_groups(parser.primary_key_groups)
+        defaut_content = self.output_formater.format_comma(parser.primary_key_groups)
         output = OutputAgregator()
         self.output_formater.parser.format_line_headers(output, parser)
         self.output_formater.parser.format_regexes_message(output, parser)
 
         self.editor.create_input_window(defaut_content, output.get_content())
 
-        meta_info = {PARSER: parser_id}
+        meta_info = {
+            PARSER: parser_id,
+            LOAD_METHOD: self._load_primary_key,
+        }
         self._set_read_input_info(self.back_edit_primary_key, meta_info)
         print 'edit_primary_key_groups executed with parser_id: %s' % parser_id
 
+    #TODO Move this function to new class InputLoader
+    def _load_primary_key(self):
+        content = self.editor.get_input_content()
+        primary_key = parse_primary_key_groups(content)
+        return primary_key
+
     def back_edit_primary_key(self, read_input_info):
         parser_id = read_input_info.meta_info[PARSER]
-        # TODO parsr input
         groups = read_input_info.content
         # self.teacher.set_primary_key(parser_id, groups)
+        print groups
         print 'back_edit_primary_key %s ' % groups
+        return True
 
     def add_constraint(self):
         # TODO add select window between teacher and input window
         output = OutputAgregator()
         parsers = self.raw_output.parsers.values()
         self.output_formater.parser.format_constraint_message(output, parsers)
-        content = get_constraint_template()
-        self.editor.create_input_window(content, output.get_content())
+        content = self.output_formater.to_buttons(constraint_returner())
+        self.editor.create_case_window(content, output.get_content())
 
-        self._set_read_input_info(self.back_add_constraint, {})
+        meta_info = {
+            LOAD_METHOD: self.editor.get_button_name,
+        }
+
+        self._set_read_input_info(self.mid_add_constraint, meta_info)
         print 'add_constraint executed'
 
+    def mid_add_constraint(self, read_input_info):
+        constraint_type = read_input_info.content
+        print constraint_type
+        output = OutputAgregator()
+        parsers = self.raw_output.parsers.values()
+        self.output_formater.parser.format_constraint_message(output, parsers)
+        content = self.output_formater.get_constraint_template(constraint_type)
+        self.editor.create_input_window(content, output.get_content())
+        meta_info = {
+            LOAD_METHOD: self._load_constraint,
+            CONSTRAINT: constraint_type,
+        }
+
+        self._set_read_input_info(self.back_add_constraint, meta_info)
+        return False
+
+    def _load_constraint(self):
+        content = self.editor.get_input_content()
+        constraint = parse_constraint(content)
+        return constraint
+
     def back_add_constraint(self, read_input_info):
-        raw_constraint = read_input_info.content
-        # TODO add parse constraint
-        # constraint = self.input_reader.parse_constraint(raw_constraint)
+        constraint = read_input_info.content
+        print constraint
         # self.teacher.register_constraint(constraint)
-        print 'back_add_constraint %s ' % raw_constraint
+        return True
 
     def delete_constraint(self, constraint):
         self.teacher.remove_constraint(constraint)
@@ -373,18 +453,21 @@ class TeacherProxy():
         print 'add_param executed with constraint %s' % constraint
 
     def back_add_param(self, read_input_info):
-        param = read_input_info.content
-        # TODO parse param
+        content = read_input_info.content
+        param = parse_param(content)
+        print param
         constraint = read_input_info.meta_info[CONSTRAINT]
         # self.teacher.register_constraint(constraint)
         print 'back_add_param %s ' % param
+        return True
 
     def edit_constraint_group(self, constraint, constraint_group):
         output = OutputAgregator()
         parsers = self.raw_output.parsers.values()
         self.output_formater.constraint.format_constraint(output, constraint)
         self.output_formater.parser.format_constraint_message(output, parsers)
-        self.editor.create_input_window(str(constraint_group), output.get_content())
+        content = self.output_formater.format_comma(constraint_group)
+        self.editor.create_input_window(content, output.get_content())
 
         meta_info = {CONSTRAINT: constraint, GROUP: constraint_group}
         self._set_read_input_info(self.back_edit_constraint_group, meta_info)
@@ -392,15 +475,16 @@ class TeacherProxy():
 
     def back_edit_constraint_group(self, read_input_info):
         group_content = read_input_info.content
+        constraint = parse_constraint_group(group_content)
         # TODO parse group
         constraint = read_input_info.meta_info[CONSTRAINT]
         constraint_group = read_input_info.meta_info[GROUP]
         # TODO nowy constraint
         # self.teacher.update_constraint_group(constraint, group_id, group_content)
         print 'back_edit_constraint_group %s' % constraint_group
+        return True
 
     def edit_constraint_param(self, constraint, param):
-        # TODO add message window with constraint
         output = OutputAgregator()
         content = self.output_formater.format_param(param, constraint.params[param])
         self.output_formater.constraint.format_constraint(output, constraint)
@@ -411,11 +495,13 @@ class TeacherProxy():
         print 'edit_constraint_param executed with %s and %s' % (constraint, param)
 
     def back_edit_constraint_param(self, read_input_info):
-        param_content = read_input_info.content
-        # TODO parse param content
+        content = read_input_info.content
+        param = parse_param(content)
+        print param
         constraint = read_input_info.meta_info[CONSTRAINT]
         # self.teacher.update_constraint_param(constraint, param, param_content)
-        print 'back_edit_constraint_param %s' % param_content
+        print 'back_edit_constraint_param %s' % param
+        return True
 
     # TODO add buttons and implement funcitons:
     # 1. Delete param
