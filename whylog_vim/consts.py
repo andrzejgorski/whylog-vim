@@ -29,7 +29,6 @@ class ButtonsMetaConsts():
 
 
 class ParserOutputConsts():
-    # TODO Delete this
     GROUP_CONVERTER = 'group %s: %s, match: %s'
     LINE_BUTTONS = '[copy_line] [delete_line]'
     LOG_TYPE = 'log type: %s'

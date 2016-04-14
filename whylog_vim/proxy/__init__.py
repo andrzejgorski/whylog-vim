@@ -6,6 +6,7 @@ from whylog_vim.proxy.log_reader import LogReaderProxy
 WHYLOG_PATH = '/home/andrzej/.whylog/config'
 
 
+# TODO Move to consts
 class states:
     # Editor states
     EDITOR_NORMAL = 0
@@ -50,9 +51,12 @@ class WhylogProxy():
         self.editor = editor
         self.teacher_generator = teacher_generator
         self.log_reader = LogReaderProxy(editor, log_reader)
-        self.teacher = TeacherProxy(self.editor, self.teacher_generator.next(), self)
+        self._create_teacher()
+
+    def _create_teacher(self):
+        self.teacher = TeacherProxy(self.teacher_generator.next(), self.editor, self)
 
     def new_teacher(self):
         self.teacher.close()
-        self.teacher = TeacherProxy(self.editor, self.teacher_generator.next(), self)
+        self.create_teacher()
         self._state = states.EDITOR_NORMAL

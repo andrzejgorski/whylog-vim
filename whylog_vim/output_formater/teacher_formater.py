@@ -1,5 +1,13 @@
 import re
-from whylog_vim.consts import GlobalConsts, ButtonsMetaConsts as BMC, ParserOutputConsts as POC, ConstraintsOutputConsts as COC, Messages, WarningMessages, LogTypeConsts as LTC
+from whylog_vim.consts import (
+    GlobalConsts,
+    ButtonsMetaConsts as BMC,
+    ParserOutputConsts as POC,
+    ConstraintsOutputConsts as COC,
+    Messages,
+    WarningMessages,
+    LogTypeConsts as LTC,
+)
 
 
 class OutputAgregator():
@@ -214,8 +222,8 @@ class TeacherOutput():
         output.add(GlobalConsts.MAIN_BUTTONS)
         return output
 
-    def format_param(self, param, param_value):
-        return COC.PARAM_SIMPLE % (param, param_value)
+    def format_param(self, param_key, param_value):
+        return COC.PARAM_SIMPLE % (param_key, param_value)
 
     def format_match(self, group):
         return 'match: %s' % group.content

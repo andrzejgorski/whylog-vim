@@ -50,7 +50,7 @@ def parse_constraint(lines):
     # TODO Add errors handler
     pattern = re.compile(prepare_regex(COC.TYPE))
     constr_type = pattern.match(lines[0]).group(1)
-    regex = '^' + COC.GROUP2 % (Input.INT_GROUP1, Input.INT_GROUP2) + '$'
+    regex = '^' + COC.GROUP % (Input.INT_GROUP1, Input.INT_GROUP2) + '$'
     pattern = re.compile(regex)
     groups = []
     for line in range(1, len(lines)):
@@ -83,3 +83,51 @@ def parse_constraint(lines):
 
     return constr_type, groups, params
 
+
+class LogTypeLoader():
+
+    def __init__(self, log_type_menu, get_line_number):
+        self.log_type_menu = log_type_menu
+        self.get_line_number = get_line_number
+
+    def __call__(self):
+        return self.log_type_menu.get_button_meta(self.get_line_number())[BMC.LOG_TYPE]
+
+
+class GetInputContentLoader():
+
+    def __init__(self, get_input_content):
+        self.get_input_content = get_input_content
+
+    def __call__(self):
+        raise NotImplemented()
+
+
+class NewLogTypeLoader(GetInputContentLoader):
+
+    def __call__(self):
+        return parse_log_type(self.get_input_content())
+
+
+class PrimaryKeyLoader(GetInputContentLoader):
+
+    def __call__(self):
+        return parse_primary_key_groups(self.get_input_content())
+
+
+class ConstraintLoader(GetInputContentLoader):
+
+    def __call__(self):
+        return parse_constraint(self.get_input_content())
+
+
+class ParseParamLoader(GetInputContentLoader):
+
+    def __call__(self):
+        return parse_param(self.get_input_content())
+
+
+class ConstraintGroupLoader(GetInputContentLoader):
+
+    def __call__(self):
+        return parse_constraint_group(self.get_input_content())
