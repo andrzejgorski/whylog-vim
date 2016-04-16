@@ -13,21 +13,11 @@ from whylog_vim.input_reader.teacher_reader import (
     PrimaryKeyLoader,
     ParseParamLoader,
 )
-# TODO delete it
-from whylog_vim.gui import (
-    set_syntax_folding,
-    get_current_line,
-    get_current_filename,
-    resize,
-    get_line_number,
-)
 from whylog_vim.consts import ButtonsMetaConsts as BMC
 
 # TODO delete it
 from whylog_vim.mocks import converter_returner, log_type_returner, constraint_returner
-from whylog_vim.proxy.teacher.utils import (
-    parsers_ids,
-)
+from whylog_vim.proxy.teacher.utils import parsers_ids
 from whylog_vim.proxy.teacher.consts import TeacherProxyStates as States, ReadInputMetaKeys, Keys
 
 
@@ -43,7 +33,7 @@ class TeacherPerformer():
     def new_lesson(self):
         front_input = self.editor.get_front_input()
         self.teacher.add_line(next(parsers_ids), front_input)
-        self.origin_file_name = get_current_filename()
+        self.origin_file_name = self.editor.get_current_filename()
 
         # TODO Add consts dialoges
         print '### WHYLOG ### You added line \'%s\' as effect. Select cause and press <F4>.' % front_input.line_content
@@ -59,7 +49,7 @@ class TeacherPerformer():
         output = self.output_formater.format_rule(self.raw_output)
         self.teacher_proxy.set_output(output)
         self.editor.set_output(output.get_content())
-        set_syntax_folding()
+        self.editor.set_syntax_folding()
         self.teacher_proxy.set_main_state()
 
     def _reprint_teacher(self):
@@ -77,7 +67,6 @@ class TeacherPerformer():
 
     def back_edit_content(self, read_input_info):
         parser_id = read_input_info.meta_info[ReadInputMetaKeys.PARSER]
-        # TODO parser input
         content = read_input_info.content
         front_input = FrontInput(0, content, None)
         self.teacher.add_line(parser_id, front_input)
@@ -172,7 +161,7 @@ class TeacherPerformer():
             ReadInputMetaKeys.PARSER: parser_id,
             ReadInputMetaKeys.CONTENT: log_types_menu,
         }
-        loader = LogTypeLoader(log_types_menu, get_line_number)
+        loader = LogTypeLoader(log_types_menu, self.editor.get_line_number)
         self.teacher_proxy._set_read_input_info(self.back_edit_log_type, meta_info, loader)
         print 'edit_log_type executed with parser_id: %s' % parser_id
 

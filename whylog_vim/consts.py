@@ -82,3 +82,7 @@ class mainStates():
     EDITOR_NORMAL = 0
     LOG_READER = 1
     TEACHER = 2
+
+
+class WindowSizes():
+    MAX_MESSAGE_SIZE = 20

@@ -3,7 +3,6 @@ from whylog.log_reader import LogReader
 from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
 from whylog_vim.output_formater.log_reader_formater import LogReaderOutput
 from whylog_vim.input_reader.log_reader import QueryInputReader
-from whylog_vim.gui import get_current_line
 
 
 class LogReaderProxy():
@@ -29,7 +28,7 @@ class LogReaderProxy():
         return True
 
     def _handle_signal_on_output(self):
-        current_line = get_current_line()
+        current_line = self.editor.get_current_line()
         match = self.input_reader.match_output_line(current_line)
         if match is not False:
             file_name, offset = match

@@ -4,6 +4,7 @@ from whylog_vim.proxy.log_reader import LogReaderProxy
 from whylog_vim.consts import mainStates as States
 
 
+#TODO Add path_loader
 WHYLOG_PATH = '/home/andrzej/.whylog/config'
 
 

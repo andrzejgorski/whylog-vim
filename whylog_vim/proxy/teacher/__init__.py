@@ -1,17 +1,5 @@
 import re
 
-from whylog.teacher import Teacher
-from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
-
-from whylog_vim.consts import ButtonsMetaConsts as BMC
-from whylog_vim.gui import (
-    go_to_offset,
-    normal,
-    get_offset,
-    get_line_number,
-)
-from whylog_vim.output_formater.teacher_formater import TeacherOutput, OutputAgregator
-
 from whylog_vim.input_reader.teacher_reader import (
     get_button_name,
     parse_log_type,
@@ -20,20 +8,11 @@ from whylog_vim.input_reader.teacher_reader import (
     parse_constraint,
     parse_constraint_group,
 )
-# TODO delete it
-from whylog_vim.gui import (
-    set_syntax_folding,
-    get_current_line,
-    get_current_filename,
-    resize,
-    get_line_number,
-)
 from whylog_vim.consts import ButtonsMetaConsts as BMC
-from whylog_vim.proxy.teacher.consts import TeacherProxyStates as States
+from whylog_vim.exceptions import CannotGoToPosition
+from whylog_vim.proxy.teacher.consts import TeacherProxyStates as States, ButtonsNames
 from whylog_vim.proxy.teacher.performer import TeacherPerformer
-from whylog_vim.proxy.teacher.utils import (
-    ReadInputInfo,
-)
+from whylog_vim.proxy.teacher.utils import ReadInputInfo
 
 
 class TeacherProxy():
@@ -43,23 +22,22 @@ class TeacherProxy():
         self.editor = editor
         self.state = States.BEGIN
         self.buttons = {
-            # TODO use consts here
-            'copy_line': self.teacher_performer.copy_line,
-            'delete_line': self.teacher_performer.delete_line,
-            'guess_regex': self.teacher_performer.guess_regex,
-            'add_constraint': self.teacher_performer.add_constraint,
-            'delete_constraint': self.teacher_performer.delete_constraint,
-            'add_param': self.teacher_performer.add_param,
-            'save': self.teacher_performer.save,
-            'test_rule': self.teacher_performer.test_rule,
-            'return_to_file': self.teacher_performer.return_to_file,
-            'give_up_rule': self.teacher_performer.give_up_rule,
+            ButtonsNames.COPY_LINE: self.teacher_performer.copy_line,
+            ButtonsNames.DELETE_LINE: self.teacher_performer.delete_line,
+            ButtonsNames.GUESS_REGEX: self.teacher_performer.guess_regex,
+            ButtonsNames.ADD_CONSTRAINT: self.teacher_performer.add_constraint,
+            ButtonsNames.DELETE_CONSTRAINT: self.teacher_performer.delete_constraint,
+            ButtonsNames.ADD_PARAM: self.teacher_performer.add_param,
+            ButtonsNames.SAVE: self.teacher_performer.save,
+            ButtonsNames.TEST_RULE: self.teacher_performer.test_rule,
+            ButtonsNames.RETURN_TO_FILE: self.teacher_performer.return_to_file,
+            ButtonsNames.GIVE_UP_RULE: self.teacher_performer.give_up_rule,
         }
 
     def signal_1(self):
         if self.editor.cursor_at_teacher():
             if self.state == States.MAIN_WINDOW:
-                self.action()
+                self.handle_menu_signal()
         elif self.editor.cursor_at_input() or self.editor.cursor_at_case():
             if self.state == States.INPUT:
                 self._read_input()
@@ -86,7 +64,7 @@ class TeacherProxy():
             self._return_cursor_to_position()
 
     def _set_cursor_position(self):
-        self._return_offset = get_offset()
+        self._return_offset = self.editor.get_offset()
 
     def set_output(self, output):
         self.output = output
@@ -98,45 +76,33 @@ class TeacherProxy():
         self.read_input_info = ReadInputInfo(self, function, meta_info, loader)
         self.state = States.INPUT
 
-    def action(self):
+    def handle_menu_signal(self):
         self._set_cursor_position()
-        line_number = get_line_number()
+        line_number = self.editor.get_line_number()
         meta = self.output.get_button_meta(line_number)
         try:
             func = meta[BMC.FUNCTION]
         except KeyError:
-            pass
-        else:
-            del meta[BMC.FUNCTION]
-            func(**meta)
-            return
-
-        try:
-            name = self.editor.get_button_name()
-            func = self.buttons[name]
-        except KeyError:
             try:
-                func = self.buttons[(name, tuple(meta.keys()))]
+                func = self.buttons[self.editor.get_button_name()]
             except KeyError:
-                # TODO add WhylogVIMException
-                print ('Cannot execute "%s" with params %s, %s' %
-                       (name, meta, tuple(meta.keys())))
+                print 'Nothing to press here'
             else:
                 func(**meta)
         else:
+            del meta[BMC.FUNCTION]
             func(**meta)
+
         if self.state == States.MAIN_WINDOW:
             self._return_cursor_to_position()
 
     def _return_cursor_to_position(self):
         try:
-            go_to_offset(self._return_offset)
+            self.editor.go_to_offset(self._return_offset)
         except Exception:
-            # Can't go to the offset. Nothing to do.
+            raise CannotGoToPosition(self._return_offset)
+        try:
+            self.editor.normal('zo')
+        except Exception:
+            # Fold opening error. Nothing to do.
             pass
-        else:
-            try:
-                normal('zo')
-            except Exception:
-                # Fold opening error. Nothing to do.
-                pass

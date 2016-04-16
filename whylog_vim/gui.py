@@ -4,55 +4,7 @@ from mock import MagicMock, patch
 import os.path
 import vim
 from whylog_vim.input_reader.teacher_reader import get_button_name
-from whylog_vim.consts import WindowTypes
-
-
-def go_to_line(line):
-    vim.command(':%d' % (line,))
-
-def go_to_offset(byte_offset):
-    vim.command(':go %d' % (byte_offset,))
-
-def open_file_at_offset(filename, offset):
-    vim.command(':edit %s' % (filename,))
-    go_to_offset(offset)
-
-def go_to_window(window_id):
-    assert window_id is not None
-    vim.command('%dwincmd w' % window_id)
-
-def split_window():
-    vim.command(':split')
-
-def set_syntax_folding():
-    vim.command(':set foldmethod=syntax')
-
-def normal(command):
-    vim.command("normal %s" % (command,))
-
-def get_col():
-    return int(vim.eval('col(".")'))
-
-def get_current_window_id():
-    return int(vim.eval('winnr()'))
-
-def get_current_line():
-    """
-    Method returns content of the line where cursor is.
-    """
-    return vim.current.line
-
-def get_current_filename():
-    return vim.current.buffer.name
-
-def get_line_number():
-    return int(vim.eval('line(".")'))
-
-def get_offset():
-    return int(vim.eval('line2byte(line("."))+col(".")'))
-
-def resize(size):
-    vim.command('resize %s' % size)
+from whylog_vim.consts import WindowTypes, WindowSizes
 
 
 class WindowContext(object):
@@ -66,9 +18,6 @@ class WindowContext(object):
 
     def __exit__(self, type_, value, traceback):
         self.gui.set_window_writability(False)
-
-
-# TODO move to consts
 
 
 class VimEditor():
@@ -85,32 +34,33 @@ class VimEditor():
     def go_to_file(self, file_name, offset):
         id_ = self.get_files_window_id(file_name)
         if id_ is not None:
-            go_to_window(id_)
-            go_to_offset(offset)
+            self.go_to_window(id_)
+            self.go_to_offset(offset)
         else:
-            split_window()
-            open_file_at_offset(file_name, offset)
+            self.split_window()
+            self.open_file_at_offset(file_name, offset)
 
     def show_message_window(self, message):
         if message:
             if self.is_file_open(WindowTypes.MESSAGE):
                 self.close_message_window()
                 self._resize_max()
-            return_file = get_current_filename()
+            return_file = self.get_current_filename()
             message_context = WindowContext(self)
             vim.command(':split %s' % WindowTypes.MESSAGE)
             vim.command(':setlocal buftype=nowrite')
             self.set_output_with_context(message, message_context)
             size = len(message.split('\n'))
             # TODO consider it
-            if size > 20:
-                size = 20
-            resize(size)
-            go_to_window(self.get_files_window_id(return_file))
+            if size > WindowSizes.MAX_MESSAGE_SIZE:
+                size = WindowSizes.MAX_MESSAGE_SIZE
+            self.resize(size)
+            self.go_to_window(self.get_files_window_id(return_file))
             self.message = True
         else:
             self.message = False
 
+    # TODO consider move to one function
     def create_case_window(self, default_input, message=None):
         self.show_message_window(message)
         self.output_window_context = WindowContext(self)
@@ -127,32 +77,26 @@ class VimEditor():
         self.set_output(default_input)
         vim.command(':set modifiable')
 
-    def get_input(self, message, options=None):
-        if options:
-            return vim.command(':input(%s, %s)' % (message, options))
-        else:
-            return vim.command(':input(%s)' % message)
-
     def change_to_teacher_window(self):
         self.output_window_context = WindowContext(self)
         vim.command(':e %s' % WindowTypes.TEACHER)
         vim.command(':setlocal buftype=nowrite')
-        vim.command(':resize 100')
+        self._resize_max()
 
     def create_query_window(self):
         """
         Method witch close window where is an output of the Whylog.
         """
         self.output_window_context = WindowContext(self)
-        self.output_window_context.origin_window_name = get_current_filename()
+        self.output_window_context.origin_window_name = self.get_current_filename()
         if not self.is_whylog_window_open():
             vim.command(':rightbelow split %s' % WindowTypes.QUERY)
             vim.command(':setlocal buftype=nowrite')
-            vim.command(':resize 10')
+            self.resize(10)
             vim.command(':setlocal nomodifiable')
 
     def _resize_max(self):
-        vim.command(':resize 100')
+        self.resize(100)
 
     def create_teacher_window(self):
         """
@@ -166,18 +110,17 @@ class VimEditor():
         self.get_files_window_id(WindowTypes.TEACHER)
 
     def get_button_name(self):
-        line_content = get_current_line()
-        offset = get_col()
+        line_content = self.get_current_line()
+        offset = self.get_col()
         return get_button_name(line_content, offset)
 
-    def set_output(self, contents, line=None):
+    # TODO consider make this funciton into one
+    def set_output(self, contents):
         """
         This method set content of the output window.
         """
         with self.output_window_context as output_buffer:
             output_buffer[:] = contents.split('\n')
-            if line is not None:
-                go_to_line(line)
 
     def set_output_with_context(self, contents, context):
         """
@@ -190,6 +133,7 @@ class VimEditor():
         vim.command(':setlocal %s' % self.WINDOW_WRITEABILITY_STATE_DICT[state])
 
     def _get_output_window_id(self):
+        # TODO Refactor
         whylog_windows = [
             WindowTypes.QUERY,
             WindowTypes.TEACHER,
@@ -229,10 +173,10 @@ class VimEditor():
         This method return Front Input object of the line where cursor is,
         which is implemented in the whylog.front.utils.py file.
         """
-        filename = get_current_filename()
+        filename = self.get_current_filename()
         resource_location = LocallyAccessibleLogOpener(filename)
         cursor_position = self.get_cursor_offset()
-        line_content = get_current_line()
+        line_content = self.get_current_line()
         return FrontInput(cursor_position, line_content, resource_location)
 
     def close_output_window(self):
@@ -269,26 +213,26 @@ class VimEditor():
             return False
 
     def cursor_at_output(self):
-        return get_current_window_id() == self._get_output_window_id()
+        return self.get_current_window_id() == self._get_output_window_id()
 
     def cursor_at_teacher(self):
-        return get_current_window_id() == self.get_files_window_id(WindowTypes.TEACHER)
+        return self.get_current_window_id() == self.get_files_window_id(WindowTypes.TEACHER)
 
     def cursor_at_input(self):
-        return get_current_window_id() == self.get_files_window_id(WindowTypes.INPUT)
+        return self.get_current_window_id() == self.get_files_window_id(WindowTypes.INPUT)
 
     def cursor_at_case(self):
-        return get_current_window_id() == self.get_files_window_id(WindowTypes.CASE)
+        return self.get_current_window_id() == self.get_files_window_id(WindowTypes.CASE)
 
     def close_message_window(self):
         if self.message is True:
             id_ = self.get_files_window_id(WindowTypes.MESSAGE)
-            go_to_window(id_)
+            self.go_to_window(id_)
             vim.command(':q')
 
     def close_teacher_window(self):
         id_ = self.get_files_window_id(WindowTypes.TEACHER)
-        go_to_window(id_)
+        self.go_to_window(id_)
         vim.command(':q')
 
     def go_to_output_window(self):
@@ -297,11 +241,58 @@ class VimEditor():
         is moving to the output window.
         """
         id_ = self._get_output_window_id()
-        go_to_window(id_)
+        self.go_to_window(id_)
 
     def go_to_input_window(self):
         """
         After call of this function cursor
         is moving to the input window.
         """
-        go_to_window(self.output_window_context.origin_window_id)
+        self.go_to_window(self.output_window_context.origin_window_id)
+
+    def go_to_line(self, line):
+        vim.command(':%d' % (line,))
+
+    def go_to_offset(self, byte_offset):
+        vim.command(':go %d' % (byte_offset,))
+
+    def open_file_at_offset(self, filename, offset):
+        vim.command(':edit %s' % (filename,))
+        self.go_to_offset(offset)
+
+    def go_to_window(self, window_id):
+        assert window_id is not None
+        vim.command('%dwincmd w' % window_id)
+
+    def split_window(self):
+        vim.command(':split')
+
+    def set_syntax_folding(self):
+        vim.command(':set foldmethod=syntax')
+
+    def normal(self, command):
+        vim.command("normal %s" % (command,))
+
+    def get_col(self):
+        return int(vim.eval('col(".")'))
+
+    def get_current_window_id(self):
+        return int(vim.eval('winnr()'))
+
+    def get_current_line(self):
+        """
+        Method returns content of the line where cursor is.
+        """
+        return vim.current.line
+
+    def get_current_filename(self):
+        return vim.current.buffer.name
+
+    def get_line_number(self):
+        return int(vim.eval('line(".")'))
+
+    def get_offset(self):
+        return int(vim.eval('line2byte(line("."))+col(".")'))
+
+    def resize(self, size):
+        vim.command('resize %s' % size)
