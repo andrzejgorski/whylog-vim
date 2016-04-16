@@ -75,3 +75,10 @@ class Input():
     GROUP2 = '(?P<content2>.+)'
     INT_GROUP1 = '(?P<int1>\d+)'
     INT_GROUP2 = '(?P<int2>\d+)'
+
+
+class mainStates():
+    # Editor states
+    EDITOR_NORMAL = 0
+    LOG_READER = 1
+    TEACHER = 2
