@@ -1,5 +1,4 @@
 from whylog_vim.consts import ButtonsMetaConsts as BMC
-from whylog_vim.proxy.teacher.consts import TeacherProxyStates as States
 
 
 def naturals_generator():

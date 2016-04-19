@@ -13,12 +13,12 @@ from whylog_vim.input_reader.teacher_reader import (
     PrimaryKeyLoader,
     ParseParamLoader,
 )
-from whylog_vim.consts import ButtonsMetaConsts as BMC
+from whylog_vim.consts import ButtonsMetaConsts as BMC, MainStates
 
 # TODO delete it
 from whylog_vim.mocks import converter_returner, log_type_returner, constraint_returner
 from whylog_vim.proxy.teacher.utils import parsers_ids
-from whylog_vim.proxy.teacher.consts import TeacherProxyStates as States, ReadInputMetaKeys, Keys
+from whylog_vim.proxy.teacher.consts import ReadInputMetaKeys, Keys
 
 
 class TeacherPerformer():
@@ -50,7 +50,7 @@ class TeacherPerformer():
         self.teacher_proxy.set_output(output)
         self.editor.set_output(output.get_content())
         self.editor.set_syntax_folding()
-        self.teacher_proxy.set_main_state()
+        self.main_proxy.set_state(MainStates.TEACHER)
 
     def _reprint_teacher(self):
         self.editor.change_to_teacher_window()
@@ -331,12 +331,13 @@ class TeacherPerformer():
         self.teacher.save()
         print 'save executed'
 
-    # TODO check rule
     def test_rule(self):
+        self.main_proxy.set_state(MainStates.TEST_RULE)
         # TODO ?? test_rule
         print 'test rule executed'
 
     def return_to_file(self):
+        self.main_proxy.set_state(MainStates.ADD_CAUSE)
         self.editor.go_to_file(self.origin_file_name, 1)
         self.editor.close_teacher_window()
         print 'return_to_file executed'

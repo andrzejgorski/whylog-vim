@@ -77,11 +77,15 @@ class Input():
     INT_GROUP2 = '(?P<int2>\d+)'
 
 
-class mainStates():
+class MainStates():
     # Editor states
     EDITOR_NORMAL = 0
-    LOG_READER = 1
-    TEACHER = 2
+    LOG_READER = 100
+    TEACHER = 200
+    ADD_CAUSE = 201
+    TEACHER_INPUT = 202
+    EFFECT_ADDED = 203
+    TEST_RULE = 204
 
 
 class WindowSizes():

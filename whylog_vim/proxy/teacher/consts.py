@@ -1,12 +1,5 @@
 
 
-class TeacherProxyStates():
-    INPUT = 'input'
-    EFFECT_ADDED = 'efect added'
-    BEGIN = 'begin'
-    MAIN_WINDOW = 'main window'
-
-
 class ReadInputMetaKeys():
     PARSER = 'parser'
     GROUP = 'group'

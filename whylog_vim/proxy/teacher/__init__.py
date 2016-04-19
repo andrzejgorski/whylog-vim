@@ -8,9 +8,9 @@ from whylog_vim.input_reader.teacher_reader import (
     parse_constraint,
     parse_constraint_group,
 )
-from whylog_vim.consts import ButtonsMetaConsts as BMC
-from whylog_vim.exceptions import CannotGoToPosition
-from whylog_vim.proxy.teacher.consts import TeacherProxyStates as States, ButtonsNames
+from whylog_vim.consts import ButtonsMetaConsts as BMC, MainStates
+from whylog_vim.proxy.teacher.exceptions import CannotGoToPosition
+from whylog_vim.proxy.teacher.consts import ButtonsNames
 from whylog_vim.proxy.teacher.performer import TeacherPerformer
 from whylog_vim.proxy.teacher.utils import ReadInputInfo
 
@@ -20,7 +20,6 @@ class TeacherProxy():
     def __init__(self, teacher, editor, main_proxy):
         self.teacher_performer = TeacherPerformer(self, teacher, editor, main_proxy)
         self.editor = editor
-        self.state = States.BEGIN
         self.buttons = {
             ButtonsNames.COPY_LINE: self.teacher_performer.copy_line,
             ButtonsNames.DELETE_LINE: self.teacher_performer.delete_line,
@@ -33,26 +32,9 @@ class TeacherProxy():
             ButtonsNames.RETURN_TO_FILE: self.teacher_performer.return_to_file,
             ButtonsNames.GIVE_UP_RULE: self.teacher_performer.give_up_rule,
         }
+        self.main_proxy = main_proxy
 
-    def signal_1(self):
-        if self.editor.cursor_at_teacher():
-            if self.state == States.MAIN_WINDOW:
-                self.handle_menu_signal()
-        elif self.editor.cursor_at_input() or self.editor.cursor_at_case():
-            if self.state == States.INPUT:
-                self._read_input()
-
-    def signal_2(self):
-        if not self.editor.cursor_at_output():
-            if self.state == States.BEGIN:
-                self.state = States.EFFECT_ADDED
-                self.teacher_performer.new_lesson()
-            elif self.state == States.EFFECT_ADDED:
-                self.teacher_performer.add_cause()
-            else:
-                self._add_cause()
-
-    def _read_input(self):
+    def read_input(self):
         self.read_input_info.load_input()
         return_function = self.read_input_info.return_function
         if return_function(self.read_input_info):
@@ -69,12 +51,9 @@ class TeacherProxy():
     def set_output(self, output):
         self.output = output
 
-    def set_main_state(self):
-        self.state = States.MAIN_WINDOW
-
     def _set_read_input_info(self, function, meta_info=None, loader=None):
         self.read_input_info = ReadInputInfo(self, function, meta_info, loader)
-        self.state = States.INPUT
+        self.main_proxy.set_state(MainStates.TEACHER_INPUT)
 
     def handle_menu_signal(self):
         self._set_cursor_position()
@@ -93,7 +72,7 @@ class TeacherProxy():
             del meta[BMC.FUNCTION]
             func(**meta)
 
-        if self.state == States.MAIN_WINDOW:
+        if self.main_proxy.get_state() == MainStates.TEACHER:
             self._return_cursor_to_position()
 
     def _return_cursor_to_position(self):

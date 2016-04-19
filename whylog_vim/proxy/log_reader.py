@@ -23,7 +23,7 @@ class LogReaderProxy():
             query_output = self._log_reader.get_causes(front_input)
 
         contents = self.output_formater.format_query(front_input, query_output)
-        self.editor.set_output(contents, line=4)
+        self.editor.set_output(contents)
         self.editor.go_to_output_window()
         return True
 
