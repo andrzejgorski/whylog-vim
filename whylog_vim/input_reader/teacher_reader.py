@@ -1,5 +1,6 @@
 import re
 from whylog.config.log_type import LogType
+from whylog.config.filename_matchers import RegexFilenameMatcher
 from whylog_vim.consts import ButtonsMetaConsts as BMC, LogTypeConsts as LTC, Input, ConstraintsOutputConsts as COC
 
 
@@ -24,9 +25,8 @@ def parse_log_type(lines):
     host_pattern = pattern.match(lines[1]).group(1)
     pattern = re.compile(prepare_regex(LTC.PATH_PATTERN))
     path_pattern = pattern.match(lines[2]).group(1)
-    pattern = re.compile(prepare_regex(LTC.FILE_NAME_MATCHER))
-    file_name_matcher = pattern.match(lines[3]).group(1)
-    return LogType(name, host_pattern, path_pattern, file_name_matcher)
+    matcher = RegexFilenameMatcher(host_pattern, path_pattern, name)
+    return LogType(name, matcher)
 
 
 def parse_primary_key_groups(content):

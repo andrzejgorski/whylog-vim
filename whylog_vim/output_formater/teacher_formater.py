@@ -252,12 +252,11 @@ class TeacherOutput():
         for log_type in log_types:
             output.add(LTC.NAME % log_type._name)
             output.set_buttons_meta({BMC.LOG_TYPE: log_type})
-            output.add(LTC.HOST_PATTERN % log_type._host_pattern_str)
-            output.set_buttons_meta({BMC.LOG_TYPE: log_type})
-            output.add(LTC.PATH_PATTERN % log_type._path_pattern_str)
-            output.set_buttons_meta({BMC.LOG_TYPE: log_type})
-            output.add(LTC.FILE_NAME_MATCHER % log_type._filename_matcher_class_name)
-            output.set_buttons_meta({BMC.LOG_TYPE: log_type})
+            for matcher in log_type._filename_matchers:
+                output.add(LTC.HOST_PATTERN % matcher._host_pattern)
+                output.set_buttons_meta({BMC.LOG_TYPE: log_type})
+                output.add(LTC.PATH_PATTERN % matcher._path_pattern)
+                output.set_buttons_meta({BMC.LOG_TYPE: log_type})
             output.add(GlobalConsts.EMPTY_LINE)
         output.add(LTC.ADD_LOGTYPE)
         output.set_buttons_meta({BMC.LOG_TYPE: BMC.BUTTON})
@@ -268,6 +267,5 @@ class TeacherOutput():
         result.append(LTC.NAME)
         result.append(LTC.HOST_PATTERN)
         result.append(LTC.PATH_PATTERN)
-        result.append(LTC.FILE_NAME_MATCHER)
         return '\n'.join(result)
 

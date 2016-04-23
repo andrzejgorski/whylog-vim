@@ -36,7 +36,7 @@ class TeacherPerformer():
         self.origin_file_name = self.editor.get_current_filename()
 
         # TODO Add consts dialoges
-        print '### WHYLOG ### You added line \'%s\' as effect. Select cause and press <F4>.' % front_input.line_content
+        print '### WHYLOG ### You added line as effect. Select cause and press <F4>.'
 
     def add_cause(self):
         front_input = self.editor.get_front_input()
