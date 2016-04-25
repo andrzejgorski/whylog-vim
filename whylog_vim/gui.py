@@ -50,6 +50,7 @@ class VimEditor():
         vim.command(':setlocal buftype=nowrite')
         self.set_output(default_input)
         vim.command(':set nomodifiable')
+        self._set_file_type()
 
     def create_input_window(self, default_input):
         self.output_window_context = WindowContext(self)
@@ -57,12 +58,14 @@ class VimEditor():
         vim.command(':setlocal buftype=nowrite')
         self.set_output(default_input)
         vim.command(':set modifiable')
+        self._set_file_type()
 
     def create_teacher_window(self):
         self.output_window_context = WindowContext(self)
         vim.command(':e %s' % WindowTypes.TEACHER)
         vim.command(':setlocal buftype=nowrite')
         vim.command(':set nomodifiable')
+        self._set_file_type()
 
     def create_query_window(self):
         self.output_window_context = WindowContext(self)
@@ -70,6 +73,7 @@ class VimEditor():
         vim.command(':setlocal buftype=nowrite')
         self.resize(10)
         vim.command(':setlocal nomodifiable')
+        self._set_file_type()
 
     def close_window(self, filename):
         self.go_to_file(filename)
@@ -201,3 +205,7 @@ class VimEditor():
 
     def resize(self, size):
         vim.command('resize %s' % size)
+
+    def _set_file_type(self):
+        vim.command('setlocal filetype=whylog')
+

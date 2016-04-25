@@ -1,11 +1,11 @@
 
 
 class WindowTypes():
-    QUERY = 'whylog_query_output.whylog'
-    TEACHER = 'whylog_teacher.whylog'
-    INPUT = 'whylog_input.whylog'
-    MESSAGE = 'whylog_message.whylog'
-    CASE = 'whylog_case.whylog'
+    QUERY = 'whylog_query_output'
+    TEACHER = 'whylog_teacher'
+    INPUT = 'whylog_input'
+    MESSAGE = 'whylog_message'
+    CASE = 'whylog_case'
 
 
 class GlobalConsts():
