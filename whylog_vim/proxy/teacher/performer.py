@@ -1,9 +1,9 @@
 import re
 
 from whylog.teacher import Teacher
-from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
+from whylog.front.utils import FrontInput
 
-from whylog_vim.output_formater.teacher_formater import TeacherOutput, OutputAgregator
+from whylog_vim.output_formater.teacher_formater import TeacherOutput, OutputAgregator, get_log_types_message, get_primary_key_message
 
 from whylog_vim.input_reader.teacher_reader import (
     ConstraintGroupLoader,
@@ -13,7 +13,7 @@ from whylog_vim.input_reader.teacher_reader import (
     PrimaryKeyLoader,
     ParseParamLoader,
 )
-from whylog_vim.consts import ButtonsMetaConsts as BMC, MainStates
+from whylog_vim.consts import ButtonsMetaConsts as BMC, MainStates, Messages, WindowTypes
 
 # TODO delete it
 from whylog_vim.mocks import converter_returner, log_type_returner, constraint_returner
@@ -32,7 +32,7 @@ class TeacherPerformer():
 
     def new_lesson(self):
         front_input = self.editor.get_front_input()
-        self.teacher.add_line(next(parsers_ids), front_input)
+        self.teacher.add_line(next(parsers_ids), front_input, effect=True)
         self.origin_file_name = self.editor.get_current_filename()
 
         # TODO Add consts dialoges
@@ -52,9 +52,10 @@ class TeacherPerformer():
         self.editor.set_syntax_folding()
         self.main_proxy.set_state(MainStates.TEACHER)
 
-    def _reprint_teacher(self):
-        self.editor.change_to_teacher_window()
+    def reprint_teacher(self, _=None):
+        self.editor.create_teacher_window()
         self.print_teacher()
+        return True
 
     def edit_content(self, parser_id):
         default_content = self.raw_output.parsers[parser_id].line_content
@@ -76,12 +77,12 @@ class TeacherPerformer():
     def copy_line(self, parser_id):
         new_id = next(parsers_ids)
         self.teacher.add_line(new_id, self.teacher._lines[parser_id])
-        self._reprint_teacher()
+        self.reprint_teacher()
         print 'copy_line executed with parser_id: %s, new_id = %s ' % (parser_id, new_id)
 
     def delete_line(self, parser_id):
         self.teacher.remove_line(parser_id)
-        self._reprint_teacher()
+        self.reprint_teacher()
         print 'delete_line executed with parser_id: %s' % parser_id
 
     def edit_regex_name(self, parser_id):
@@ -106,9 +107,11 @@ class TeacherPerformer():
     def edit_regex(self, parser_id):
         parser = self.raw_output.parsers[parser_id]
 
-        default_content = parser.pattern
-        message = parser.line_content
-        self.editor.create_input_window(default_content, message)
+        message = [Messages.REGEX, parser.line_content]
+        output = OutputAgregator()
+        output.add_message(message)
+        output.add(parser.pattern)
+        self.editor.create_input_window(output.get_content())
 
         meta_info = {ReadInputMetaKeys.PARSER: parser_id}
         self.teacher_proxy._set_read_input_info(self.back_edit_regex, meta_info)
@@ -124,15 +127,16 @@ class TeacherPerformer():
 
     def guess_regex(self, parser_id):
         self.teacher.guess_pattern(parser_id)
-        self._reprint_teacher()
+        self.reprint_teacher()
         print 'guess_regex executed with parser_id: %s' % parser_id
 
     def edit_group(self, parser_id, group_id):
         group = self.raw_output.parsers[parser_id].groups[group_id]
 
-        default_content = self.output_formater.to_buttons(converter_returner())
-        message = self.output_formater.format_match(group)
-        self.editor.create_case_window(default_content, message)
+        output = OutputAgregator()
+        output.add_message([Messages.CONVERER % group.content], WindowTypes.CASE)
+        output.add(self.output_formater.to_buttons(converter_returner()))
+        self.editor.create_case_window(output.get_content())
 
         meta_info = {
             ReadInputMetaKeys.PARSER: parser_id,
@@ -146,62 +150,71 @@ class TeacherPerformer():
         parser_id = read_input_info.meta_info[ReadInputMetaKeys.PARSER]
         group_id = read_input_info.meta_info[ReadInputMetaKeys.GROUP]
         converter = read_input_info.content
-        # self.teacher.set_converter(parser_id, group_id, converter)
+        if converter is not None:
+            pass
+            # self.teacher.set_converter(parser_id, group_id, converter)
         return True
 
     def edit_log_type(self, parser_id, log_type):
         parser = self.raw_output.parsers[parser_id]
 
-        log_types_menu = self.output_formater.format_log_type(log_type_returner())
         output = OutputAgregator()
-        self.output_formater.parser.format_line_headers(output, parser)
-        self.editor.create_case_window(log_types_menu.get_content(), output.get_content())
+        output.add_message(get_log_types_message(parser), WindowTypes.CASE)
+        self.output_formater.format_log_type(output, log_type_returner())
+        self.editor.create_case_window(output.get_content())
 
         meta_info = {
             ReadInputMetaKeys.PARSER: parser_id,
-            ReadInputMetaKeys.CONTENT: log_types_menu,
+            ReadInputMetaKeys.CONTENT: output,
         }
-        loader = LogTypeLoader(log_types_menu, self.editor.get_line_number)
+        loader = LogTypeLoader(
+            output,
+            self.editor.get_line_number,
+            self.teacher_proxy.set_return_function,
+        )
         self.teacher_proxy._set_read_input_info(self.back_edit_log_type, meta_info, loader)
         print 'edit_log_type executed with parser_id: %s' % parser_id
 
     def back_edit_log_type(self, read_input_info):
         parser_id = read_input_info.meta_info[ReadInputMetaKeys.PARSER]
-        content = read_input_info.content
-        if content == BMC.BUTTON:
-            # new log type
-            parser = self.raw_output.parsers[parser_id]
-
-            log_types_menu = self.output_formater.get_log_type_template()
-            output = OutputAgregator()
-            self.output_formater.parser.format_line_headers(output, parser)
-            self.editor.create_input_window(log_types_menu, output.get_content())
-            meta_info = {
-                ReadInputMetaKeys.PARSER: parser_id,
-            }
-            loader = NewLogTypeLoader(self.editor.get_input_content)
-            self.teacher_proxy._set_read_input_info(self.back_new_log_type, meta_info, loader)
+        logtype = read_input_info.content
+        if logtype is None:
             return False
-        else:
-            # content is logtype
-            self.teacher.set_log_type(parser_id, content)
-            print 'back_edit_log_type %s ' % content._name
-            print 'back_edit_log_type %s ' % content._name
-            return True
+        self.teacher.set_log_type(parser_id, logtype)
+        print 'back_edit_log_type %s ' % logtype._name
+        print 'back_edit_log_type %s ' % logtype._name
+        return True
+
+    def new_log_type(self, read_input_info):
+        parser_id = read_input_info.meta_info[ReadInputMetaKeys.PARSER]
+        parser = self.raw_output.parsers[parser_id]
+
+        output = OutputAgregator()
+        output.add_message(get_log_types_message(parser), WindowTypes.INPUT)
+
+        output.add(self.output_formater.get_log_type_template())
+        self.editor.create_input_window(output.get_content())
+        meta_info = {
+            ReadInputMetaKeys.PARSER: parser_id,
+        }
+        loader = NewLogTypeLoader(self.editor.get_input_content)
+        self.teacher_proxy._set_read_input_info(self.back_new_log_type, meta_info, loader)
+        return False
 
     def back_new_log_type(self, read_input_info):
         log_type = read_input_info.content
         # self.teacher.config.add_new_log_type(log_type)
+        print log_type
         print log_type
         return True
 
     def edit_primary_key_groups(self, parser_id, primary_key):
         parser = self.raw_output.parsers[parser_id]
 
-        defaut_content = self.output_formater.format_comma(parser.primary_key_groups)
         output = OutputAgregator()
         self.output_formater.parser.format_line_headers(output, parser)
         self.output_formater.parser.format_regexes_message(output, parser)
+        output.add(self.output_formater.format_comma(parser.primary_key_groups))
 
         self.editor.create_input_window(defaut_content, output.get_content())
 
@@ -256,7 +269,7 @@ class TeacherPerformer():
 
     def delete_constraint(self, constraint):
         self.teacher.remove_constraint(constraint)
-        self._reprint_teacher()
+        self.reprint_teacher()
         print 'delete_constraint executed with constraint %s' % constraint
 
     def add_param(self, constraint):
@@ -339,7 +352,7 @@ class TeacherPerformer():
     def return_to_file(self):
         self.main_proxy.set_state(MainStates.ADD_CAUSE)
         self.editor.go_to_file(self.origin_file_name, 1)
-        self.editor.close_teacher_window()
+        self.editor.close_output_window()
         print 'return_to_file executed'
 
     def give_up_rule(self):

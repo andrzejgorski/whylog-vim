@@ -18,32 +18,40 @@ from whylog_vim.proxy.teacher.utils import ReadInputInfo
 class TeacherProxy():
 
     def __init__(self, teacher, editor, main_proxy):
-        self.teacher_performer = TeacherPerformer(self, teacher, editor, main_proxy)
+        self.performer = TeacherPerformer(self, teacher, editor, main_proxy)
         self.editor = editor
         self.buttons = {
-            ButtonsNames.COPY_LINE: self.teacher_performer.copy_line,
-            ButtonsNames.DELETE_LINE: self.teacher_performer.delete_line,
-            ButtonsNames.GUESS_REGEX: self.teacher_performer.guess_regex,
-            ButtonsNames.ADD_CONSTRAINT: self.teacher_performer.add_constraint,
-            ButtonsNames.DELETE_CONSTRAINT: self.teacher_performer.delete_constraint,
-            ButtonsNames.ADD_PARAM: self.teacher_performer.add_param,
-            ButtonsNames.SAVE: self.teacher_performer.save,
-            ButtonsNames.TEST_RULE: self.teacher_performer.test_rule,
-            ButtonsNames.RETURN_TO_FILE: self.teacher_performer.return_to_file,
-            ButtonsNames.GIVE_UP_RULE: self.teacher_performer.give_up_rule,
+            ButtonsNames.COPY_LINE: self.performer.copy_line,
+            ButtonsNames.DELETE_LINE: self.performer.delete_line,
+            ButtonsNames.GUESS_REGEX: self.performer.guess_regex,
+            ButtonsNames.ADD_CONSTRAINT: self.performer.add_constraint,
+            ButtonsNames.DELETE_CONSTRAINT: self.performer.delete_constraint,
+            ButtonsNames.ADD_PARAM: self.performer.add_param,
+            ButtonsNames.SAVE: self.performer.save,
+            ButtonsNames.TEST_RULE: self.performer.test_rule,
+            ButtonsNames.RETURN_TO_FILE: self.performer.return_to_file,
+            ButtonsNames.GIVE_UP_RULE: self.performer.give_up_rule,
         }
         self.main_proxy = main_proxy
+
+    def new_lesson(self):
+        self.performer.new_lesson()
+
+    def add_cause(self):
+        self.performer.add_cause()
 
     def read_input(self):
         self.read_input_info.load_input()
         return_function = self.read_input_info.return_function
         if return_function(self.read_input_info):
-            self.editor.close_message_window()
-            self.editor.change_to_teacher_window()
-            self.teacher_performer.print_teacher()
+            self.editor.create_teacher_window()
+            self.performer.print_teacher()
 
             del self.read_input_info
             self._return_cursor_to_position()
+
+    def set_return_function(self, function):
+        self.read_input_info.return_function = function
 
     def _set_cursor_position(self):
         self._return_offset = self.editor.get_offset()
@@ -65,7 +73,7 @@ class TeacherProxy():
             try:
                 func = self.buttons[self.editor.get_button_name()]
             except KeyError:
-                print 'Nothing to press here'
+                print 'This line is not editable'
             else:
                 func(**meta)
         else:

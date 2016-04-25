@@ -1,6 +1,7 @@
 from mock import MagicMock, patch
 from whylog.log_reader import LogReader
-from whylog.front.utils import FrontInput, LocallyAccessibleLogOpener
+from whylog.front.utils import FrontInput
+from whylog.config import LineSource
 from whylog_vim.output_formater.log_reader_formater import LogReaderOutput
 from whylog_vim.input_reader.log_reader import QueryInputReader
 
@@ -36,14 +37,11 @@ class LogReaderProxy():
         else:
             self.editor.close_output_window()
 
-    def signal_1(self):
+    def handle_action(self):
         if self.editor.cursor_at_output():
             self._handle_signal_on_output()
         else:
             self.editor.close_output_window()
-
-    def signal_2(self):
-        pass
 
     def get_tree(self, front_input):
         raise NotImplemented()
@@ -53,8 +51,7 @@ class LogReaderProxy():
         if front_input.offset == 34:
             return [FrontInput(
                 21, '2 root cause',
-                LocallyAccessibleLogOpener(
-                    self.editor.get_input_window_file_name()))
+                LineSource('localhost', 'node_1.log'))
             ]
         else:
             return []

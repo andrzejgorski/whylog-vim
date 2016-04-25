@@ -32,13 +32,16 @@ class ParserOutputConsts():
     GROUP_CONVERTER = 'group %s: %s, match: %s'
     LINE_BUTTONS = '[copy_line] [delete_line]'
     LOG_TYPE = 'log type: %s'
-    MESSAGE_CONTENT = '=== %s %s: %s'
+    MESSAGE_CONTENT = '=== %s: %s'
     META = 'file: %s, offset: %s'
     OTHERS_HEAD = '--- Other:'
     PRIMARY_KEY = 'primary key groups: %s'
     REGEX_BUTTONS = '[guess_regex]'
     REGEX_HEAD = '--- Regex: %s'
     LINE_CONTENT = '--- Line %s: %s'
+
+    EFFECT_LINE_NAME = 'effect'
+    CAUSE_LINE_NAME = 'cause_%s'
 
 
 class ConstraintsOutputConsts():
@@ -58,11 +61,19 @@ class LogTypeConsts():
     PATH_PATTERN = 'path pattern: %s'
     FILE_NAME_MATCHER = 'file name matcher: %s'
     ADD_LOGTYPE = '[add_log_type]'
+    CANCEL_LOGTYPE = '[cancel]'
 
 
 class Messages():
-    CAUSE = 'cause line'
-    EFFECT = 'effect line'
+    PREFIX = '# %s'
+    HEADER = 'This is whylog input window.'
+    ENDING = 'Do not change the commented text above.'
+    INPUT_INFO = 'Enter the content below commented block and press <F3>.'
+    CASE_INFO = 'Select an option and press <F3>'
+    CONVERER = 'This is the match of the group: %s'
+    REGEX = 'This is the content of the line:'
+    LOGTYPE = 'This is the content and path of the line:'
+    PRIMARY_KEY = 'This is the content and path of the line:'
 
 
 class WarningMessages():
@@ -79,14 +90,18 @@ class Input():
 
 class MainStates():
     # Editor states
-    EDITOR_NORMAL = 0
-    LOG_READER = 100
-    TEACHER = 200
-    ADD_CAUSE = 201
-    TEACHER_INPUT = 202
-    EFFECT_ADDED = 203
-    TEST_RULE = 204
+    EDITOR_NORMAL = 'editor normal'
+    LOG_READER = 'query'
+    TEACHER = 'teacher menu'
+    ADD_CAUSE = 'add cause'
+    TEACHER_INPUT = 'input window'
+    EFFECT_ADDED = 'added effect'
 
 
 class WindowSizes():
     MAX_MESSAGE_SIZE = 20
+
+
+class ActionTypes():
+    STANDARD = 'standard action'
+    TEACHER = 'teacher action'

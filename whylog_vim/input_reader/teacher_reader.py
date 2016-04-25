@@ -86,12 +86,27 @@ def parse_constraint(lines):
 
 class LogTypeLoader():
 
-    def __init__(self, log_type_menu, get_line_number):
+    def __init__(self, log_type_menu, get_line_number, set_return_function):
         self.log_type_menu = log_type_menu
         self.get_line_number = get_line_number
+        self.set_return_function = set_return_function
 
     def __call__(self):
-        return self.log_type_menu.get_button_meta(self.get_line_number())[BMC.LOG_TYPE]
+        button_meta = self.log_type_menu.get_button_meta(self.get_line_number())
+        if BMC.LOG_TYPE in button_meta:
+            return button_meta[BMC.LOG_TYPE]
+
+        if BMC.FUNCTION in button_meta:
+            self.set_return_function(button_meta[BMC.FUNCTION])
+
+
+def filter_comments(content):
+    result = []
+    pattern = re.compile('^# .*$')
+    for line in content:
+        if not pattern.match(line):
+            result.append(line)
+    return result
 
 
 class GetInputContentLoader():

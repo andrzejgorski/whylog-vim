@@ -7,7 +7,32 @@ from whylog_vim.consts import (
     Messages,
     WarningMessages,
     LogTypeConsts as LTC,
+    WindowTypes,
 )
+
+
+#TODO Refactor this module.
+
+
+def get_parser_name(id_):
+    if id_ == 0:
+        return POC.EFFECT_LINE_NAME
+    else:
+        return POC.CAUSE_LINE_NAME % id_
+
+
+def get_log_types_message(parser):
+    result = [Messages.LOGTYPE]
+    result.append(POC.LINE_CONTENT % (parser._id, parser.line_content))
+    result.append(POC.META % (parser.line_resource_location, parser.line_offset))
+    return result
+
+
+def get_primary_key_message(parser):
+    result = [Messages.PRIMARY_KEY]
+    result.append(POC.LINE_CONTENT % (parser._id, parser.line_content))
+    result.append(POC.META % (parser.line_resource_location, parser.line_offset))
+    return result
 
 
 class OutputAgregator():
@@ -36,22 +61,43 @@ class OutputAgregator():
         except KeyError:
             return {}
 
+    def add_commented(self, content):
+        self.add(Messages.PREFIX % content)
+
+    def add_message(self, content, window_type=WindowTypes.INPUT):
+        self.add_commented(Messages.HEADER)
+        if window_type == WindowTypes.INPUT:
+            self.add_commented(Messages.INPUT_INFO)
+        elif window_type == WindowTypes.CASE:
+            self.add_commented(Messages.CASE_INFO)
+        for item in content:
+            self.add_commented(item)
+        self.add_commented(Messages.ENDING)
+
 
 class ParserFormater():
 
-    def __init__(self, teacher_proxy):
-        self.teacher_proxy = teacher_proxy
+    def __init__(self, teacher_performer):
+        self.teacher_performer = teacher_performer
+
+    def format(self, output, parser, parser_id, effect=False):
+        parser._id = parser_id
+        self._format_line_info(output, parser, effect)
+        self._format_regexes(output, parser)
+        self._format_line_others(output, parser)
+        output.add(GlobalConsts.EMPTY_LINE)
+        output.add(GlobalConsts.END_BRACKET)
 
     def _format_regexes(self, output, parser):
         output.add(POC.REGEX_HEAD % parser.pattern_name)
         output.set_buttons_meta({
             BMC.PARSER: parser._id,
-            BMC.FUNCTION: self.teacher_proxy.edit_regex_name,
+            BMC.FUNCTION: self.teacher_performer.edit_regex_name,
         })
         output.add(parser.pattern)
         output.set_buttons_meta({
             BMC.PARSER: parser._id,
-            BMC.FUNCTION: self.teacher_proxy.edit_regex,
+            BMC.FUNCTION: self.teacher_performer.edit_regex,
         })
         output.add(POC.REGEX_BUTTONS)
         output.set_buttons_meta({BMC.PARSER: parser._id})
@@ -69,12 +115,38 @@ class ParserFormater():
             output.set_buttons_meta({
                 BMC.PARSER: parser_id,
                 BMC.GROUP: group,
-                BMC.FUNCTION: self.teacher_proxy.edit_group,
+                BMC.FUNCTION: self.teacher_performer.edit_group,
             })
 
-    def format_line_headers(self, output, parser):
-        output.add(POC.LINE_CONTENT % (parser._id, parser.line_content))
+    def _format_line_info(self, output, parser, effect):
+        output.add(POC.MESSAGE_CONTENT % (get_parser_name(parser._id), parser.line_content))
+        output.set_buttons_meta({
+            BMC.PARSER: parser._id,
+            BMC.FUNCTION: self.teacher_performer.edit_content,
+        })
         output.add(POC.META % (parser.line_resource_location, parser.line_offset))
+        if not effect:
+            output.add(POC.LINE_BUTTONS)
+            output.set_buttons_meta({BMC.PARSER: parser._id})
+        output.add(GlobalConsts.EMPTY_LINE)
+
+    def _format_line_others(self, output, parser):
+        output.add(POC.OTHERS_HEAD)
+        output.add(POC.LOG_TYPE % parser.log_type_name)
+        output.set_buttons_meta({
+            BMC.PARSER: parser._id,
+            BMC.LOG_TYPE: parser.log_type_name,
+            BMC.FUNCTION: self.teacher_performer.edit_log_type,
+        })
+        output.add(POC.PRIMARY_KEY % parser.primary_key_groups[0])
+        output.set_buttons_meta({
+            BMC.PARSER: parser._id,
+            BMC.PRIMARY_KEY: parser.primary_key_groups[0],
+            BMC.FUNCTION: self.teacher_performer.edit_primary_key_groups,
+        })
+
+    def _regex_is_not_correct(self, regex, line_content):
+        return not re.match(re.compile(regex), line_content)
 
     def format_converters(self, output, groups, parser_id):
         for group in groups.keys():
@@ -89,48 +161,11 @@ class ParserFormater():
         self.format_converters(output, parser.groups, parser._id)
         output.add(GlobalConsts.EMPTY_LINE)
 
-    def _format_line_info(self, output, message, parser):
-        output.add(POC.MESSAGE_CONTENT % (message, parser._id, parser.line_content))
-        output.set_buttons_meta({
-            BMC.PARSER: parser._id,
-            BMC.FUNCTION: self.teacher_proxy.edit_content,
-        })
-        output.add(POC.META % (parser.line_resource_location, parser.line_offset))
-        output.add(POC.LINE_BUTTONS)
-        output.set_buttons_meta({BMC.PARSER: parser._id})
-        output.add(GlobalConsts.EMPTY_LINE)
-
-    def _format_line_others(self, output, parser):
-        output.add(POC.OTHERS_HEAD)
-        output.add(POC.LOG_TYPE % parser.log_type_name)
-        output.set_buttons_meta({
-            BMC.PARSER: parser._id,
-            BMC.LOG_TYPE: parser.log_type_name,
-            BMC.FUNCTION: self.teacher_proxy.edit_log_type,
-        })
-        output.add(POC.PRIMARY_KEY % parser.primary_key_groups[0])
-        output.set_buttons_meta({
-            BMC.PARSER: parser._id,
-            BMC.PRIMARY_KEY: parser.primary_key_groups[0],
-            BMC.FUNCTION: self.teacher_proxy.edit_primary_key_groups,
-        })
-
-    def format(self, output, message, parser, parser_id):
-        parser._id = parser_id
-        self._format_line_info(output, message, parser)
-        self._format_regexes(output, parser)
-        self._format_line_others(output, parser)
-        output.add(GlobalConsts.EMPTY_LINE)
-        output.add(GlobalConsts.END_BRACKET)
-
     def format_constraint_message(self, output, parsers):
         for parser in parsers:
             self.format_line_headers(output, parser)
             self.format_converters(output, parser.groups, parser._id)
             output.add(GlobalConsts.EMPTY_LINE)
-
-    def _regex_is_not_correct(self, regex, line_content):
-        return not re.match(re.compile(regex), line_content)
 
 
 class ConstraintsFormater():
@@ -195,9 +230,9 @@ class TeacherOutput():
     def _format_effect_line(self, output, raw_output, effect_id):
         self.parser.format(
                 output,
-                Messages.EFFECT,
                 raw_output.parsers[effect_id],
                 effect_id,
+                effect=True,
             )
 
     def _format_causes(self, output, rule, effect_id):
@@ -206,12 +241,12 @@ class TeacherOutput():
         for line_id in causes_lines:
             self.parser.format(
                     output,
-                    Messages.CAUSE,
                     rule.parsers[line_id],
                     line_id,
+                    effect=False,
                 )
 
-    def format_rule(self, rule_intent):
+    def format_rule(self, rule_intent, message=None):
         output = OutputAgregator()
         output.add(GlobalConsts.MAIN_HEADER)
         effect_id = rule_intent.effect_id
@@ -224,9 +259,6 @@ class TeacherOutput():
 
     def format_param(self, param_key, param_value):
         return COC.PARAM_SIMPLE % (param_key, param_value)
-
-    def format_match(self, group):
-        return 'match: %s' % group.content
 
     def format_comma(self, primary_key_groups):
         return ', '.join(map(str, primary_key_groups))
@@ -244,11 +276,10 @@ class TeacherOutput():
     def to_buttons(self, elem_list):
         result = '[%s]' % elem_list[0]
         for elem in elem_list[1:]:
-            result += ' [%s]' % elem
+            result += '\n[%s]' % elem
         return result
 
-    def format_log_type(self, log_types):
-        output = OutputAgregator()
+    def format_log_type(self, output, log_types):
         for log_type in log_types:
             output.add(LTC.NAME % log_type._name)
             output.set_buttons_meta({BMC.LOG_TYPE: log_type})
@@ -259,7 +290,9 @@ class TeacherOutput():
                 output.set_buttons_meta({BMC.LOG_TYPE: log_type})
             output.add(GlobalConsts.EMPTY_LINE)
         output.add(LTC.ADD_LOGTYPE)
-        output.set_buttons_meta({BMC.LOG_TYPE: BMC.BUTTON})
+        output.set_buttons_meta({BMC.FUNCTION: self.teacher.new_log_type})
+        output.add(LTC.CANCEL_LOGTYPE)
+        output.set_buttons_meta({BMC.FUNCTION: self.teacher.reprint_teacher})
         return output
 
     def get_log_type_template(self):
@@ -268,4 +301,3 @@ class TeacherOutput():
         result.append(LTC.HOST_PATTERN)
         result.append(LTC.PATH_PATTERN)
         return '\n'.join(result)
-

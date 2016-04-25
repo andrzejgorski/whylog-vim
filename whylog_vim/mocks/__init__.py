@@ -3,7 +3,7 @@ from whylog.config.filename_matchers import RegexFilenameMatcher
 
 
 def converter_returner():
-    return ['string', 'data', 'int', 'float']
+    return ['string', 'to_date', 'int', 'float']
 
 
 def log_type_returner():

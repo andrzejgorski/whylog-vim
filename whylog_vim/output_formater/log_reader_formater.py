@@ -14,7 +14,7 @@ class LogReaderOutput():
             self.output_str
             .format(
                 message,
-                line_fi_style.resource_location,
+                line_fi_style.line_source.path,
                 line_fi_style.offset
             )
         )
