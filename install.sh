@@ -6,4 +6,4 @@
 mkdir -p ~/.vim/bundle/whylog
 cp -r vim/whylog/* ~/.vim/bundle/whylog
 
-python setup.py instal
+python setup.py install
