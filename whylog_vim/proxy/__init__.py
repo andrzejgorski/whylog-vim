@@ -59,7 +59,7 @@ class WhylogProxy():
             func()
 
     def _create_teacher(self):
-        self.teacher = TeacherProxy(self.teacher_generator.next(), self.editor, self)
+        self.teacher = TeacherProxy(self.teacher_generator(), self.editor, self)
 
     def new_teacher(self):
         self._create_teacher()
