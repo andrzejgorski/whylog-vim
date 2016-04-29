@@ -1,4 +1,4 @@
-# After instalating you need to have installed vim pathogen.
+# Before instalating you need to have installed vim pathogen.
 #
 # To install check: https://github.com/tpope/vim-pathogen
 #
