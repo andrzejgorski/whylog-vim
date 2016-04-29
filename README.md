@@ -15,7 +15,7 @@ build python in vim
 
 ##### installation:
 ```sh
-sudo apt-get install vim-python-jedi
+(sudo) apt-get install vim-python-jedi
 ```
 
 
@@ -26,7 +26,7 @@ https://github.com/9livesdata/whylog.git
 ```sh
 git clone https://github.com/9livesdata/whylog.git
 cd whylog
-python setup.py install
+(sudo) python setup.py install
 ```
 
 
@@ -45,9 +45,10 @@ cd whylog_vim
 mkdir -p ~/.vim/bundle/whylog
 cp -r vim/whylog/* ~/.vim/bundle/whylog
 ```
-##### python whylog\_vim
+##### python whylog\_vim:
 
 ```sh
-python setup.py install
+cd whylog_vim
+(sudo) python setup.py install
 ```
-if the last command doesn't work try with sudo
+sudo parametr is optional
