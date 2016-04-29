@@ -1,24 +1,24 @@
-### Before instalating you need to have installed some programs:
+## Before instalating you need to have installed some programs:
 
-#1 vim-pathogen #
+### 1 vim-pathogen
 https://github.com/tpope/vim-pathogen
 
-installation:
+##### installation:
 mkdir -p ~/.vim/autoload ~/.vim/bundle && \
 curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 
 
-# 2 vim-python-jedi #
+### 2 vim-python-jedi
 build python in vim
 
-installation:
+##### installation:
 sudo apt-get install vim-python-jedi
 
 
-# 3 whylog #
+### 3 whylog
 https://github.com/9livesdata/whylog.git
 
-installation:
+##### installation:
 git clone https://github.com/9livesdata/whylog.git
 cd whylog
 sudo python setup.py install
