@@ -26,7 +26,7 @@ https://github.com/9livesdata/whylog.git
 ```sh
 git clone https://github.com/9livesdata/whylog.git
 cd whylog
-sudo python setup.py install
+python setup.py install
 ```
 
 
