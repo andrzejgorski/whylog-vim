@@ -1,5 +1,4 @@
-from whylog.front.utils import FrontInput
-from whylog.config import LineSource
+from whylog import LineSource, FrontInput
 
 from mock import MagicMock, patch
 import os.path
