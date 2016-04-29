@@ -1,4 +1,4 @@
-from whylog.front.whylog_factory import whylog_factory
+from whylog import whylog_factory
 from whylog_vim.proxy.teacher import TeacherProxy
 from whylog_vim.proxy.log_reader import LogReaderProxy
 from whylog_vim.consts import MainStates as States, ActionTypes
