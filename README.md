@@ -38,7 +38,7 @@ map <f4> :call whylog#Whylog_Teach()<CR>
 ```
 
 
-## Installation: (same as install.sh)
+### Installation: (same as install.sh)
 ```sh
 git clone https://github.com/9livesdata/whylog-vim.git
 cd whylog_vim
