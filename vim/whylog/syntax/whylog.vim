@@ -17,7 +17,6 @@ syn match headers '^===\( \w\+\)\{1,}:\?'
 syn region descBlock start="===" end="<<<" fold transparent contains=headers,prefixes,params,button,todo
 syn match params '!!.*!!'
 
-" syn match params '\^[^[]*\$'
 syn keyword headers date
 syn keyword headers string
 syn keyword headers int
@@ -42,4 +41,4 @@ hi def link headers         Statement
 hi def link headers2        Statement
 hi def link prefixes        Type
 hi def link params          Constant
-hi def link button          PreProc
+hi def link button          Todo
