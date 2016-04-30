@@ -5,8 +5,7 @@ from whylog_vim.consts import MainStates as States, ActionTypes
 from whylog_vim.exceptions import UnknownAction
 
 
-class WhylogProxy():
-
+class WhylogProxy(object):
 
     def __init__(self, editor):
         self.editor = editor
@@ -44,9 +43,8 @@ class WhylogProxy():
         self._handle_action(self.teach_handler, ActionTypes.TEACHER)
 
     def _update_normal_state(self):
-        if not self.editor.is_whylog_window_open():
-            if not self._state == States.ADD_CAUSE:
-                self._state = States.EDITOR_NORMAL
+        if not self.editor.is_whylog_window_open() and not self._state == States.ADD_CAUSE:
+            self._state = States.EDITOR_NORMAL
 
     def _handle_action(self, handler, action_type):
         self._update_normal_state()
