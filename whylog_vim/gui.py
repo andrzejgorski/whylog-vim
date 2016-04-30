@@ -1,11 +1,7 @@
-from whylog import LineSource, FrontInput
-
-from mock import MagicMock, patch
-import os.path
 import vim
-from whylog_vim.input_reader.teacher_reader import get_button_name, filter_comments
+from whylog import LineSource, FrontInput
 from whylog_vim.consts import WindowTypes, WindowSizes
-
+from whylog_vim.input_reader.teacher_reader import get_button_name, filter_comments
 
 
 class WindowContext(object):
