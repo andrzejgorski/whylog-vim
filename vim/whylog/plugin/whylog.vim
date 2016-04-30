@@ -1,5 +1,5 @@
 function! whylog#Whylog_Action()
-    if !has('python') | !has("byte_offset")
+    if !has('python') | !has('byte_offset')
         finish
     endif
 python << EOF
@@ -9,7 +9,7 @@ EOF
 endfunction
 
 function! whylog#Whylog_Teach()
-    if !has('python') | !has("byte_offset")
+    if !has('python') | !has('byte_offset')
         finish
     endif
 python << EOF
