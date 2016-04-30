@@ -21,7 +21,7 @@ class WindowContext(object):
         vim.command('setlocal nomodifiable')
 
 
-class VimEditor():
+class VimEditor(object):
 
     whylog_windows = [
         WindowTypes.QUERY,
@@ -35,9 +35,9 @@ class VimEditor():
             return filter_comments(output_buffer[:])
 
     def go_to_file(self, file_name, offset=1):
-        id_ = self.get_files_window_id(file_name)
-        if id_ is not None:
-            self.go_to_window(id_)
+        window_id = self.get_files_window_id(file_name)
+        if window_id is not None:
+            self.go_to_window(window_id)
             self.go_to_offset(offset)
         else:
             self.split_window()
@@ -70,7 +70,7 @@ class VimEditor():
         self.output_window_context = WindowContext(self)
         vim.command(':rightbelow split %s' % WindowTypes.QUERY)
         vim.command(':setlocal buftype=nowrite')
-        self.resize(10)
+        self.resize(WindowSizes.QUERY_WINDOW)
         vim.command(':setlocal nomodifiable')
         self._set_file_type()
 
@@ -89,12 +89,12 @@ class VimEditor():
         for id_, window in enumerate(vim.windows):
             for name in self.whylog_windows:
                 if window.buffer.name.endswith(name):
-                    return int(id_)+1
+                    return int(id_) + 1
         return None
 
     def get_cursor_offset(self):
         """
-        This method return offset -
+        This method returns offset -
         byte of the first char of the line
         where is cursor, when the method is called.
         """
@@ -102,8 +102,7 @@ class VimEditor():
 
     def get_front_input(self):
         """
-        This method return Front Input object of the line where cursor is,
-        which is implemented in the whylog.front.utils.py file.
+        This method returns Front Input object of the line where cursor is,
         """
         filename = self.get_current_filename()
         host = 'localhost'
@@ -114,7 +113,7 @@ class VimEditor():
 
     def close_output_window(self):
         """
-        Same as name of the function. Closing window where is output of the Whylog.
+        Same as name of the function. Closes window where is output of the Whylog.
         """
         self.go_to_output_window()
         vim.command(':q')
@@ -135,8 +134,7 @@ class VimEditor():
     def is_file_open(self, file_name):
         if self.get_files_window_id(file_name) is not None:
             return True
-        else:
-            return False
+        return False
 
     def cursor_at_output(self):
         return self.get_current_window_id() == self._get_output_window_id()
@@ -155,8 +153,8 @@ class VimEditor():
         After call of this function cursor
         is moving to the output window.
         """
-        id_ = self._get_output_window_id()
-        self.go_to_window(id_)
+        window_id = self._get_output_window_id()
+        self.go_to_window(window_id)
 
     def go_to_line(self, line):
         vim.command(':%d' % (line,))
@@ -181,7 +179,7 @@ class VimEditor():
     def normal(self, command):
         vim.command("normal %s" % (command,))
 
-    def get_col(self):
+    def get_column(self):
         return int(vim.eval('col(".")'))
 
     def get_current_window_id(self):

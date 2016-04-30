@@ -12,7 +12,7 @@ class GlobalConsts():
     BUTTONS_HEADER = '--- Buttons:'
     EMPTY_LINE = ''
     END_BRACKET = '<<<'
-    MAIN_BUTTONS = '[save] [test_rule] [return_to_file] [give_up_rule]'
+    MAIN_BUTTONS = '[save] [verify_rule] [return_to_file] [abandon_rule]'
     MAIN_HEADER = '# You are using whylog teacher.'
 
 
@@ -68,16 +68,16 @@ class Messages():
     PREFIX = '# %s'
     HEADER = 'This is whylog input window.'
     ENDING = 'Do not change the commented text above.'
-    INPUT_INFO = 'Enter the content below commented block and press <F3>.'
+    INPUT_INFO = 'Enter the content the below commented block and press <F3>.'
     CASE_INFO = 'Select an option and press <F3>'
-    CONVERER = 'This is the match of the group: %s'
+    CONVERTER = 'This is the match of the group: %s'
     REGEX = 'This is the content of the line:'
     LOGTYPE = 'This is the content and path of the line:'
     PRIMARY_KEY = 'This is the content and path of the line:'
 
 
 class WarningMessages():
-    REGEX_NOT_MATCH = '!! Warning Message: Regex doen\'t match to the line.!!'
+    REGEX_NOT_MATCH = '!! Warning Message: Regex doesn\'t match to the line.!!'
 
 
 class Input():
@@ -88,8 +88,7 @@ class Input():
     INT_GROUP2 = '(?P<int2>\d+)'
 
 
-class MainStates():
-    # Editor states
+class EditorStates():
     EDITOR_NORMAL = 'editor normal'
     LOG_READER = 'query'
     TEACHER = 'teacher menu'
@@ -99,7 +98,7 @@ class MainStates():
 
 
 class WindowSizes():
-    MAX_MESSAGE_SIZE = 20
+    QUERY_WINDOW = 10
 
 
 class ActionTypes():
