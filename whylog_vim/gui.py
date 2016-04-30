@@ -35,8 +35,9 @@ class VimCommander(object):
         vim.command('%dwincmd w' % window_id)
 
     @staticmethod
-    def split_window():
-        vim.command(':split')
+    def split_window(name=None):
+        name = name or ''
+        vim.command(':rightbelow split %s' % name)
 
     @staticmethod
     def set_modifiable():
@@ -63,11 +64,11 @@ class VimCommander(object):
         return vim.current.line
 
     @staticmethod
-    def go_to_offset():
+    def go_to_offset(byte_offset):
         vim.command(':go %d' % (byte_offset,))
 
     @staticmethod
-    def _get_cursor_offset():
+    def get_cursor_offset():
         return int(vim.eval('line2byte(line("."))'))
 
     @staticmethod
@@ -87,22 +88,26 @@ class VimCommander(object):
         return int(vim.eval('line2byte(line("."))+col(".")'))
 
 
-class WindowContect(object):
+class WindowContext(object):
 
     def __enter__(self):
-        VimCommander.set_modifiable
+        VimCommander.set_modifiable()
         return vim.current.buffer
 
     def __exit__(self, type_, value, traceback):
-        VimCommander.set_nomodifible
+        VimCommander.set_nomodifible()
 
 
 class Window(object):
 
-    def __init__(self, name, content, modifiable):
-        content = content or []
+    def __init__(self, name, content, modifiable, size=None):
+        content = content or ''
         self.context = WindowContext()
-        VimCommander.open_file_at_window(name)
+        if size is None:
+            VimCommander.open_file_at_window(name)
+        else:
+            VimCommander.split_window(name)
+            VimCommander.resize(size)
         VimCommander.set_nowritable()
         self.set_output(content)
         self.set_modifiable(modifiable)
@@ -121,13 +126,13 @@ class Window(object):
             VimCommander.set_nomodifible()
 
     def get_content(self):
-        with self.output_window_context as output_buffer:
+        with self.context as output_buffer:
             return filter_comments(output_buffer[:])
 
     def _set_window_id(self):
         for window_id, window in enumerate(vim.windows):
             if window.buffer.name.endswith(self.name):
-                self.window_id = window_id
+                self.window_id = window_id + 1
 
 
 class WhylogWindowManager(object):
@@ -142,22 +147,36 @@ class WhylogWindowManager(object):
     def __init__(self):
         self.windows = dict()
 
-    def create_window(self, window_type, content=None, modifiable=False):
-        self.windows[window_type] = Window(window_type, content, modifiable)
+    def create_window(self, window_type, content, modifiable=False, size=None):
+        self.windows[window_type] = Window(window_type, content, modifiable, size)
 
-    def get_input_content(self, window_type):
+    def get_window_content(self, window_type):
         return self.windows[window_type].get_content()
 
     def go_to_window(self, window_type):
         VimCommander.go_to_window(self.windows[window_type].window_id)
 
+    def get_window_id(self, window_type):
+        try:
+            window_id = self.windows[window_type].window_id
+        except KeyError:
+            return None
+        else:
+            return window_id
+
     def close_window(self, window_type):
-        self.go_to_window()
+        self.go_to_window(window_type)
         VimCommander.close_current_window()
         del self.windows[window_type]
 
     def are_windows_closed(self):
         return len(self.windows) == 0
+
+    def get_windows_ids(self):
+        return [window.window_id for window in self.windows.values()]
+
+    def set_content(self, window_type, content):
+        self.windows[window_type].set_output(content)
 
 
 class FilesManager(object):
@@ -195,23 +214,32 @@ class VimEditor(object):
         return filter_comments(
             self.window_manager.get_window_content(WindowTypes.INPUT))
 
-    def create_case_window(self, default_input):
+    def create_case_window(self, default_input=None):
         self.window_manager.create_window(WindowTypes.CASE, default_input)
 
     def create_input_window(self, default_input=None):
         self.window_manager.create_window(WindowTypes.INPUT, default_input, modifiable=True)
 
-    def create_teacher_window(self):
-        self.window_manager.create_window(WindowTypes.TEACHER)
+    def create_teacher_window(self, default_input=None):
+        self.window_manager.create_window(WindowTypes.TEACHER, default_input)
 
-    def create_query_window(self):
-        self.window_manager.create_window(WindowTypes.QUERY)
+    def create_query_window(self, default_input=None):
+        self.window_manager.create_window(WindowTypes.QUERY, default_input, False, WindowSizes.QUERY_WINDOW)
+
+    def go_to_file(self, filename, offset=1):
+        FilesManager.go_to_file(filename, offset)
+
+    def set_query_output(self, content):
+        self.window_manager.set_content(WindowTypes.QUERY, content)
+
+    def set_teacher_output(self, content):
+        self.window_manager.set_content(WindowTypes.TEACHER, content)
 
     def is_any_whylog_window_open(self):
         return not self.window_manager.are_windows_closed()
 
     def close_window(self, filename):
-        if not FileManager.is_file_open(filename):
+        if not FilesManager.is_file_open(filename):
             VimCommand.close_current_window()
 
     def get_button_name(self):
@@ -229,28 +257,28 @@ class VimEditor(object):
         return FrontInput(cursor_position, line_content, line_source)
 
     def close_query_window(self):
-        self.window_manager.close(WindowTypes.QUERY)
+        self.window_manager.close_window(WindowTypes.QUERY)
 
     def close_teacher_window(self):
-        self.window_manager.close(WindowTypes.TEACHER)
+        self.window_manager.close_window(WindowTypes.TEACHER)
 
     def cursor_at_output(self):
-        return VimCommander.get_current_window_id() == self._get_output_window_id()
+        return VimCommander.get_current_window_id() in self.window_manager.get_windows_ids()
 
     def cursor_at_teacher(self):
-        return VimCommander.get_current_window_id() == self._get_files_window_id(WindowTypes.TEACHER)
+        return VimCommander.get_current_window_id() == self.window_manager.get_window_id(WindowTypes.TEACHER)
 
     def cursor_at_input(self):
-        return VimCommander.get_current_window_id() == self._get_files_window_id(WindowTypes.INPUT)
+        return VimCommander.get_current_window_id() == self.window_manager.get_window_id(WindowTypes.INPUT)
 
     def cursor_at_case(self):
-        return VimCommander.get_current_window_id() == self._get_files_window_id(WindowTypes.CASE)
+        return VimCommander.get_current_window_id() == self.window_manager.get_window_id(WindowTypes.CASE)
 
-    def go_to_output_window(self):
+    def go_to_query_window(self):
         self.window_manager.go_to_window(WindowTypes.QUERY)
 
     def go_to_offset(self, byte_offset):
-        VimCommander.go_to_offset(offset)
+        VimCommander.go_to_offset(byte_offset)
 
     def set_syntax_folding(self):
         VimCommander.set_syntax_folding()
