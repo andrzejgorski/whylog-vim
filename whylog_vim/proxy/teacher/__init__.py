@@ -26,11 +26,10 @@ class TeacherProxy():
             ButtonsNames.GUESS_REGEX: self.performer.guess_regex,
             ButtonsNames.ADD_CONSTRAINT: self.performer.add_constraint,
             ButtonsNames.DELETE_CONSTRAINT: self.performer.delete_constraint,
-            ButtonsNames.ADD_PARAM: self.performer.add_param,
             ButtonsNames.SAVE: self.performer.save,
             ButtonsNames.TEST_RULE: self.performer.test_rule,
             ButtonsNames.RETURN_TO_FILE: self.performer.return_to_file,
-            ButtonsNames.GIVE_UP_RULE: self.performer.give_up_rule,
+            ButtonsNames.ABANDON_RULE: self.performer.give_up_rule,
         }
         self.main_proxy = main_proxy
 

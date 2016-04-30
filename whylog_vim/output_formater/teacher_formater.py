@@ -32,6 +32,30 @@ def get_primary_key_message(parser):
     result = [Messages.PRIMARY_KEY]
     result.append(POC.LINE_CONTENT % (parser._id, parser.line_content))
     result.append(POC.META % (parser.line_resource_location, parser.line_offset))
+    result.append(parser.pattern)
+    for group in parser.groups.keys():
+        result.append(POC.GROUP_CONVERTER %
+            (group, parser.groups[group].converter, parser.groups[group].content))
+    return result
+
+
+def get_constraint_message(parsers):
+    result = []
+    for parser in parsers:
+        result.append(POC.LINE_CONTENT % (parser._id, parser.line_content))
+        result.append(POC.META % (parser.line_resource_location, parser.line_offset))
+        result.append(parser.pattern)
+        for group in parser.groups.keys():
+            result.append(POC.GROUP_CONVERTER %
+                (group, parser.groups[group].converter, parser.groups[group].content))
+        result.append(GlobalConsts.EMPTY_LINE)
+    return result
+
+
+def to_buttons(elem_list):
+    result = '[%s]' % elem_list[0]
+    for elem in elem_list[1:]:
+        result += '\n[%s]' % elem
     return result
 
 
@@ -90,10 +114,6 @@ class ParserFormater():
 
     def _format_regexes(self, output, parser):
         output.add(POC.REGEX_HEAD % parser.pattern_name)
-        output.set_buttons_meta({
-            BMC.PARSER: parser._id,
-            BMC.FUNCTION: self.teacher_performer.edit_regex_name,
-        })
         output.add(parser.pattern)
         output.set_buttons_meta({
             BMC.PARSER: parser._id,
@@ -107,7 +127,6 @@ class ParserFormater():
         self._format_converters_(output, parser.groups, parser._id)
         output.add(GlobalConsts.EMPTY_LINE)
 
-    # TODO delete this function after adding
     def _format_converters_(self, output, groups, parser_id):
         for group in groups.keys():
             output.add(POC.GROUP_CONVERTER %
@@ -126,7 +145,8 @@ class ParserFormater():
         })
         output.add(POC.META % (parser.line_resource_location, parser.line_offset))
         if not effect:
-            output.add(POC.LINE_BUTTONS)
+            output.add(POC.COPY_BUTTON)
+            output.add(POC.DELETE_BUTTON)
             output.set_buttons_meta({BMC.PARSER: parser._id})
         output.add(GlobalConsts.EMPTY_LINE)
 
@@ -161,12 +181,6 @@ class ParserFormater():
         self.format_converters(output, parser.groups, parser._id)
         output.add(GlobalConsts.EMPTY_LINE)
 
-    def format_constraint_message(self, output, parsers):
-        for parser in parsers:
-            self.format_line_headers(output, parser)
-            self.format_converters(output, parser.groups, parser._id)
-            output.add(GlobalConsts.EMPTY_LINE)
-
 
 class ConstraintsFormater():
 
@@ -174,7 +188,6 @@ class ConstraintsFormater():
         self.teacher_proxy = teacher_proxy
 
     def _format_params(self, output, constraint):
-        output.add(GlobalConsts.EMPTY_LINE)
         output.add(COC.PARAMS_HEADER)
         params = constraint.params
         for param in params.keys():
@@ -182,22 +195,21 @@ class ConstraintsFormater():
             output.set_buttons_meta({
                 BMC.CONSTRAINT: constraint,
                 BMC.PARAM: param,
-                BMC.FUNCTION: self.teacher_proxy.edit_constraint_param,
             })
-        output.add(GlobalConsts.EMPTY_LINE)
 
     def _format_single(self, output, constraint):
         output.add(COC.TYPE % constraint.type)
+        output.set_buttons_meta({
+            BMC.CONSTRAINT: constraint,
+            BMC.FUNCTION: self.teacher_proxy.edit_constraint,
+        })
         output.add(COC.CONSTR_BUTTONS)
         # TODO in this line should be constraint id
-        output.set_buttons_meta({BMC.CONSTRAINT: constraint})
+        output.set_buttons_meta({
+            BMC.CONSTRAINT: constraint,
+        })
         for group in constraint.groups:
-            output.add(COC.GROUP % (group[0], group[1]))
-            output.set_buttons_meta({
-                BMC.CONSTRAINT: constraint,
-                BMC.CONSTRAINT_GROUP: group,
-                BMC.FUNCTION: self.teacher_proxy.edit_constraint_group,
-            })
+            output.add(COC.GROUP % (get_parser_name(group[0]), group[1]))
         if constraint.params:
             self._format_params(output, constraint)
         output.add(GlobalConsts.EMPTY_LINE)
@@ -214,7 +226,7 @@ class ConstraintsFormater():
         output.add(COC.TYPE % constraint.type)
         output.set_buttons_meta({BMC.CONSTRAINT: constraint})
         for group in constraint.groups:
-            output.add(COC.GROUP % (group[0], group[1]))
+            output.add(COC.GROUP % (get_parser_name(group[0]), group[1]))
         if constraint.params:
             self._format_params(output, constraint)
         output.add(GlobalConsts.EMPTY_LINE)
@@ -273,15 +285,18 @@ class TeacherOutput():
         result.append(COC.PARAM_SIMPLE % ('param_key', 'value'))
         return '\n'.join(result)
 
-    def to_buttons(self, elem_list):
-        result = '[%s]' % elem_list[0]
-        for elem in elem_list[1:]:
-            result += '\n[%s]' % elem
-        return result
+    def get_constraint_content(self, output, constraint):
+        output.add(COC.TYPE % constraint.type)
+        for group in constraint.groups:
+            output.add(COC.GROUP % (get_parser_name(group[0]), group[1]))
+        if constraint.params:
+            output.add(COC.PARAMS_HEADER)
+            for param in constraint.params.keys():
+                output.add(COC.PARAM % (param, constraint.params[param]))
 
     def format_log_type(self, output, log_types):
         for log_type in log_types:
-            output.add(LTC.NAME % log_type._name)
+            output.add(LTC.NAME % log_type.name)
             output.set_buttons_meta({BMC.LOG_TYPE: log_type})
             for matcher in log_type._filename_matchers:
                 output.add(LTC.HOST_PATTERN % matcher._host_pattern)
