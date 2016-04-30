@@ -16,16 +16,14 @@ class LogReaderProxy():
 
     def new_query(self):
         front_input = self.editor.get_front_input()
-        self.editor.create_query_window()
-
         # Mock
         with patch('whylog.log_reader.LogReader.get_causes') as mock:
             mock.return_value = self.mock_query_output(front_input)
             query_output = self._log_reader.get_causes(front_input)
 
         contents = self.output_formater.format_query(front_input, query_output)
-        self.editor.set_output(contents)
-        self.editor.go_to_output_window()
+        self.editor.create_query_window(contents)
+        self.editor.go_to_query_window()
         return True
 
     def _handle_signal_on_output(self):
@@ -35,13 +33,13 @@ class LogReaderProxy():
             file_name, offset = match
             self.editor.go_to_file(file_name, offset)
         else:
-            self.editor.close_output_window()
+            self.editor.close_query_window()
 
     def handle_action(self):
         if self.editor.cursor_at_output():
             self._handle_signal_on_output()
         else:
-            self.editor.close_output_window()
+            self.editor.close_query_window()
 
     def get_tree(self, front_input):
         raise NotImplemented()

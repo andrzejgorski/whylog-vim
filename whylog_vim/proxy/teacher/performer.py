@@ -13,7 +13,7 @@ from whylog_vim.input_reader.teacher_reader import (
     PrimaryKeyLoader,
     ParseParamLoader,
 )
-from whylog_vim.consts import ButtonsMetaConsts as BMC, MainStates, Messages, WindowTypes
+from whylog_vim.consts import ButtonsMetaConsts as BMC, EditorStates, Messages, WindowTypes
 
 # TODO delete it
 from whylog_vim.mocks import converter_returner, log_type_returner, constraint_returner
@@ -49,9 +49,9 @@ class TeacherPerformer():
         self.raw_output = self.teacher.get_rule()
         output = self.output_formater.format_rule(self.raw_output)
         self.teacher_proxy.set_output(output)
-        self.editor.set_output(output.get_content())
+        self.editor.set_teacher_output(output.get_content())
         self.editor.set_syntax_folding()
-        self.main_proxy.set_state(MainStates.TEACHER)
+        self.main_proxy.set_state(EditorStates.TEACHER)
 
     def reprint_teacher(self, _=None):
         self.editor.create_teacher_window()
@@ -135,7 +135,7 @@ class TeacherPerformer():
         group = self.raw_output.parsers[line_id].groups[group_id]
 
         output = OutputAgregator()
-        output.add_message([Messages.CONVERER % group.content], WindowTypes.CASE)
+        output.add_message([Messages.CONVERTER % group.content], WindowTypes.CASE)
         output.add(to_buttons(converter_returner()))
         self.editor.create_case_window(output.get_content())
 
@@ -309,12 +309,12 @@ class TeacherPerformer():
             print 'Rule is correct.'
 
     def return_to_file(self):
-        self.main_proxy.set_state(MainStates.ADD_CAUSE)
+        self.main_proxy.set_state(EditorStates.ADD_CAUSE)
         self.editor.go_to_file(self.origin_file_name, 1)
-        self.editor.close_output_window()
+        self.editor.close_teacher_window()
         print 'return_to_file executed'
 
     def give_up_rule(self):
-        self.editor.close_output_window()
+        self.editor.close_teacher_window()
         self.main_proxy.new_teacher()
         print 'give_up_rule executed'

@@ -8,7 +8,7 @@ from whylog_vim.input_reader.teacher_reader import (
     parse_constraint,
     parse_constraint_group,
 )
-from whylog_vim.consts import ButtonsMetaConsts as BMC, MainStates
+from whylog_vim.consts import ButtonsMetaConsts as BMC, EditorStates
 from whylog_vim.proxy.teacher.exceptions import CannotGoToPosition
 from whylog_vim.proxy.teacher.consts import ButtonsNames
 from whylog_vim.proxy.teacher.performer import TeacherPerformer
@@ -60,7 +60,7 @@ class TeacherProxy():
 
     def _set_read_input_info(self, function, meta_info=None, loader=None):
         self.read_input_info = ReadInputInfo(self, function, meta_info, loader)
-        self.main_proxy.set_state(MainStates.TEACHER_INPUT)
+        self.main_proxy.set_state(EditorStates.TEACHER_INPUT)
 
     def handle_menu_signal(self):
         self._set_cursor_position()
@@ -79,16 +79,16 @@ class TeacherProxy():
             del meta[BMC.FUNCTION]
             func(**meta)
 
-        if self.main_proxy.get_state() == MainStates.TEACHER:
+        if self.main_proxy.get_state() == EditorStates.TEACHER:
             self._return_cursor_to_position()
 
     def _return_cursor_to_position(self):
         try:
-            self.editor.go_to_offset(self._return_offset)
+           self.editor.go_to_offset(self._return_offset)
         except Exception:
             raise CannotGoToPosition(self._return_offset)
         try:
-            self.editor.normal('zo')
+            self.editor.open_fold()
         except Exception:
             # Fold opening error. Nothing to do.
             pass

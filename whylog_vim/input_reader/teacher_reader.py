@@ -1,6 +1,5 @@
 import re
-from whylog.config.log_type import LogType
-from whylog.config.filename_matchers import RegexFilenameMatcher
+from whylog import LogType, WildCardFilenameMatcher
 from whylog_vim.consts import ButtonsMetaConsts as BMC, LogTypeConsts as LTC, Input, ConstraintsOutputConsts as COC
 
 

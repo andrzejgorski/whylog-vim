@@ -1,5 +1,4 @@
-from whylog.config.log_type import LogType
-from whylog.config.filename_matchers import RegexFilenameMatcher
+from whylog import LogType, WildCardFilenameMatcher
 
 
 def converter_returner():
@@ -7,8 +6,8 @@ def converter_returner():
 
 
 def log_type_returner():
-    matchers1 = [RegexFilenameMatcher('localhost', '^.*.path$', 'lala')]
-    matchers2 = [RegexFilenameMatcher('localhost', '^.*.path$', 'lala'), RegexFilenameMatcher('localhost', '^.*.log$', 'lala')]
+    matchers1 = [WildCardFilenameMatcher('localhost', '^.*.path$', 'lala')]
+    matchers2 = [WildCardFilenameMatcher('localhost', '^.*.path$', 'lala'), WildCardFilenameMatcher('localhost', '^.*.log$', 'lala')]
     matchers3 = []
     return [
         LogType('hydra', matchers1),
