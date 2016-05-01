@@ -2,7 +2,7 @@ class WhylogVimExceptions(Exception):
     pass
 
 
-class UnknownAction(WhylogVIMExceptions):
+class UnknownAction(WhylogVimExceptions):
 
     def __init__(self, action_type, state):
         self.action_type = action_type
