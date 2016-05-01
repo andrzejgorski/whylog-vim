@@ -49,12 +49,12 @@ class WhylogProxy(object):
     def _handle_action(self, handler, action_type):
         self._update_normal_state()
         try:
-            func, state = handler[self._state]
+            action_function, state = handler[self._state]
         except KeyError:
             raise UnknownAction(action_type, self._state)
         else:
             self._state = state
-            func()
+            action_function()
 
     def _create_teacher(self):
         self.teacher = TeacherProxy(self.teacher_generator(), self.editor, self)

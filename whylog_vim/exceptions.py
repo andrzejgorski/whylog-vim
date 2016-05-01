@@ -1,4 +1,4 @@
-class WhylogVIMExceptions(Exception):
+class WhylogVimExceptions(Exception):
     pass
 
 
