@@ -7,7 +7,7 @@ from whylog_vim.input_reader.teacher_reader import get_button_name, filter_comme
 from whylog_vim.consts import WindowTypes, WindowSizes
 from whylog_vim.gui.vim_commander import VimCommander
 from whylog_vim.gui.windows import WhylogWindowManager
-from whylog_vim.gui.files_manager import FileManager
+from whylog_vim.gui.files_manager import FilesManager
 
 
 class VimEditor(object):

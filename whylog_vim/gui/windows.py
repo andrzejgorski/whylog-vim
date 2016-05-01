@@ -1,5 +1,6 @@
 import vim
 
+from whylog_vim.consts import WindowTypes
 from whylog_vim.gui.vim_commander import VimCommander
 
 
@@ -42,7 +43,7 @@ class Window(object):
 
     def get_content(self):
         with self.context as output_buffer:
-            return filter_comments(output_buffer[:])
+            return output_buffer[:]
 
     def _set_window_id(self):
         for window_id, window in enumerate(vim.windows):
