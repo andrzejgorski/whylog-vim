@@ -1,7 +1,7 @@
-from whylog_vim.exceptions import WhylogVIMExceptions
+from whylog_vim.exceptions import WhylogVimExceptions
 
 
-class CannotGoToPosition(WhylogVIMExceptions):
+class CannotGoToPosition(WhylogVimExceptions):
 
     def __init__(self, position):
         self.position = position
