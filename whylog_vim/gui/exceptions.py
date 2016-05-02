@@ -13,6 +13,12 @@ class CannotCloseWindow(WindowException):
         return 'Cannot close the window %s' % self.window_type
 
 
+class CannotFindWindowId(WindowException):
+
+    def __repr__(self):
+        return 'Cannot find id of the window %s' % self.window_type
+
+
 class CannotGetWindowContent(WindowException):
 
     def __repr__(self):

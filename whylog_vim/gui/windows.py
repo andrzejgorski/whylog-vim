@@ -1,8 +1,9 @@
 import vim
 
 from whylog_vim.consts import WindowTypes
+from whylog_vim.gui.files_manager import FilesManager
 from whylog_vim.gui.exceptions import (
-    CannotCloseWindow, CannotGetWindowContent,
+    CannotCloseWindow, CannotGetWindowContent, CannotFindWindowId,
     CannotSetWindowContent, CannotSwitchToWindow)
 from whylog_vim.gui.vim_commander import VimCommander
 
@@ -55,9 +56,10 @@ class Window(object):
             return output_buffer[:]
 
     def get_window_id(self):
-        for window_id, window in enumerate(vim.windows, 1):
-            if window.buffer.name.endswith(self.name):
-                return window_id
+        window_id = FilesManager.get_files_window_id()
+        if window_id:
+            return window_id
+        raise CannotFindWindowId(self.name)
 
 
 class WhylogWindowManager(object):
