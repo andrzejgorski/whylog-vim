@@ -6,20 +6,18 @@ class FilesManager(object):
 
     @staticmethod
     def get_files_window_id(file_name):
-        for window_id, window in enumerate(vim.windows):
+        for window_id, window in enumerate(vim.windows, 1):
             if window.buffer.name.endswith(file_name):
-                return window_id + 1
+                return window_id
         return None
 
     @classmethod
     def is_file_open(cls, file_name):
-        if FilesManager.get_files_window_id(file_name) is not None:
-            return True
-        return False
+        return cls.get_files_window_id(file_name) is not None:
 
-    @staticmethod
-    def go_to_file(file_name, offset=1):
-        window_id = FilesManager.get_files_window_id(file_name)
+    @classmethod
+    def go_to_file(cls, file_name, offset=1):
+        window_id = cls.get_files_window_id(file_name)
         if window_id is not None:
             VimCommander.go_to_window(window_id)
         else:

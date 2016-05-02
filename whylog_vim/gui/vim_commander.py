@@ -21,7 +21,7 @@ class VimCommander(object):
 
     @staticmethod
     def normal(command):
-        vim.command("normal %s" % (command,))
+        vim.command("normal %s" % command)
 
     @staticmethod
     def go_to_window(window_id):
@@ -59,7 +59,7 @@ class VimCommander(object):
 
     @staticmethod
     def go_to_offset(byte_offset):
-        vim.command(':go %d' % (byte_offset,))
+        vim.command(':go %d' % byte_offset)
 
     @staticmethod
     def get_cursor_offset():

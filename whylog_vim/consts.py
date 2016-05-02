@@ -1,19 +1,21 @@
 
 
 class WindowTypes():
-    QUERY = 'whylog_query_output.whylog'
-    TEACHER = 'whylog_teacher.whylog'
-    INPUT = 'whylog_input.whylog'
-    MESSAGE = 'whylog_message.whylog'
-    CASE = 'whylog_case.whylog'
+    QUERY = 'whylog_query_output'
+    TEACHER = 'whylog_teacher'
+    INPUT = 'whylog_input'
+    MESSAGE = 'whylog_message'
+    CASE = 'whylog_case'
 
 
-class GlobalConsts():
+class TeacherConsts():
     BUTTONS_HEADER = '--- Buttons:'
     EMPTY_LINE = ''
     END_BRACKET = '<<<'
-    MAIN_BUTTONS = '[save] [verify_rule] [return_to_file] [abandon_rule]'
-    MAIN_HEADER = '# You are using whylog teacher.'
+    ABANDON_BUTTON = '[abandon_rule]'
+    VERIFY_BUTTON = '[verify_rule]'
+    RETURN_BUTTON = '[return_to_file]'
+    SAVE_BUTTON = '[save]'
 
 
 class ButtonsMetaConsts():
@@ -22,7 +24,7 @@ class ButtonsMetaConsts():
     GROUP = 'group_id'
     LOG_TYPE = 'log_type'
     PARAM = 'param'
-    PARSER = 'parser_id'
+    PARSER = 'line_id'
     PRIMARY_KEY = 'primary_key'
     BUTTON = 'button'
     FUNCTION = 'function'
@@ -30,14 +32,15 @@ class ButtonsMetaConsts():
 
 class ParserOutputConsts():
     GROUP_CONVERTER = 'group %s: %s, match: %s'
-    LINE_BUTTONS = '[copy_line] [delete_line]'
+    COPY_BUTTON = '[copy_line]'
+    DELETE_BUTTON = '[delete_line]'
     LOG_TYPE = 'log type: %s'
     MESSAGE_CONTENT = '=== %s: %s'
     META = 'file: %s, offset: %s'
-    OTHERS_HEAD = '--- Other:'
+    OTHERS_HEADER = '--- Other:'
     PRIMARY_KEY = 'primary key groups: %s'
-    REGEX_BUTTONS = '[guess_regex]'
-    REGEX_HEAD = '--- Regex: %s'
+    GUESS_BUTTON = '[guess_regex]'
+    REGEX_HEADER = '--- Regex: %s'
     LINE_CONTENT = '--- Line %s: %s'
 
     EFFECT_LINE_NAME = 'effect'
@@ -45,20 +48,19 @@ class ParserOutputConsts():
 
 
 class ConstraintsOutputConsts():
-    BUTTONS = '[add_constraint]'
-    CONSTR_BUTTONS = '[delete_constraint] [add_param]'
-    GROUP = 'parser: %s, group: %s'
+    ADD_BUTTON = '[add_constraint]'
+    DELETE_BUTTON = '[delete_constraint]'
+    GROUP = 'line: %s, group: %s'
     HEADER = '=== Rule Constraints:'
     PARAM = '%s: %s'
-    PARAMS_HEADER = '--- Params:'
+    PARAMS_HEADER = 'params:'
     TYPE = '--- Constraint: %s'
-    PARAM_SIMPLE = '%s: %s'
 
 
 class LogTypeConsts():
     NAME = '--- name: %s'
     HOST_PATTERN = 'host pattern: %s'
-    PATH_PATTERN = 'path pattern: %s'
+    PATH_PATTERN = ' path pattern: %s'
     FILE_NAME_MATCHER = 'file name matcher: %s'
     ADD_LOGTYPE = '[add_log_type]'
     CANCEL_LOGTYPE = '[cancel]'
@@ -66,7 +68,8 @@ class LogTypeConsts():
 
 class Messages():
     PREFIX = '# %s'
-    HEADER = 'This is whylog input window.'
+    TEACHER_HEADER = 'You are using whylog teacher.'
+    INPUT_HEADER = 'This is whylog input window.'
     ENDING = 'Do not change the commented text above.'
     INPUT_INFO = 'Enter the content the below commented block and press <F3>.'
     CASE_INFO = 'Select an option and press <F3>'
