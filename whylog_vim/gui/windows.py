@@ -35,13 +35,13 @@ class Window(object):
             VimCommander.split_window(name)
             VimCommander.resize(splited_window_size)
         VimCommander.set_nowritable()
-        self.set_output(content)
+        self.set_content(content)
         self.set_modifiable(modifiable)
         self.name = name
         VimCommander.set_file_type()
         self._set_window_id()
 
-    def set_output(self, contents):
+    def set_content(self, contents):
         with self.context as output_buffer:
             output_buffer[:] = contents.split('\n')
 
@@ -113,6 +113,6 @@ class WhylogWindowManager(object):
 
     def set_content(self, window_type, content):
         try:
-            self.windows[window_type].set_output(content)
+            self.windows[window_type].set_content(content)
         except KeyError:
             CannotSetWindowContent(window_type)
