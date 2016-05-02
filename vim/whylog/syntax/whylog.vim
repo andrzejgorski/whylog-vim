@@ -8,7 +8,7 @@
 if exists('b:current_syntax')
   finish
 endif
-syn keyword todo contained TODO FIXME XXX NOTE
+syn keyword todo contained TODO FIXME
 syn match comment '#.*$' contains=todo
 
 let b:current_syntax = 'whylog'
@@ -20,18 +20,18 @@ syn match params '!!.*!!'
 syn keyword headers date
 syn keyword headers string
 syn keyword headers int
-syn match prefixes 'file: '
-syn match prefixes 'offset: '
-syn match prefixes 'log type: '
-syn match prefixes 'parser: '
-syn match prefixes 'group: '
-syn match prefixes 'host pattern: '
-syn match prefixes 'path pattern: '
-syn match prefixes 'file name matcher: '
-syn match prefixes 'primary key groups: '
-syn match prefixes 'group_converter \d\+: '
-syn match prefixes 'group \d\+: '
-syn match prefixes 'match: '
+syn match prefixes 'file:'
+syn match prefixes 'offset:'
+syn match prefixes 'log type:'
+syn match prefixes 'parser:'
+syn match prefixes 'group:'
+syn match prefixes 'host pattern:'
+syn match prefixes 'path pattern:'
+syn match prefixes 'file name matcher:'
+syn match prefixes 'primary key groups:'
+syn match prefixes 'group_converter \d\+:'
+syn match prefixes 'group \d\+:'
+syn match prefixes 'match:'
 syn match button '\[[^[^[]*\]'
 
 

@@ -34,6 +34,6 @@ mkdir -p ~/.vim/bundle/whylog
 cp -r vim/whylog/* ~/.vim/bundle/whylog
 
 
-sudo python setup.py install
+# sudo python setup.py install
 # if doesn't work try:
 # sudo python setup.py install
