@@ -52,9 +52,10 @@ class VimEditor(object):
 
     def get_front_input(self):
         """
-        This method returns Front Input object of the line where cursor is,
+        This method returns Front Input object of the line where cursor is.
         """
         filename = self.get_current_filename()
+        # TODO add proper host
         host = 'localhost'
         cursor_position = VimCommander.get_cursor_offset()
         line_content = VimCommander.get_current_line()
@@ -67,16 +68,16 @@ class VimEditor(object):
     def close_teacher_window(self):
         self.window_manager.close_window(WindowTypes.TEACHER)
 
-    def cursor_at_output(self):
+    def cursor_at_whylog_windows(self):
         return VimCommander.get_current_window_id() in self.window_manager.get_windows_ids()
 
-    def cursor_at_teacher(self):
+    def cursor_at_teacher_window(self):
         return VimCommander.get_current_window_id() == self.window_manager.get_window_id(WindowTypes.TEACHER)
 
-    def cursor_at_input(self):
+    def cursor_at_input_window(self):
         return VimCommander.get_current_window_id() == self.window_manager.get_window_id(WindowTypes.INPUT)
 
-    def cursor_at_case(self):
+    def cursor_at_case_window(self):
         return VimCommander.get_current_window_id() == self.window_manager.get_window_id(WindowTypes.CASE)
 
     def go_to_query_window(self):
@@ -89,7 +90,7 @@ class VimEditor(object):
         VimCommander.set_syntax_folding()
 
     def open_fold(self):
-        # normal command in vim witch opens fold.
+        # normal command in vim which opens fold.
         VimCommander.normal('zo')
 
     def get_current_line(self):

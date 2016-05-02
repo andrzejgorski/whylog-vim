@@ -1,6 +1,9 @@
 import vim
 
 from whylog_vim.consts import WindowTypes
+from whylog_vim.gui.exceptions import (
+    CannotCloseWindow, CannotGetWindowContent,
+    CannotSetWindowContent, CannotSwitchToWindow)
 from whylog_vim.gui.vim_commander import VimCommander
 
 
@@ -16,14 +19,20 @@ class WindowContext(object):
 
 class Window(object):
 
-    def __init__(self, name, content, modifiable, size=None):
+    def __init__(
+            self,
+            file_name,
+            content=None,
+            modifiable=False,
+            splitetd_window_size=None
+    ):
         content = content or ''
         self.context = WindowContext()
         if size is None:
             VimCommander.open_file_at_window(name)
         else:
             VimCommander.split_window(name)
-            VimCommander.resize(size)
+            VimCommander.resize(splited_window_size)
         VimCommander.set_nowritable()
         self.set_output(content)
         self.set_modifiable(modifiable)
@@ -45,10 +54,10 @@ class Window(object):
         with self.context as output_buffer:
             return output_buffer[:]
 
-    def _set_window_id(self):
-        for window_id, window in enumerate(vim.windows):
+    def get_window_id(self):
+        for window_id, window in enumerate(vim.windows, 1):
             if window.buffer.name.endswith(self.name):
-                self.window_id = window_id + 1
+                return window_id
 
 
 class WhylogWindowManager(object):
@@ -67,21 +76,30 @@ class WhylogWindowManager(object):
         self.windows[window_type] = Window(window_type, content, modifiable, size)
 
     def get_window_content(self, window_type):
-        return self.windows[window_type].get_content()
+        try:
+            content = self.windows[window_type].get_content()
+        except KeyError:
+            raise CannotGetWindowContent(window_type)
 
     def go_to_window(self, window_type):
-        VimCommander.go_to_window(self.windows[window_type].window_id)
+        try:
+            VimCommander.go_to_window(self.windows[window_type].get_window_id())
+        except KeyError:
+            raise CannotSwitchToWindow(window_type)
 
     def get_window_id(self, window_type):
         try:
-            window_id = self.windows[window_type].window_id
+            window_id = self.windows[window_type].get_window_id()
         except KeyError:
             return None
         else:
             return window_id
 
     def close_window(self, window_type):
-        self.go_to_window(window_type)
+        try:
+            self.go_to_window(window_type)
+        except CannotSwitchToWindow:
+            raise CannotCloseWindow(window_type)
         VimCommander.close_current_window()
         del self.windows[window_type]
 
@@ -89,7 +107,10 @@ class WhylogWindowManager(object):
         return not self.windows
 
     def get_windows_ids(self):
-        return [window.window_id for window in self.windows.values()]
+        return [window.get_window_id() for window in self.windows.values()]
 
     def set_content(self, window_type, content):
-        self.windows[window_type].set_output(content)
+        try:
+            self.windows[window_type].set_output(content)
+        except KeyError:
+            CannotSetWindowContent(window_type)
