@@ -2,7 +2,6 @@ import vim
 
 
 class VimCommander(object):
-
     @staticmethod
     def resize(size):
         vim.command('resize %s' % size)
