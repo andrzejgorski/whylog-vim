@@ -1,4 +1,3 @@
-import re
 from functools import partial
 from whylog_vim.consts import Messages
 
