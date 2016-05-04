@@ -1,3 +1,6 @@
+import re
+
+
 class Input(object):
     EMPTY_GROUP = '(?P<content>.+)'
     GROUP1 = '(?P<content1>.+)'
@@ -7,5 +10,5 @@ class Input(object):
 
 
 class RegexPatterns(object):
-    COMMENTS = '^# .*$'
-    BUTTON = '\[[^[^[]*\]'
+    COMMENTS = re.compile('^# .*$')
+    BUTTON = re.compile('\[[^[^[]*\]')
