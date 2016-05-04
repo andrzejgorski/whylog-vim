@@ -15,9 +15,9 @@ class LogReaderProxy():
     def new_query(self):
         front_input = self.editor.get_front_input()
         # Mock
-        with patch('whylog.log_reader.LogReader.get_causes') as mock:
-            mock.return_value = self.mock_query_output(front_input)
-            query_output = self._log_reader.get_causes(front_input)
+        # with patch('whylog.log_reader.LogReader.get_causes') as mock:
+        #     mock.return_value = self.mock_query_output(front_input)
+        query_output = self._log_reader.get_causes(front_input)
 
         contents = self.output_formater.format_query(front_input, query_output)
         self.editor.create_query_window(contents)
