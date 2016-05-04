@@ -1,4 +1,4 @@
-from whylog_vim.input_reader import filer_comments, get_button_name, prepare_regex
+from whylog_vim.input_reader import filter_comments, get_button_name, prepare_regex
 
 
 def tests_unit_filter_comments():
@@ -23,6 +23,6 @@ def tests_unit_get_button_name():
     assert None == get_button_name(line, 10)
     assert 'dummy_button' == get_button_name(line, 11)
     assert 'dummy_button' == get_button_name(line, 14)
-    assert 'dummy_button' == get_button_name(line, 25)
-    assert None == get_button_name(line, 27)
+    assert 'dummy_button' == get_button_name(line, 24)
+    assert None == get_button_name(line, 25)
     assert None == get_button_name(line, 34)
