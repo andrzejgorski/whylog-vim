@@ -1,2 +1,4 @@
+isort
 nose
+pyflakes
 yapf
