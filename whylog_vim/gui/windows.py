@@ -29,7 +29,7 @@ class Window(object):
     ):
         content = content or ''
         self.context = WindowContext()
-        if size is None:
+        if splited_window_size is None:
             VimCommander.open_file_at_window(name)
         else:
             VimCommander.split_window(name)
