@@ -22,7 +22,7 @@ class FilesManager(object):
 
     @classmethod
     def is_file_open(cls, file_name):
-        return cls.get_files_window_id(file_name) is not None:
+        return cls.get_files_window_id(file_name) is not None
 
     @classmethod
     def go_to_file(cls, file_name, offset=1):
