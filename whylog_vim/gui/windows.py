@@ -25,7 +25,7 @@ class Window(object):
             file_name,
             content=None,
             modifiable=False,
-            splitetd_window_size=None
+            splited_window_size=None
     ):
         content = content or ''
         self.context = WindowContext()
