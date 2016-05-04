@@ -3,7 +3,7 @@ from whylog_vim.input_reader.consts import Input, RegexPatterns
 
 
 def filter_comments(content):
-    return filter(lambda x: not RegexPatterns.COMMENTS.match(x), content)
+    return [line for line in content if not RegexPatterns.COMMENTS.match(line)]
 
 
 def get_button_name(line, offset):
