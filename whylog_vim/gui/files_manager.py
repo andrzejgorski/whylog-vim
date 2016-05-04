@@ -6,6 +6,15 @@ class FilesManager(object):
 
     @staticmethod
     def get_files_window_id(file_name):
+        """
+        This function returns the id of the window named as given filename.
+        It will works fine if in whole gui module this value will be
+        neither returned outside nor agregated.
+        That is because we want to avoid situation when between set window id and move
+        to window using this id something can change in vim.windows
+        (for example user press :q in vim and close one of the window)
+        and meaning of the id will change.
+        """
         for window_id, window in enumerate(vim.windows, 1):
             if window.buffer.name.endswith(file_name):
                 return window_id
