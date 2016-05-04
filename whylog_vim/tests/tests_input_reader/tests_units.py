@@ -1,4 +1,4 @@
-from whylog_vim.input_reader import filter_comments, get_button_name, prepare_regex
+from whylog_vim.input_reader import filter_comments, get_button_name
 
 
 def tests_unit_filter_comments():
