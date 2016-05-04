@@ -1,14 +1,6 @@
 import re
+from functools import partial
 from whylog_vim.consts import Messages
-
-
-class Button():
-    def __init__(self, function, **params):
-        self.function = function
-        self.params = params
-
-    def __call__(self):
-        self.function(**self.params)
 
 
 class OutputAgregator():
@@ -26,13 +18,9 @@ class OutputAgregator():
         # The same type as vim buffor.
         return self.output_lines
 
-    def set_button(self, button):
-        line = self._get_line()
-        self.buttons[line] = button
-
     def create_button(self, function, **params):
         line = self._get_line()
-        self.buttons[line] = Button(function, **params)
+        self.buttons[line] = partial(function, **params)
 
     def call_button(self, line):
         try:
