@@ -1,6 +1,6 @@
 import re
 from whylog_vim.consts import (
-    GlobalConsts,
+    TeacherConsts,
     ButtonsMetaConsts as BMC,
     ParserOutputConsts as POC,
     ConstraintsOutputConsts as COC,
@@ -48,7 +48,7 @@ def get_constraint_message(parsers):
         for group in parser.groups.keys():
             result.append(POC.GROUP_CONVERTER %
                 (group, parser.groups[group].converter, parser.groups[group].content))
-        result.append(GlobalConsts.EMPTY_LINE)
+        result.append(TeacherConsts.EMPTY_LINE)
     return result
 
 
@@ -109,8 +109,8 @@ class ParserFormater():
         self._format_line_info(output, parser, effect)
         self._format_regexes(output, parser)
         self._format_line_others(output, parser)
-        output.add(GlobalConsts.EMPTY_LINE)
-        output.add(GlobalConsts.END_BRACKET)
+        output.add(TeacherConsts.EMPTY_LINE)
+        output.add(TeacherConsts.END_BRACKET)
 
     def _format_regexes(self, output, parser):
         output.add(POC.REGEX_HEAD % parser.pattern_name)
@@ -123,9 +123,9 @@ class ParserFormater():
         output.set_buttons_meta({BMC.PARSER: parser._id})
         if self._regex_is_not_correct(parser.pattern, parser.line_content):
             output.add(WarningMessages.REGEX_NOT_MATCH)
-        output.add(GlobalConsts.EMPTY_LINE)
+        output.add(TeacherConsts.EMPTY_LINE)
         self._format_converters_(output, parser.groups, parser._id)
-        output.add(GlobalConsts.EMPTY_LINE)
+        output.add(TeacherConsts.EMPTY_LINE)
 
     def _format_converters_(self, output, groups, parser_id):
         for group in groups.keys():
@@ -148,7 +148,7 @@ class ParserFormater():
             output.add(POC.COPY_BUTTON)
             output.add(POC.DELETE_BUTTON)
             output.set_buttons_meta({BMC.PARSER: parser._id})
-        output.add(GlobalConsts.EMPTY_LINE)
+        output.add(TeacherConsts.EMPTY_LINE)
 
     def _format_line_others(self, output, parser):
         output.add(POC.OTHERS_HEAD)
@@ -177,9 +177,9 @@ class ParserFormater():
     def format_regexes_message(self, output, parser):
         output.add(POC.REGEX_HEAD % parser.pattern_name)
         output.add(parser.pattern)
-        output.add(GlobalConsts.EMPTY_LINE)
+        output.add(TeacherConsts.EMPTY_LINE)
         self.format_converters(output, parser.groups, parser._id)
-        output.add(GlobalConsts.EMPTY_LINE)
+        output.add(TeacherConsts.EMPTY_LINE)
 
 
 class ConstraintsFormater():
@@ -212,15 +212,15 @@ class ConstraintsFormater():
             output.add(COC.GROUP % (get_parser_name(group[0]), group[1]))
         if constraint.params:
             self._format_params(output, constraint)
-        output.add(GlobalConsts.EMPTY_LINE)
+        output.add(TeacherConsts.EMPTY_LINE)
 
     def format(self, output, constraints):
         output.add(COC.HEADER)
         output.add(COC.BUTTONS)
-        output.add(GlobalConsts.EMPTY_LINE)
+        output.add(TeacherConsts.EMPTY_LINE)
         for constraint in constraints:
             self._format_single(output, constraint)
-        output.add(GlobalConsts.END_BRACKET)
+        output.add(TeacherConsts.END_BRACKET)
 
     def format_constraint(self, output, constraint):
         output.add(COC.TYPE % constraint.type)
@@ -229,7 +229,7 @@ class ConstraintsFormater():
             output.add(COC.GROUP % (get_parser_name(group[0]), group[1]))
         if constraint.params:
             self._format_params(output, constraint)
-        output.add(GlobalConsts.EMPTY_LINE)
+        output.add(TeacherConsts.EMPTY_LINE)
 
 
 class TeacherOutput():
@@ -260,13 +260,13 @@ class TeacherOutput():
 
     def format_rule(self, rule_intent, message=None):
         output = OutputAgregator()
-        output.add(GlobalConsts.MAIN_HEADER)
+        output.add(TeacherConsts.MAIN_HEADER)
         effect_id = rule_intent.effect_id
         self._format_effect_line(output, rule_intent, effect_id)
         self._format_causes(output, rule_intent, effect_id)
         self.constraint.format(output, rule_intent.constraints)
-        output.add(GlobalConsts.BUTTONS_HEADER)
-        output.add(GlobalConsts.MAIN_BUTTONS)
+        output.add(TeacherConsts.BUTTONS_HEADER)
+        output.add(TeacherConsts.MAIN_BUTTONS)
         return output
 
     def format_param(self, param_key, param_value):
@@ -280,7 +280,7 @@ class TeacherOutput():
         result.append(COC.TYPE % constraint_type)
         result.append(COC.GROUP)
         result.append(COC.GROUP)
-        result.append(GlobalConsts.EMPTY_LINE)
+        result.append(TeacherConsts.EMPTY_LINE)
         result.append(COC.PARAMS_HEADER)
         result.append(COC.PARAM_SIMPLE % ('param_key', 'value'))
         return '\n'.join(result)
@@ -303,7 +303,7 @@ class TeacherOutput():
                 output.set_buttons_meta({BMC.LOG_TYPE: log_type})
                 output.add(LTC.PATH_PATTERN % matcher._path_pattern)
                 output.set_buttons_meta({BMC.LOG_TYPE: log_type})
-            output.add(GlobalConsts.EMPTY_LINE)
+            output.add(TeacherConsts.EMPTY_LINE)
         output.add(LTC.ADD_LOGTYPE)
         output.set_buttons_meta({BMC.FUNCTION: self.teacher.new_log_type})
         output.add(LTC.CANCEL_LOGTYPE)
