@@ -1,5 +1,3 @@
-
-
 class Input():
     EMPTY_GROUP = '(?P<content>.+)'
     GROUP1 = '(?P<content1>.+)'
