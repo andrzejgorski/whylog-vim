@@ -2,84 +2,84 @@ import vim
 
 
 class VimCommander(object):
-    @staticmethod
-    def resize(size):
+    @classmethod
+    def resize(cls, size):
         vim.command('resize %s' % size)
 
-    @staticmethod
-    def set_file_type():
+    @classmethod
+    def set_file_type(cls):
         vim.command('setlocal filetype=whylog')
 
-    @staticmethod
-    def get_column():
+    @classmethod
+    def get_column(cls):
         return int(vim.eval('col(".")'))
 
-    @staticmethod
-    def get_current_window_id():
+    @classmethod
+    def get_current_window_id(cls):
         return int(vim.eval('winnr()'))
 
-    @staticmethod
-    def normal(command):
+    @classmethod
+    def normal(cls, command):
         vim.command("normal %s" % command)
 
-    @staticmethod
-    def go_to_window(window_id):
+    @classmethod
+    def go_to_window(cls, window_id):
         assert window_id is not None
         vim.command('%dwincmd w' % window_id)
 
-    @staticmethod
-    def split_window(name=None):
+    @classmethod
+    def split_window(cls, name=None):
         name = name or ''
         vim.command(':rightbelow split %s' % name)
 
-    @staticmethod
-    def set_modifiable():
+    @classmethod
+    def set_modifiable(cls):
         vim.command('setlocal modifiable')
 
-    @staticmethod
-    def set_nomodifible():
+    @classmethod
+    def set_nomodifible(cls):
         vim.command('setlocal nomodifiable')
 
-    @staticmethod
-    def open_file_at_window(filename):
+    @classmethod
+    def open_file_at_window(cls, filename):
         vim.command(':e %s' % filename)
 
-    @staticmethod
-    def set_nowritable():
+    @classmethod
+    def set_nowritable(cls):
         vim.command('setlocal buftype=nowrite')
 
-    @staticmethod
-    def close_current_window():
+    @classmethod
+    def close_current_window(cls):
         vim.command(':q')
 
-    @staticmethod
-    def get_current_line():
+    @classmethod
+    def get_current_line(cls):
         return vim.current.line
 
-    @staticmethod
-    def go_to_offset(byte_offset):
+    @classmethod
+    def go_to_offset(cls, byte_offset):
         vim.command(':go %d' % byte_offset)
 
-    @staticmethod
-    def get_cursor_offset():
+    @classmethod
+    def get_cursor_offset(cls):
         return int(vim.eval('line2byte(line("."))'))
 
-    @staticmethod
-    def set_syntax_folding():
+    @classmethod
+    def set_syntax_folding(cls):
         vim.command(':set foldmethod=syntax')
 
-    @staticmethod
-    def get_current_filename():
+    @classmethod
+    def get_current_filename(cls):
         return vim.current.buffer.name
 
-    @staticmethod
-    def get_line_number():
+    @classmethod
+    def get_line_number(cls):
         return int(vim.eval('line(".")'))
 
-    @staticmethod
-    def get_offset():
+    @classmethod
+    def get_offset(cls):
         return int(vim.eval('line2byte(line("."))+col(".")'))
 
-    @staticmethod
-    def get_buffor():
+    @classmethod
+    def get_buffor(cls):
         return vim.current.buffer
