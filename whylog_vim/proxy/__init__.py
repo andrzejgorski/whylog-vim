@@ -27,7 +27,7 @@ class WhylogProxy(object):
         }
 
     def _read_input(self):
-        if self.editor.cursor_at_input() or self.editor.cursor_at_case():
+        if self.editor.cursor_at_input_window() or self.editor.cursor_at_case_window():
             self.teacher.read_input()
 
     def set_state(self, state):

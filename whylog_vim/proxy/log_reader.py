@@ -34,7 +34,7 @@ class LogReaderProxy():
             self.editor.close_query_window()
 
     def handle_action(self):
-        if self.editor.cursor_at_output():
+        if self.editor.cursor_at_whylog_windows():
             self._handle_signal_on_output()
         else:
             self.editor.close_query_window()

@@ -65,6 +65,11 @@ class OutputAgregator():
         self.buttons_info = {}
         self.parsers = {}
         self.output_lines = []
+        self.window_type_to_message = {
+            WindowTypes.INPUT: Messages.INPUT_INFO,
+            WindowTypes.CASE: Messages.CASE_INFO,
+            WindowTypes.TEACHER: Messages.CASE_INFO,
+        }
 
     def add(self, element):
         self.output_lines.append(element)
@@ -89,14 +94,16 @@ class OutputAgregator():
         self.add(Messages.PREFIX % content)
 
     def add_message(self, content, window_type=WindowTypes.INPUT):
-        self.add_commented(Messages.HEADER)
-        if window_type == WindowTypes.INPUT:
-            self.add_commented(Messages.INPUT_INFO)
-        elif window_type == WindowTypes.CASE:
-            self.add_commented(Messages.CASE_INFO)
+        if window_type == WindowTypes.TEACHER:
+            self.add_commented(Messages.TEACHER_HEADER)
+        else:
+            self.add_commented(Messages.INPUT_HEADER)
+        type_message = self.window_type_to_message[window_type]
+        self.add_commented(type_message)
         for item in content:
             self.add_commented(item)
-        self.add_commented(Messages.ENDING)
+        if window_type == WindowTypes.INPUT:
+            self.add_commented(Messages.ENDING)
 
 
 class ParserFormater():
@@ -113,13 +120,13 @@ class ParserFormater():
         output.add(TeacherConsts.END_BRACKET)
 
     def _format_regexes(self, output, parser):
-        output.add(POC.REGEX_HEAD % parser.pattern_name)
+        output.add(POC.REGEX_HEADER % parser.pattern_name)
         output.add(parser.pattern)
         output.set_buttons_meta({
             BMC.PARSER: parser._id,
             BMC.FUNCTION: self.teacher_performer.edit_regex,
         })
-        output.add(POC.REGEX_BUTTONS)
+        output.add(POC.GUESS_BUTTON)
         output.set_buttons_meta({BMC.PARSER: parser._id})
         if self._regex_is_not_correct(parser.pattern, parser.line_content):
             output.add(WarningMessages.REGEX_NOT_MATCH)
@@ -151,7 +158,7 @@ class ParserFormater():
         output.add(TeacherConsts.EMPTY_LINE)
 
     def _format_line_others(self, output, parser):
-        output.add(POC.OTHERS_HEAD)
+        output.add(POC.OTHERS_HEADER)
         output.add(POC.LOG_TYPE % parser.log_type_name)
         output.set_buttons_meta({
             BMC.PARSER: parser._id,
@@ -175,7 +182,7 @@ class ParserFormater():
             output.set_buttons_meta({BMC.PARSER: parser_id, BMC.GROUP: group})
 
     def format_regexes_message(self, output, parser):
-        output.add(POC.REGEX_HEAD % parser.pattern_name)
+        output.add(POC.REGEX_HEADER % parser.pattern_name)
         output.add(parser.pattern)
         output.add(TeacherConsts.EMPTY_LINE)
         self.format_converters(output, parser.groups, parser._id)
@@ -203,7 +210,7 @@ class ConstraintsFormater():
             BMC.CONSTRAINT: constraint,
             BMC.FUNCTION: self.teacher_proxy.edit_constraint,
         })
-        output.add(COC.CONSTR_BUTTONS)
+        output.add(COC.DELETE_BUTTON)
         # TODO in this line should be constraint id
         output.set_buttons_meta({
             BMC.CONSTRAINT: constraint,
@@ -216,7 +223,7 @@ class ConstraintsFormater():
 
     def format(self, output, constraints):
         output.add(COC.HEADER)
-        output.add(COC.BUTTONS)
+        output.add(COC.ADD_BUTTON)
         output.add(TeacherConsts.EMPTY_LINE)
         for constraint in constraints:
             self._format_single(output, constraint)
@@ -260,13 +267,16 @@ class TeacherOutput():
 
     def format_rule(self, rule_intent, message=None):
         output = OutputAgregator()
-        output.add(TeacherConsts.MAIN_HEADER)
+        output.add_message([], WindowTypes.TEACHER)
         effect_id = rule_intent.effect_id
         self._format_effect_line(output, rule_intent, effect_id)
         self._format_causes(output, rule_intent, effect_id)
         self.constraint.format(output, rule_intent.constraints)
         output.add(TeacherConsts.BUTTONS_HEADER)
-        output.add(TeacherConsts.MAIN_BUTTONS)
+        output.add(TeacherConsts.ABANDON_BUTTON)
+        output.add(TeacherConsts.VERIFY_BUTTON)
+        output.add(TeacherConsts.RETURN_BUTTON)
+        output.add(TeacherConsts.SAVE_BUTTON)
         return output
 
     def format_param(self, param_key, param_value):
