@@ -1,5 +1,5 @@
 import re
-from whylog_vim.consts import Input
+from whylog_vim.input_reader.consts import Input
 
 
 def filter_comments(content):
