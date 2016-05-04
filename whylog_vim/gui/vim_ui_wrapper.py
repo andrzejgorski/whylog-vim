@@ -1,7 +1,7 @@
 import vim
 
 
-class VimCommander(object):
+class VimUIWrapper(object):
     @classmethod
     def resize(cls, size):
         vim.command('resize %s' % size)
@@ -28,8 +28,7 @@ class VimCommander(object):
         vim.command('%dwincmd w' % window_id)
 
     @classmethod
-    def split_window(cls, name=None):
-        name = name or ''
+    def split_window(cls, name=''):
         vim.command(':rightbelow split %s' % name)
 
     @classmethod
@@ -61,7 +60,7 @@ class VimCommander(object):
         vim.command(':go %d' % byte_offset)
 
     @classmethod
-    def get_cursor_offset(cls):
+    def get_line_offset(cls):
         return int(vim.eval('line2byte(line("."))'))
 
     @classmethod
@@ -77,9 +76,9 @@ class VimCommander(object):
         return int(vim.eval('line(".")'))
 
     @classmethod
-    def get_offset(cls):
+    def get_cursor_offset(cls):
         return int(vim.eval('line2byte(line("."))+col(".")'))
 
     @classmethod
-    def get_buffor(cls):
+    def get_buffer(cls):
         return vim.current.buffer
