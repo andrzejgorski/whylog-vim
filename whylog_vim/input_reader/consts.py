@@ -1,4 +1,6 @@
 import re
+from whylog.input_reader import prepare_regex
+from whylog.consts import LogTypeConsts
 
 
 class Input(object):
@@ -12,3 +14,6 @@ class Input(object):
 class RegexPatterns(object):
     COMMENTS = re.compile('^# .*$')
     BUTTON = re.compile('\[[^[^[]*\]')
+    LOGTYPE_NAME = re.compile(prepare_regex(LogTypeConsts.NAME))
+    HOST_PATTERN = re.compile(prepare_regex(LogTypeConsts.HOST_PATTERN))
+    PATH_PATTERN = re.compile(prepare_regex(LogTypeConsts.PATH_PATTERN))
