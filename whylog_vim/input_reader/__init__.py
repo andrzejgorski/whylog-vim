@@ -11,7 +11,6 @@ def get_button_name(line, offset):
     for match in re.finditer(RegexPatterns.BUTTON, line):
         if offset >= match.start(0) and offset < match.end(0):
             return match.group(0)[1:-1]
-    return None
 
 
 def prepare_regex(pattern):
