@@ -22,7 +22,7 @@ class Window(object):
 
     def __init__(
             self,
-            file_name,
+            name,
             content=None,
             modifiable=False,
             splited_window_size=None
@@ -39,7 +39,6 @@ class Window(object):
         self.set_modifiable(modifiable)
         self.name = name
         VimCommander.set_file_type()
-        self._set_window_id()
 
     def set_content(self, contents):
         with self.context as output_buffer:
@@ -56,7 +55,7 @@ class Window(object):
             return output_buffer[:]
 
     def get_window_id(self):
-        window_id = FilesManager.get_files_window_id()
+        window_id = FilesManager.get_files_window_id(self.name)
         if window_id:
             return window_id
         raise CannotFindWindowId(self.name)
