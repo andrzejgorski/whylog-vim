@@ -2,7 +2,6 @@ from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
 
 
 class FilesManager(object):
-
     @staticmethod
     def get_files_window_id(file_name):
         """
