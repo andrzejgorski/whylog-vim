@@ -2,7 +2,7 @@ from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
 
 
 class FilesManager(object):
-    @classmethod
+    classmethod
     def get_files_window_id(cls, file_name):
         """
         This function returns the id of the window named as given filename.

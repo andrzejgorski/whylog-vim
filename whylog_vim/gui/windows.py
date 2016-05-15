@@ -7,7 +7,6 @@ from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
 
 
 class WindowContext(object):
-
     def __enter__(self):
         VimCommander.set_modifiable()
         return VimCommander.get_buffor()
@@ -17,14 +16,11 @@ class WindowContext(object):
 
 
 class Window(object):
-
-    def __init__(
-            self,
-            name,
-            content=None,
-            modifiable=False,
-            splited_window_size=None
-    ):
+    def __init__(self,
+                 name,
+                 content=None,
+                 modifiable=False,
+                 splited_window_size=None):
         content = content or ''
         self.context = WindowContext()
         if splited_window_size is None:
