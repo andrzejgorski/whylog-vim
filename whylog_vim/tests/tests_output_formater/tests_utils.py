@@ -7,11 +7,10 @@ def tests_convert_to_buttons_empty_list():
 
 
 def tests_convert_to_buttons_1_elem_list():
-    test_list = ['jajko']
-    assert '[jajko]' == convert_to_buttons(test_list)
+    test_list = ['foo']
+    assert '[foo]' == convert_to_buttons(test_list)
 
 
 def tests_convert_to_buttons_many_elem_list():
-    test_list = ['jajko', 'kanapka', 'ziemniak', 'mleko']
-    assert '[jajko]\n[kanapka]\n[ziemniak]\n[mleko]' == convert_to_buttons(
-        test_list)
+    test_list = ['foo', 'bar', 'baz']
+    assert '[foo]\n[bar]\n[baz]' == convert_to_buttons(test_list)
