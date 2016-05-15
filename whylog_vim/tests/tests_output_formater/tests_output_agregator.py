@@ -2,7 +2,7 @@ from whylog_vim.output_formater.output_agregator import OutputAgregator
 
 
 def tests_basic_output_agregator():
-    class TestFunctions():
+    class TestFunctions(object):
         def test_function(self, param1, param2):
             self.called_test_function = param1 + param2
 
