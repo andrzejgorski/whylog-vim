@@ -9,3 +9,11 @@ class Messages(object):
     REGEX = 'This is the content of the line:'
     LOGTYPE = 'This is the content and path of the line:'
     PRIMARY_KEY = 'This is the content and path of the line:'
+
+
+class WindowTypes():
+    QUERY = 'whylog_query_output'
+    TEACHER = 'whylog_teacher'
+    INPUT = 'whylog_input'
+    MESSAGE = 'whylog_message'
+    CASE = 'whylog_case'
