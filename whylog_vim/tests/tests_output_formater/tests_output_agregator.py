@@ -32,4 +32,3 @@ def tests_basic_output_agregator():
     assert some_object.called_test_function == 'foo bar'
     output.call_button(5)
     assert some_object.called_test_function == 50
-    output.call_button(4)
