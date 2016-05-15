@@ -11,7 +11,7 @@ class OutputAgregator():
         self.output_lines.append(element)
 
     def add_commented(self, content):
-        self.add(Messages.PREFIX % content)
+        self.add(Messages.COMMENT_PREFIX % content)
 
     def get_content(self):
         # The same type as vim buffor.
