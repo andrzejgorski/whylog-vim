@@ -1,5 +1,4 @@
 class TeacherProxy(object):
-
     def __init__(self, teacher, editor, main_proxy):
         self.teacher = teacher
         self.editor = editor
