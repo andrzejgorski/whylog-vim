@@ -44,7 +44,8 @@ class WhylogProxy(object):
         self._handle_action(self.teach_handler, ActionTypes.TEACHER)
 
     def _update_normal_state(self):
-        if not self.editor.is_whylog_window_open() and not self._state == States.ADD_CAUSE:
+        if not self.editor.is_whylog_window_open(
+        ) and not self._state == States.ADD_CAUSE:
             self._state = States.EDITOR_NORMAL
 
     def _handle_action(self, handler, action_type):

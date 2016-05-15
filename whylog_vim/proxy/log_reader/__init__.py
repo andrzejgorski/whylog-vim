@@ -1,5 +1,4 @@
 class LogReaderProxy(object):
-
     def __init__(self, editor, log_reader):
         self.editor = editor
         self.log_reader = log_reader
