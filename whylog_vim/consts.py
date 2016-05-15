@@ -1,4 +1,4 @@
-class Messages():
+class Messages(object):
     COMMENT_PREFIX = '# %s'
     TEACHER_HEADER = 'You are using whylog teacher.'
     INPUT_HEADER = 'This is whylog input window.'

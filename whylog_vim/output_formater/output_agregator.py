@@ -2,7 +2,7 @@ from functools import partial
 from whylog_vim.consts import Messages
 
 
-class OutputAgregator():
+class OutputAgregator(object):
     def __init__(self):
         self.buttons = {}
         self.output_lines = []
