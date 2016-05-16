@@ -6,7 +6,6 @@ from whylog_vim.proxy import WhylogProxy
 
 
 class UnitTestWhylogProxy(TestCase):
-
     def tests_unit_check_log_reader_states_of_whylog_proxy(self):
         whylog_proxy = WhylogProxy(MagicMock())
 
@@ -15,7 +14,6 @@ class UnitTestWhylogProxy(TestCase):
         self.assertEqual(whylog_proxy.get_state(), States.LOG_READER)
         whylog_proxy.action()
         self.assertEqual(whylog_proxy.get_state(), States.LOG_READER)
-
 
     def tests_unit_check_teacher_states_of_whylog_proxy(self):
         whylog_proxy = WhylogProxy(MagicMock())
