@@ -8,5 +8,5 @@ class UnknownAction(WhylogVimException):
         self.state = state
 
     def __repr__(self):
-        return 'Unknown action for action type %s in states %s' % (
+        return 'Unknown action for action type %s in state %s' % (
             self.action_type, self.state)
