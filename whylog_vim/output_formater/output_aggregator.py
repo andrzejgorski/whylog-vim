@@ -2,7 +2,7 @@ from functools import partial
 from whylog_vim.consts import Messages
 
 
-class OutputAgregator(object):
+class OutputAggregator(object):
     def __init__(self):
         self.buttons = {}
         self.output_lines = []
@@ -17,12 +17,9 @@ class OutputAgregator(object):
         # The same type as vim buffor.
         return self.output_lines
 
-    def create_button(self, click_function, **params):
-        line = self._get_current_line_number()
-        self.buttons[line] = partial(click_function, **params)
-
-    def create_button_on_line(self, click_function, line, **params):
-        self.buttons[line] = partial(click_function, **params)
+    def create_button(self, callback_function, line=None):
+        line = line or self._get_current_line_number()
+        self.buttons[line] = callback_function
 
     def call_button(self, line_number):
         try:
