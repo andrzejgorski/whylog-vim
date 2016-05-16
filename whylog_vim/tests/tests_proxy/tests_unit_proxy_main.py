@@ -1,6 +1,7 @@
 from mock import MagicMock
-from whylog_vim.proxy import WhylogProxy
+
 from whylog_vim.consts import EditorStates as States
+from whylog_vim.proxy import WhylogProxy
 
 
 def tests_unit_check_log_reader_states_of_whylog_proxy():
