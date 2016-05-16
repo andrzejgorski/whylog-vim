@@ -1,7 +1,8 @@
-from whylog_vim.output_formater.output_agregator import OutputAgregator
+from functools import partial
+from whylog_vim.output_formater.output_aggregator import OutputAggregator
 
 
-def tests_basic_output_agregator():
+def tests_basic_output_aggregator():
     class TestFunctions(object):
         def test_function(self, param1, param2):
             self.called_test_function = param1 + param2
@@ -11,19 +12,21 @@ def tests_basic_output_agregator():
 
     some_object = TestFunctions()
 
-    output = OutputAgregator()
+    output = OutputAggregator()
     output.add('Some line.')
     output.add('Another line.')
     output.add('Clickable line.')
 
-    output.create_button(some_object.test_function,
-                         param1='foo ',
-                         param2='bar')
+    output.create_button(partial(some_object.test_function,
+                                 param1='foo ',
+                                 param2='bar'))
 
     output.add('Next line.')
     output.add('Next Clickable line.')
 
-    output.create_button(some_object.test_function2, param1=100, param2=50)
+    output.create_button(partial(some_object.test_function2,
+                                 param1=100,
+                                 param2=50))
 
     content = ['Some line.', 'Another line.', 'Clickable line.', 'Next line.',
                'Next Clickable line.']
