@@ -2,8 +2,8 @@ from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
 
 
 class FilesManager(object):
-    @staticmethod
-    def get_files_window_id(file_name):
+    @classethod
+    def get_files_window_id(cls, file_name):
         """
         This function returns the id of the window named as given filename.
         It will works fine if in whole gui module this value will be
