@@ -3,7 +3,7 @@ import re
 from whylog.constraints import IdenticalConstraint
 from whylog.constraints.const import ConstraintType
 
-from whylog_vim.input_reader.consts import Input, RegexPatterns, ConstraintInput
+from whylog_vim.input_reader.consts import RegexPatterns, ConstraintInput
 from whylog_vim.utils import get_id_from_name
 
 
