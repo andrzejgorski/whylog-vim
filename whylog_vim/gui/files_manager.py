@@ -2,7 +2,7 @@ from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
 
 
 class FilesManager(object):
-    @classethod
+    @classmethod
     def get_files_window_id(cls, file_name):
         """
         This function returns the id of the window named as given filename.
@@ -28,5 +28,5 @@ class FilesManager(object):
             VimUIWrapper.go_to_window(window_id)
         else:
             VimUIWrapper.split_window()
-            VimUIWrapper.open_file_at_window(filename)
+            VimUIWrapper.open_file_at_window(file_name)
         VimUIWrapper.go_to_offset(offset)
