@@ -14,10 +14,8 @@ class WhylogProxy(object):
         self.new_teacher()
 
         self.action_handler = {
-            States.EDITOR_NORMAL:
-            (self.log_reader.new_query, States.LOG_READER),
-            States.LOG_READER:
-            (self.log_reader.handle_action, States.LOG_READER),
+            States.EDITOR_NORMAL: (self.log_reader.new_query, States.LOG_READER),
+            States.LOG_READER: (self.log_reader.handle_action, States.LOG_READER),
             States.TEACHER: (self.teacher.handle_menu_signal, States.TEACHER),
             States.TEACHER_INPUT: (self._read_input, States.TEACHER_INPUT),
         }
@@ -44,8 +42,7 @@ class WhylogProxy(object):
         self._handle_action(self.teach_handler, ActionTypes.TEACHER)
 
     def _update_normal_state(self):
-        if not self.editor.is_whylog_window_open(
-        ) and self._state != States.ADD_CAUSE:
+        if not self.editor.is_whylog_window_open() and self._state != States.ADD_CAUSE:
             self._state = States.EDITOR_NORMAL
 
     def _handle_action(self, handler, action_type):
@@ -59,6 +56,5 @@ class WhylogProxy(object):
             action_function()
 
     def new_teacher(self):
-        self.teacher = TeacherProxy(self.teacher_generator(), self.editor,
-                                    self)
+        self.teacher = TeacherProxy(self.teacher_generator(), self.editor, self)
         self._state = States.EDITOR_NORMAL
