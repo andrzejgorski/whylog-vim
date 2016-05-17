@@ -26,3 +26,10 @@ def tests_unit_get_button_name():
     assert InputReader.get_button_name(line, 24) == 'dummy_button'
     assert InputReader.get_button_name(line, 25) == None
     assert InputReader.get_button_name(line, 34) == None
+
+
+def tests_unit_parse_log_type():
+    log_type = """
+
+
+    """
