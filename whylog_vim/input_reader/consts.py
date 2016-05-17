@@ -23,7 +23,7 @@ def _prepare_default(pattern):
 
 @_regex_begin_end
 def _prepare_group(pattern):
-    return pattern % (Input.INT_GROUP1, Input.INT_GROUP2)
+    return pattern % (Input.GROUP1, Input.INT_GROUP2)
 
 
 @_regex_begin_end

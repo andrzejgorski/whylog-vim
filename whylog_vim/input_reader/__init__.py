@@ -4,6 +4,7 @@ from whylog.constraints import IdenticalConstraint
 from whylog.constraints.const import ConstraintType
 
 from whylog_vim.input_reader.consts import Input, RegexPatterns, ConstraintInput
+from whylog_vim.utils import get_id_from_name
 
 
 class InputReader():
@@ -36,14 +37,15 @@ class ConstraintReader():
         for line in range(1, len(lines)):
             match = ConstraintInput.GROUP.match(lines[line])
             if match:
-                groups.append((match.group('int1'), match.group('int2')))
+                groups.append((get_id_from_name(match.group('content1')), int(match.group('int2'))))
             else:
                 break
         else:
             return constr_type, groups, {}
+        return constr_type, groups, {}
 
     @classmethod
     def create_constraint(cls, lines):
         type_, groups, params = cls._parse_constraint(lines)
-        return cls.CONSTRAINTS[type_](groups, params)
+        return cls.CONSTRAINTS[type_](groups=groups, param_dict=params)
 

@@ -3,6 +3,7 @@ from whylog.constraints.const import ConstraintType
 
 from whylog_vim.input_reader import InputReader, ConstraintReader
 from whylog_vim.consts import Constraint
+from whylog_vim.utils import get_parser_name
 
 
 def tests_unit_filter_comments():
@@ -36,6 +37,7 @@ def create_constraint_text(type_, groups):
     constraint = []
     constraint.append(Constraint.TYPE % type_)
     for group in groups:
+        group = (get_parser_name(group[0]), group[1])
         constraint.append(Constraint.GROUP % group)
     return constraint
 
