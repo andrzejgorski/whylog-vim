@@ -1,4 +1,8 @@
-from whylog_vim.input_reader import InputReader
+from whylog.constraints import IdenticalConstraint
+from whylog.constraints.const import ConstraintType
+
+from whylog_vim.input_reader import InputReader, ConstraintReader
+from whylog_vim.consts import Constraint
 
 
 def tests_unit_filter_comments():
@@ -28,8 +32,17 @@ def tests_unit_get_button_name():
     assert InputReader.get_button_name(line, 34) == None
 
 
-def tests_unit_parse_log_type():
-    log_type = """
+def create_constraint_text(type_, groups):
+    constraint = []
+    constraint.append(Constraint.TYPE % type_)
+    for group in groups:
+        constraint.append(Constraint.GROUP % group)
+    return constraint
 
 
-    """
+def tests_unit_parse_Identical():
+    groups = [(1, 1), (2, 1), (3, 1), (4, 1)]
+    raw_constraint = create_constraint_text(ConstraintType.IDENTICAL, groups)
+    created_constraint = ConstraintReader.create_constraint(raw_constraint)
+    assert created_constraint.groups == groups
+    assert created_constraint.TYPE == ConstraintType.IDENTICAL
