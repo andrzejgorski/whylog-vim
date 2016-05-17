@@ -68,3 +68,8 @@ class LogType(object):
     FILE_NAME_MATCHER = 'file name matcher: %s'
     ADD_BUTTON = '[add_log_type]'
     CANCEL_BUTTON = '[cancel]'
+
+
+class LineNames(object):
+    EFFECT = 'effect'
+    CAUSE = 'cause_%s'
