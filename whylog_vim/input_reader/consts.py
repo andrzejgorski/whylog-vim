@@ -13,6 +13,7 @@ class Input(object):
 def _regex_begin_end(func):
     def wrapper(pattern):
         return '^' + func(pattern) + '$'
+
     return wrapper
 
 

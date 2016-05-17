@@ -26,9 +26,7 @@ class InputReader():
 
 class ConstraintReader():
 
-    CONSTRAINTS = {
-        ConstraintType.IDENTICAL: IdenticalConstraint,
-    }
+    CONSTRAINTS = {ConstraintType.IDENTICAL: IdenticalConstraint,}
 
     @classmethod
     def _parse_constraint(cls, lines):
@@ -48,4 +46,3 @@ class ConstraintReader():
     def create_constraint(cls, lines):
         type_, groups, params = cls._parse_constraint(lines)
         return cls.CONSTRAINTS[type_](groups=groups, param_dict=params)
-
