@@ -1,4 +1,3 @@
-import re
 from whylog_vim.output_formater.consts import LogReader
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
 
