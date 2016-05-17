@@ -1,5 +1,5 @@
 import re
-from whylog_vim.consts import LogType, Constraint
+from whylog_vim.consts import Constraint, LogType
 
 
 class Input(object):

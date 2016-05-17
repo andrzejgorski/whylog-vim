@@ -1,8 +1,6 @@
-from whylog.constraints import IdenticalConstraint
 from whylog.constraints.const import ConstraintType
-
-from whylog_vim.input_reader import InputReader, ConstraintReader
 from whylog_vim.consts import Constraint
+from whylog_vim.input_reader import InputReader, ConstraintReader
 from whylog_vim.utils import get_parser_name
 
 
