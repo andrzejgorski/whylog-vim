@@ -1,6 +1,6 @@
 from whylog import FrontInput, LineSource
-from whylog_vim.output_formater.log_reader_formater import LogReaderOutput
 from whylog_vim.output_formater.consts import LogReader
+from whylog_vim.output_formater.log_reader_formater import LogReaderOutput
 
 
 def tests_no_query_output():
