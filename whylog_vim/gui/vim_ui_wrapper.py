@@ -82,3 +82,7 @@ class VimUIWrapper(object):
     @classmethod
     def get_buffer(cls):
         return vim.current.buffer
+
+    @classmethod
+    def get_windows(cls):
+        return vim.windows
