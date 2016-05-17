@@ -4,11 +4,10 @@ from whylog_vim.output_formater.output_aggregator import OutputAggregator
 
 
 class LogReaderOutput():
-
     @classmethod
     def _format_input_line(cls, output, front_input):
         output.add(
-            LogReader.LINE_HEADER  % (
+            LogReader.LINE_HEADER % (
                 LogReader.ITEM,
                 front_input.line_source,
                 front_input.offset,
