@@ -1,7 +1,6 @@
 from whylog_vim.proxy import WhylogProxy
 from whylog_vim.gui import VimEditor
 
-
 whylog = WhylogProxy(VimEditor())
 
 

@@ -11,13 +11,11 @@ from whylog_vim.gui.files_manager import FilesManager
 
 
 class VimEditor(object):
-
     def __init__(self):
         self.window_manager = WhylogWindowManager()
 
     def get_input_content(self):
-        return filter_comments(
-            self.window_manager.get_window_content(WindowTypes.INPUT))
+        return filter_comments(self.window_manager.get_window_content(WindowTypes.INPUT))
 
     def create_case_window(self, default_input=None):
         self.window_manager.create_window(WindowTypes.CASE, default_input)
@@ -29,7 +27,9 @@ class VimEditor(object):
         self.window_manager.create_window(WindowTypes.TEACHER, default_input)
 
     def create_query_window(self, default_input=None):
-        self.window_manager.create_window(WindowTypes.QUERY, default_input, False, WindowSizes.QUERY_WINDOW)
+        self.window_manager.create_window(
+            WindowTypes.QUERY, default_input, False, WindowSizes.QUERY_WINDOW
+        )
 
     def go_to_file(self, filename, offset=1):
         FilesManager.go_to_file(filename, offset)
@@ -72,13 +72,19 @@ class VimEditor(object):
         return VimUIWrapper.get_current_window_id() in self.window_manager.get_windows_ids()
 
     def cursor_at_teacher_window(self):
-        return VimUIWrapper.get_current_window_id() == self.window_manager.get_window_id(WindowTypes.TEACHER)
+        return VimUIWrapper.get_current_window_id() == self.window_manager.get_window_id(
+            WindowTypes.TEACHER
+        )
 
     def cursor_at_input_window(self):
-        return VimUIWrapper.get_current_window_id() == self.window_manager.get_window_id(WindowTypes.INPUT)
+        return VimUIWrapper.get_current_window_id() == self.window_manager.get_window_id(
+            WindowTypes.INPUT
+        )
 
     def cursor_at_case_window(self):
-        return VimUIWrapper.get_current_window_id() == self.window_manager.get_window_id(WindowTypes.CASE)
+        return VimUIWrapper.get_current_window_id() == self.window_manager.get_window_id(
+            WindowTypes.CASE
+        )
 
     def go_to_query_window(self):
         self.window_manager.go_to_window(WindowTypes.QUERY)
