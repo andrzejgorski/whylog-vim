@@ -21,6 +21,7 @@ class Messages(object):
     REGEX = 'This is the content of the line:'
     LOGTYPE = 'This is the content and path of the line:'
     PRIMARY_KEY = 'This is the content and path of the line:'
+    DEFAULT_WINDOW = 'This is Whylog Window. Something goes wrong. This message shouldn\' appear.'
 
 
 class EditorStates(object):
