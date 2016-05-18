@@ -1,3 +1,5 @@
+import six
+
 from whylog_vim.consts import WindowTypes
 from whylog_vim.output_formater.consts import TeacherMenu
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
