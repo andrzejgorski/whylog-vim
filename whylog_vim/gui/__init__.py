@@ -12,7 +12,11 @@ class VimEditor(object):
         self.window_manager = WhylogWindowManager()
 
     def get_input_content(self):
-        return InputReader.filter_comments(self.window_manager.get_window_content(WindowTypes.INPUT))
+        return InputReader.filter_comments(
+            self.window_manager.get_window_content(
+                WindowTypes.INPUT
+            )
+        )
 
     def create_case_window(self, default_input=None):
         self.window_manager.create_window(WindowTypes.CASE, default_input)
@@ -45,7 +49,9 @@ class VimEditor(object):
             VimUIWrapper.close_current_window()
 
     def get_button_name(self):
-        return InputReader.get_button_name(VimUIWrapper.get_current_line(), VimUIWrapper.get_column())
+        return InputReader.get_button_name(
+            VimUIWrapper.get_current_line(), VimUIWrapper.get_column()
+        )
 
     def get_front_input(self):
         """
