@@ -15,4 +15,4 @@ def tests_no_query_output():
     )
     assert content[1] == front_input.line_content
     assert content[2] == '# ' + LogReader.EMPTY_OUTPUT
-    assert content[3] == '# ' + LogReader.EMPTY_OUTPUT2
+    assert content[3] == '# ' + LogReader.EMPTY_OUTPUT_CONTINUE

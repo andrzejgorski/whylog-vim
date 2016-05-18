@@ -2,7 +2,7 @@ from whylog_vim.output_formater.consts import LogReader
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
 
 
-class LogReaderOutput():
+class LogReaderOutput(object):
     @classmethod
     def _format_input_line(cls, output, front_input):
         output.add(
@@ -20,6 +20,6 @@ class LogReaderOutput():
         cls._format_input_line(output, front_input)
         if query_output == []:
             output.add_commented(LogReader.EMPTY_OUTPUT)
-            output.add_commented(LogReader.EMPTY_OUTPUT2)
+            output.add_commented(LogReader.EMPTY_OUTPUT_CONTINUE)
 
         return output
