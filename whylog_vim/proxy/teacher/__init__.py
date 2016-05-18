@@ -54,3 +54,9 @@ class TeacherProxy(object):
         except Exception:
             # Fold opening error. Nothing to do.
             pass
+
+    def set_output(self, output):
+        self.output = output
+
+    def set_return_function(self, return_function):
+        self.return_function = return_function
