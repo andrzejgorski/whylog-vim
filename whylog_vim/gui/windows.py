@@ -1,4 +1,3 @@
-from whylog_vim.const import Messages
 from whylog_vim.gui.exceptions import CannotFindWindowId
 from whylog_vim.gui.files_manager import FilesManager
 from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
