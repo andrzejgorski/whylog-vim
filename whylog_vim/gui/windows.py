@@ -67,6 +67,7 @@ class WhylogWindowManager(object):
             content = self.windows[window_type].get_content()
         except KeyError:
             raise CannotGetWindowContent(window_type)
+        return content
 
     def go_to_window(self, window_type):
         try:
