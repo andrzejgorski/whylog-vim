@@ -1,0 +1,2 @@
+class WhylogProxy(object):
+    pass
