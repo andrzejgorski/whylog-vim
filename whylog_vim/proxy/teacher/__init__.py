@@ -14,7 +14,7 @@ class TeacherProxy(object):
         front_input = self.editor.get_front_input()
         self.teacher.add_line(get_next_parser_id(), front_input, effect=True)
         self.origin_file_name = self.editor.get_current_filename()
-        print Messages.ADDED_EFFECT
+        print(Messages.ADDED_EFFECT)
 
     def add_cause(self):
         front_input = self.editor.get_front_input()
