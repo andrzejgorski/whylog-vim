@@ -1,4 +1,4 @@
-import whylog_vim.output_formater.teacher_formater import TeacherMenu
+from whylog_vim.output_formater.consts import TeacherMenu
 
 
 class TeacherProxyUsingFromater(object):
