@@ -35,3 +35,6 @@ class EditorStates(object):
 class ActionTypes(object):
     STANDARD = 'standard action'
     TEACHER = 'teacher action'
+
+
+class ParserOutputs():
