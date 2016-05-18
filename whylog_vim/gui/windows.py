@@ -8,7 +8,7 @@ from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
 class WindowContext(object):
     def __enter__(self):
         VimUIWrapper.set_modifiable()
-        return VimUIWrapper.get_buffor()
+        return VimUIWrapper.get_buffer()
 
     def __exit__(self, type_, value, traceback):
         VimUIWrapper.set_nomodifible()
@@ -31,7 +31,7 @@ class Window(object):
 
     def set_content(self, contents):
         with self.context as output_buffer:
-            output_buffer[:] = contents.split('\n')
+            output_buffer[:] = contents
 
     def set_modifiable(self, modifiable):
         if modifiable:
