@@ -33,10 +33,7 @@ class InputMessages(object):
         return output
 
     @classmethod
-    def get_primary_key_message(cls, parser):
-        output = OutputAggregator()
-        cls._add_message_prefix(ouptut, WindowTypes.INPUT)
-        output.add_commented(Messages.PRIMARY_KEY)
+    def _add_parser(cls, output, parser):
         output.add_commented(ParserOutputs.LINE_CONTENT % (parser._id, parser.line_content))
         output.add_commented(
             ParserOutputs.META % (parser.line_resource_location, parser.line_offset)
@@ -47,7 +44,14 @@ class InputMessages(object):
                 ParserOutputs.GROUP_CONVERTER %
                 (group, parser.groups[group].converter, parser.groups[group].content)
             )
-        output.add_commented(ENDING)
+        output.add_commented(Global.EMPTY_LINE)
+
+    @classmethod
+    def get_primary_key_message(cls, parser):
+        output = OutputAggregator()
+        cls._add_message_prefix(ouptut, WindowTypes.INPUT)
+        output.add_commented(Messages.PRIMARY_KEY)
+        cls._add_parser(output, parser)
         return output
 
     @classmethod
@@ -55,15 +59,5 @@ class InputMessages(object):
         output = OutputAggregator()
         cls._add_message_prefix(ouptut, WindowTypes.INPUT)
         for parser in parsers:
-            output.add_commented(ParserOutputs.LINE_CONTENT % (parser._id, parser.line_content))
-            output.add_commented(
-                ParserOutputs.META % (parser.line_resource_location, parser.line_offset)
-            )
-            output.add_commented(parser.pattern)
-            for group in six.iterkeys(parser.groups):
-                output.add_commented(
-                    ParserOutputs.GROUP_CONVERTER %
-                    (group, parser.groups[group].converter, parser.groups[group].content)
-                )
-            output.add_commented(Global.EMPTY_LINE)
+            cls._add_parser(output, parser)
         return output
