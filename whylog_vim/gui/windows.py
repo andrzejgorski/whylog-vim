@@ -1,4 +1,4 @@
-from whylog_vim.consts import Messages, WindowTypes
+from whylog_vim.consts import WindowTypes
 from whylog_vim.gui.files_manager import FilesManager
 from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
 
