@@ -23,3 +23,11 @@ class EditorStates(object):
 class ActionTypes(object):
     STANDARD = 'standard action'
     TEACHER = 'teacher action'
+
+
+class WindowTypes(object):
+    QUERY = 'whylog_query_output'
+    TEACHER = 'whylog_teacher'
+    INPUT = 'whylog_input'
+    MESSAGE = 'whylog_message'
+    CASE = 'whylog_case'
