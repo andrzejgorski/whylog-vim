@@ -15,7 +15,7 @@ class WindowContext(object):
 
 class Window(object):
     def __init__(self, name, content=None, modifiable=False, splited_window_size=None):
-        content = content or Messages.DEFAULT_WINDOW
+        assert content
         self.context = WindowContext()
         if splited_window_size is None:
             VimUIWrapper.open_file_at_window(name)
