@@ -1,3 +1,6 @@
+import six
+
+from whylog_vim.output_formater.consts import Global
 from whylog_vim.consts import Messages, ParserOutputs, WindowTypes
 from whylog_vim.output_fromater.output_aggregator import OutputAggregator
 
@@ -35,21 +38,22 @@ class InputMessages(object):
         output.add_commented(ParserOutputs.LINE_CONTENT % (parser._id, parser.line_content))
         output.add_commented(ParserOutputs.META % (parser.line_resource_location, parser.line_offset))
         output.add_commented(parser.pattern)
-        for group in parser.groups.keys():
-            result.append(POC.GROUP_CONVERTER %
+        for group in six.iterkeys(parser.groups):
+            output.add_commented(ParserOutputs.GROUP_CONVERTER %
                 (group, parser.groups[group].converter, parser.groups[group].content))
         output.add_commented(ENDING)
         return output
 
     @classmethod
     def get_constraint_message(cls, parsers):
-        result = []
+        output = OutputAggregator()
+        cls._add_message_prefix(ouptut, WindowTypes.INPUT)
         for parser in parsers:
-            result.append(POC.LINE_CONTENT % (parser._id, parser.line_content))
-            result.append(POC.META % (parser.line_resource_location, parser.line_offset))
-            result.append(parser.pattern)
+            output.add_commented(ParserOutputs.LINE_CONTENT % (parser._id, parser.line_content))
+            output.add_commented(ParserOutputs.META % (parser.line_resource_location, parser.line_offset))
+            output.add_commented(parser.pattern)
             for group in parser.groups.keys():
-                result.append(POC.GROUP_CONVERTER %
+                output.add_commented(ParserOutputs.GROUP_CONVERTER %
                     (group, parser.groups[group].converter, parser.groups[group].content))
-            result.append(TeacherConsts.EMPTY_LINE)
-        return result
+            output.add_commented(Global.EMPTY_LINE)
+        return output
