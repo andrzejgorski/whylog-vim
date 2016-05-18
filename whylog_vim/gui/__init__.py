@@ -1,8 +1,5 @@
 from whylog import LineSource, FrontInput
 
-from mock import MagicMock, patch
-import os.path
-import vim
 from whylog_vim.input_reader.teacher_reader import get_button_name, filter_comments
 from whylog_vim.consts import WindowTypes, WindowSizes
 from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
@@ -45,10 +42,10 @@ class VimEditor(object):
 
     def close_window(self, filename):
         if not FilesManager.is_file_open(filename):
-            VimCommand.close_current_window()
+            VimUIWrapper.close_current_window()
 
     def get_button_name(self):
-        return get_button_name(VimUIWrapper.get_current_line(), VimCommander.get_column())
+        return get_button_name(VimUIWrapper.get_current_line(), VimUIWrapperer.get_column())
 
     def get_front_input(self):
         """
