@@ -55,7 +55,12 @@ class Window(object):
 
 class WhylogWindowManager(object):
 
-    whylog_windows = [WindowTypes.QUERY, WindowTypes.TEACHER, WindowTypes.INPUT, WindowTypes.CASE,]
+    whylog_windows = [
+        WindowTypes.QUERY,
+        WindowTypes.TEACHER,
+        WindowTypes.INPUT,
+        WindowTypes.CASE,
+    ]
 
     def __init__(self):
         self.windows = dict()
