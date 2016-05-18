@@ -1,5 +1,3 @@
-import re
-
 from whylog.constraints import IdenticalConstraint
 from whylog.constraints.const import ConstraintType
 
