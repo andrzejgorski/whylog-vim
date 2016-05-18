@@ -6,6 +6,10 @@ class WindowTypes():
     CASE = 'whylog_case'
 
 
+class WindowSizes():
+    QUERY_WINDOW = 10
+
+
 class Messages(object):
     COMMENT_PREFIX = '# %s'
     TEACHER_HEADER = 'You are using whylog teacher.'
