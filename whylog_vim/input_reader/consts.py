@@ -3,15 +3,15 @@ from whylog_vim.consts import Constraint, LogType
 
 
 class Groups(object):
-    GROUP_FST = 'content1'
-    GROUP_SND = 'content2'
+    GROUP1 = 'content1'
+    GROUP2 = 'content2'
 
 
 class Input(object):
-    GROUP_FST = '(?P<%s>.+)' % Groups.GROUP_FST
-    GROUP_SND = '(?P<%s>.+)' % Groups.GROUP_SND
-    INT_GROUP_FST = '(?P<%s>\d+)' % Groups.GROUP_FST
-    INT_GROUP_SND = '(?P<%s>\d+)' % Groups.GROUP_SND
+    GROUP1 = '(?P<%s>.+)' % Groups.GROUP1
+    GROUP2 = '(?P<%s>.+)' % Groups.GROUP2
+    INT_GROUP1 = '(?P<%s>\d+)' % Groups.GROUP1
+    INT_GROUP2 = '(?P<%s>\d+)' % Groups.GROUP2
 
 
 def _regex_begin_end(prepare_function):
@@ -23,17 +23,17 @@ def _regex_begin_end(prepare_function):
 
 @_regex_begin_end
 def _prepare_default(pattern):
-    return pattern % Input.GROUP_FST
+    return pattern % Input.GROUP1
 
 
 @_regex_begin_end
 def _prepare_group(pattern):
-    return pattern % (Input.GROUP_FST, Input.INT_GROUP_SND)
+    return pattern % (Input.GROUP1, Input.INT_GROUP2)
 
 
 @_regex_begin_end
 def _prepare_params(pattern):
-    return pattern % (Input.GROUP_FST, Input.GROUP_SND)
+    return pattern % (Input.GROUP1, Input.GROUP2)
 
 
 class RegexPatterns(object):
