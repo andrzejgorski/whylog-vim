@@ -61,7 +61,6 @@ class InputMessages(object):
             )
             output.add_commented(parser.pattern)
             for group in six.iterkeys(parser.groups):
-            :x
                 output.add_commented(
                     ParserOutputs.GROUP_CONVERTER %
                     (group, parser.groups[group].converter, parser.groups[group].content)
