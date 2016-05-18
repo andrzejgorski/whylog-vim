@@ -26,7 +26,9 @@ class InputMessages(object):
         cls._add_message_prefix(ouptut, WindowTypes.INPUT)
         output.add_commented(Messages.LOGTYPE)
         output.add_commented(ParserOutputs.LINE_CONTENT % (parser._id, parser.line_content))
-        output.add_commented(ParserOutputs.META % (parser.line_resource_location, parser.line_offset))
+        output.add_commented(
+            ParserOutputs.META % (parser.line_resource_location, parser.line_offset)
+        )
         output.add_commented(ENDING)
         return output
 
@@ -36,11 +38,15 @@ class InputMessages(object):
         cls._add_message_prefix(ouptut, WindowTypes.INPUT)
         output.add_commented(Messages.PRIMARY_KEY)
         output.add_commented(ParserOutputs.LINE_CONTENT % (parser._id, parser.line_content))
-        output.add_commented(ParserOutputs.META % (parser.line_resource_location, parser.line_offset))
+        output.add_commented(
+            ParserOutputs.META % (parser.line_resource_location, parser.line_offset)
+        )
         output.add_commented(parser.pattern)
         for group in six.iterkeys(parser.groups):
-            output.add_commented(ParserOutputs.GROUP_CONVERTER %
-                (group, parser.groups[group].converter, parser.groups[group].content))
+            output.add_commented(
+                ParserOutputs.GROUP_CONVERTER %
+                (group, parser.groups[group].converter, parser.groups[group].content)
+            )
         output.add_commented(ENDING)
         return output
 
@@ -50,10 +56,14 @@ class InputMessages(object):
         cls._add_message_prefix(ouptut, WindowTypes.INPUT)
         for parser in parsers:
             output.add_commented(ParserOutputs.LINE_CONTENT % (parser._id, parser.line_content))
-            output.add_commented(ParserOutputs.META % (parser.line_resource_location, parser.line_offset))
+            output.add_commented(
+                ParserOutputs.META % (parser.line_resource_location, parser.line_offset)
+            )
             output.add_commented(parser.pattern)
             for group in parser.groups.keys():
-                output.add_commented(ParserOutputs.GROUP_CONVERTER %
-                    (group, parser.groups[group].converter, parser.groups[group].content))
+                output.add_commented(
+                    ParserOutputs.GROUP_CONVERTER %
+                    (group, parser.groups[group].converter, parser.groups[group].content)
+                )
             output.add_commented(Global.EMPTY_LINE)
         return output
