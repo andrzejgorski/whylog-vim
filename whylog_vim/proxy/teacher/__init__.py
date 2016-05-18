@@ -1,3 +1,6 @@
+import vim.error
+import six
+
 from whylog_vim.consts import EditorStates, Messages
 from whylog_vim.output_formater.teacher_formater import TeacherFormater
 from whylog_vim.proxy.teacher.utils import get_next_parser_id
@@ -14,7 +17,7 @@ class TeacherProxy(object):
         front_input = self.editor.get_front_input()
         self.teacher.add_line(get_next_parser_id(), front_input, effect=True)
         self.origin_file_name = self.editor.get_current_filename()
-        print(Messages.ADDED_EFFECT)
+        six.print_(Messages.ADDED_EFFECT)
 
     def add_cause(self):
         front_input = self.editor.get_front_input()
@@ -27,9 +30,6 @@ class TeacherProxy(object):
         self.output.call_button(self.editor.get_line_number())
         if self.main_proxy.get_state() == EditorStates.TEACHER:
             self._return_cursor_to_position()
-
-    def set_read_function(self, read_function):
-        self.read_function = read_function
 
     def read_input(self):
         if self.read_function():
@@ -51,10 +51,7 @@ class TeacherProxy(object):
     def _return_cursor_to_position(self):
         try:
             self.editor.go_to_offset(self._return_offset)
-        except Exception:
+        except vim.error:
             raise CannotGoToPosition(self._return_offset)
         else:
             self.editor.open_fold()
-
-    def set_return_function(self, return_function):
-        self.return_function = return_function
