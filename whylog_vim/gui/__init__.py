@@ -45,7 +45,7 @@ class VimEditor(object):
             VimUIWrapper.close_current_window()
 
     def get_button_name(self):
-        return get_button_name(VimUIWrapper.get_current_line(), VimUIWrapperer.get_column())
+        return get_button_name(VimUIWrapper.get_current_line(), VimUIWrapper.get_column())
 
     def get_front_input(self):
         """
