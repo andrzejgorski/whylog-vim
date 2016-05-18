@@ -18,7 +18,7 @@ class LogReaderOutput(object):
     def format_query(cls, front_input, query_output):
         output = OutputAggregator()
         cls._format_input_line(output, front_input)
-        if query_output == []:
+        if not query_output:
             output.add_commented(LogReader.EMPTY_OUTPUT)
             output.add_commented(LogReader.EMPTY_OUTPUT_CONTINUE)
 
