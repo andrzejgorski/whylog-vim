@@ -18,3 +18,7 @@ class WindowTypes(object):
     INPUT = 'whylog_input'
     MESSAGE = 'whylog_message'
     CASE = 'whylog_case'
+
+
+class WindowSizes():
+    QUERY_WINDOW = 10
