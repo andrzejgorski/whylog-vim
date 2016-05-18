@@ -1,3 +1,11 @@
+class WindowTypes():
+    QUERY = 'whylog_query_output'
+    TEACHER = 'whylog_teacher'
+    INPUT = 'whylog_input'
+    MESSAGE = 'whylog_message'
+    CASE = 'whylog_case'
+
+
 class Messages(object):
     COMMENT_PREFIX = '# %s'
     TEACHER_HEADER = 'You are using whylog teacher.'
