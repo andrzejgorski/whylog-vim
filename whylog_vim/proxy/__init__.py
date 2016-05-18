@@ -1,2 +1,4 @@
 class WhylogProxy(object):
-    pass
+
+    def __init__(self, editor):
+        pass
