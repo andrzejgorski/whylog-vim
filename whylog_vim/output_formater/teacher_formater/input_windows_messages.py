@@ -1,6 +1,5 @@
 import six
 
-from whylog_vim.output_formater.consts import Global
 from whylog_vim.consts import Messages, ParserOutputs, WindowTypes
 from whylog_vim.output_fromater.output_aggregator import OutputAggregator
 
@@ -44,7 +43,7 @@ class InputMessages(object):
                 ParserOutputs.GROUP_CONVERTER %
                 (group, parser.groups[group].converter, parser.groups[group].content)
             )
-        output.add_commented(Global.EMPTY_LINE)
+        output.add_commented('')
 
     @classmethod
     def get_primary_key_message(cls, parser):
