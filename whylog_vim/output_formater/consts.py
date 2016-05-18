@@ -12,3 +12,4 @@ class TeacherMenu(object):
     VERIFY_BUTTON = '[verify_rule]'
     RETURN_BUTTON = '[return_to_file]'
     SAVE_BUTTON = '[save]'
+    RESULT_HEADER = '=== Investigation Result %s'
