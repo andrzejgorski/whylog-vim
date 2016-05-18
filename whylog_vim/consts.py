@@ -1,4 +1,4 @@
-class WindowTypes():
+class WindowTypes(object):
     QUERY = 'whylog_query_output'
     TEACHER = 'whylog_teacher'
     INPUT = 'whylog_input'
@@ -6,7 +6,7 @@ class WindowTypes():
     CASE = 'whylog_case'
 
 
-class WindowSizes():
+class WindowSizes(object):
     QUERY_WINDOW = 10
 
 

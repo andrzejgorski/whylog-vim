@@ -27,8 +27,10 @@ class OutputAggregator(object):
         try:
             self.buttons[line_number]()
         except KeyError:
-            if self.default_callback_function:
+            try:
                 self.default_callback_function()
+            except AttributeError:
+                pass
 
     def _get_current_line_number(self):
         return len(self.output_lines)
