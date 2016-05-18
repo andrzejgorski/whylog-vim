@@ -3,7 +3,6 @@ class WhylogVimException(Exception):
 
 
 class UnknownAction(WhylogVimException):
-
     def __init__(self, action_type, state):
         self.action_type = action_type
         self.state = state
