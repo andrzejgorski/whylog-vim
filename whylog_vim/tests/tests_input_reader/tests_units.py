@@ -32,8 +32,7 @@ def tests_unit_get_button_name():
 
 
 def create_constraint_text(constraint_type, groups):
-    constraint = []
-    constraint.append(Constraint.TYPE % constraint_type)
+    constraint = [Constraint.TYPE % constraint_type]
     for group in groups:
         group = (get_parser_name(group[0]), group[1])
         constraint.append(Constraint.GROUP % group)
