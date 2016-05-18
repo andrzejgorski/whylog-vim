@@ -38,9 +38,8 @@ class TeacherProxy(object):
 
     def print_teacher(self):
         self.raw_rule = self.teacher.get_rule()
-        # TODO repari it
-        # self.validation = self.teacher.validate()
-        self.output = TeacherFormater.format_rule(self.raw_rule)
+        self.validation = self.teacher.validate()
+        self.output = TeacherFormater.format_rule(self.raw_rule, self.validation)
         self.editor.set_teacher_output(self.output.get_content())
         self.editor.set_syntax_folding()
         self.main_proxy.set_state(EditorStates.TEACHER)
