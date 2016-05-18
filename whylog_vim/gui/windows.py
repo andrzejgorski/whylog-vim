@@ -1,6 +1,5 @@
 import six
 
-from whylog_vim.consts import WindowTypes
 from whylog_vim.gui.exceptions import CannotFindWindowId, CannotSwitchToWindow
 from whylog_vim.gui.files_manager import FilesManager
 from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
@@ -51,7 +50,7 @@ class Window(object):
         raise CannotFindWindowId(self.name)
 
 
-def catch_key_error(funciton):
+def catch_key_error(function):
     def wrapper(window_type, *args, **kwargs):
         try:
             return function(window_type, *args, **kwargs)
