@@ -31,9 +31,9 @@ def tests_unit_get_button_name():
     assert InputReader.get_button_name(line, 34) == None
 
 
-def create_constraint_text(type_, groups):
+def create_constraint_text(constraint_type, groups):
     constraint = []
-    constraint.append(Constraint.TYPE % type_)
+    constraint.append(Constraint.TYPE % constraint_type)
     for group in groups:
         group = (get_parser_name(group[0]), group[1])
         constraint.append(Constraint.GROUP % group)

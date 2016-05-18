@@ -52,8 +52,8 @@ class ParserOutputs(object):
 
 
 class Constraint(object):
-    ADD_BUTTON = '[add_constraint]'
-    DELETE_BUTTON = '[delete_constraint]'
+    ADD_BUTTON = 'add_constraint'
+    DELETE_BUTTON = 'delete_constraint'
     GROUP = 'line: %s, group: %s'
     HEADER = '=== Rule Constraints:'
     PARAM = '%s: %s'
@@ -66,10 +66,11 @@ class LogType(object):
     HOST_PATTERN = 'host pattern: %s'
     PATH_PATTERN = ' path pattern: %s'
     FILE_NAME_MATCHER = 'file name matcher: %s'
-    ADD_BUTTON = '[add_log_type]'
-    CANCEL_BUTTON = '[cancel]'
+    ADD_BUTTON = 'add_log_type'
+    CANCEL_BUTTON = 'cancel'
 
 
 class LineNames(object):
     EFFECT = 'effect'
     CAUSE = 'cause_%s'
+    CAUSE_PREFIX = 6

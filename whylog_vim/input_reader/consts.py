@@ -2,34 +2,38 @@ import re
 from whylog_vim.consts import Constraint, LogType
 
 
+class Groups(object):
+    GROUP_FST = 'content1'
+    GROUP_SND = 'content2'
+
+
 class Input(object):
-    EMPTY_GROUP = '(?P<content>.+)'
-    GROUP1 = '(?P<content1>.+)'
-    GROUP2 = '(?P<content2>.+)'
-    INT_GROUP1 = '(?P<int1>\d+)'
-    INT_GROUP2 = '(?P<int2>\d+)'
+    GROUP_FST = '(?P<%s>.+)' % Groups.GROUP_FST
+    GROUP_SND = '(?P<%s>.+)' % Groups.GROUP_SND
+    INT_GROUP_FST = '(?P<%s>\d+)' % Groups.GROUP_FST
+    INT_GROUP_SND = '(?P<%s>\d+)' % Groups.GROUP_SND
 
 
-def _regex_begin_end(func):
+def _regex_begin_end(prepare_function):
     def wrapper(pattern):
-        return '^' + func(pattern) + '$'
+        return '^' + prepare_function(pattern) + '$'
 
     return wrapper
 
 
 @_regex_begin_end
 def _prepare_default(pattern):
-    return pattern % Input.EMPTY_GROUP
+    return pattern % Input.GROUP_FST
 
 
 @_regex_begin_end
 def _prepare_group(pattern):
-    return pattern % (Input.GROUP1, Input.INT_GROUP2)
+    return pattern % (Input.GROUP_FST, Input.INT_GROUP_SND)
 
 
 @_regex_begin_end
 def _prepare_params(pattern):
-    return pattern % (Input.GROUP1, Input.GROUP2)
+    return pattern % (Input.GROUP_FST, Input.GROUP_SND)
 
 
 class RegexPatterns(object):

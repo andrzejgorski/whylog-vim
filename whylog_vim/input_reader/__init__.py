@@ -3,11 +3,11 @@ import re
 from whylog.constraints import IdenticalConstraint
 from whylog.constraints.const import ConstraintType
 
-from whylog_vim.input_reader.consts import RegexPatterns, ConstraintInput
+from whylog_vim.input_reader.consts import RegexPatterns, ConstraintInput, Groups
 from whylog_vim.utils import get_id_from_name
 
 
-class InputReader():
+class InputReader(object):
     @classmethod
     def filter_comments(cls, content):
         return [line for line in content if not RegexPatterns.COMMENTS.match(line)]
@@ -21,10 +21,10 @@ class InputReader():
 
     @classmethod
     def parse_primary_key_groups(cls, content):
-        return map(int, content[0].split(', '))
+        return [int(group) for group in content[0].split(', ')]
 
 
-class ConstraintReader():
+class ConstraintReader(object):
 
     CONSTRAINTS = {ConstraintType.IDENTICAL: IdenticalConstraint,}
 
@@ -32,10 +32,10 @@ class ConstraintReader():
     def _parse_constraint(cls, lines):
         constr_type = ConstraintInput.TYPE.match(lines[0]).group(1)
         groups = []
-        for line in range(1, len(lines)):
-            match = ConstraintInput.GROUP.match(lines[line])
+        for line in lines[1:]:
+            match = ConstraintInput.GROUP.match(line)
             if match:
-                groups.append((get_id_from_name(match.group('content1')), int(match.group('int2'))))
+                groups.append((get_id_from_name(match.group(Groups.GROUP_FST)), int(match.group(Groups.GROUP_SND))))
             else:
                 break
         else:
@@ -44,5 +44,5 @@ class ConstraintReader():
 
     @classmethod
     def create_constraint(cls, lines):
-        type_, groups, params = cls._parse_constraint(lines)
-        return cls.CONSTRAINTS[type_](groups=groups, param_dict=params)
+        constraint_type, groups, params = cls._parse_constraint(lines)
+        return cls.CONSTRAINTS[constraint_type](groups=groups, param_dict=params)
