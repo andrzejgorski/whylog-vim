@@ -1,6 +1,7 @@
 from whylog_vim.consts import EditorStates, Messages
 from whylog_vim.output_formater.teacher_formater import TeacherFormater
 from whylog_vim.proxy.teacher.utils import get_next_parser_id
+from whylog_vim.proxy.teacher.exceptions import CannotGoToPosition
 
 
 class TeacherProxy(object):
