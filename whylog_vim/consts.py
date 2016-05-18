@@ -35,3 +35,17 @@ class EditorStates(object):
 class ActionTypes(object):
     STANDARD = 'standard action'
     TEACHER = 'teacher action'
+
+
+class ParserOutputs(object):
+    GROUP_CONVERTER = 'group %s: %s, match: %s'
+    COPY_BUTTON = '[copy_line]'
+    DELETE_BUTTON = '[delete_line]'
+    LOG_TYPE = 'log type: %s'
+    MESSAGE_CONTENT = '=== %s: %s'
+    META = 'file: %s, offset: %s'
+    OTHERS_HEADER = '--- Other:'
+    PRIMARY_KEY = 'primary key groups: %s'
+    GUESS_BUTTON = '[guess_regex]'
+    REGEX_HEADER = '--- Regex: %s'
+    LINE_CONTENT = '--- Line %s: %s'
