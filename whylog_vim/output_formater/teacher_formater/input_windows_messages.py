@@ -60,7 +60,8 @@ class InputMessages(object):
                 ParserOutputs.META % (parser.line_resource_location, parser.line_offset)
             )
             output.add_commented(parser.pattern)
-            for group in parser.groups.keys():
+            for group in six.iterkeys(parser.groups):
+            :x
                 output.add_commented(
                     ParserOutputs.GROUP_CONVERTER %
                     (group, parser.groups[group].converter, parser.groups[group].content)
