@@ -8,10 +8,31 @@ class TeacherProxy(object):
         pass
 
     def read_input(self):
-        pass
+        self.read_input_info.load_input()
+        return_function = self.read_input_info.return_function
+        if return_function(self.read_input_info):
+            self.editor.create_teacher_window()
+            self.performer.print_teacher()
+
+            del self.read_input_info
+            self._return_cursor_to_position()
 
     def new_lesson(self):
-        pass
+        self.performer.new_lesson()
 
     def add_cause(self):
-        pass
+        self.performer.add_cause()
+
+    def _set_cursor_position(self):
+        self._return_offset = self.editor.get_offset()
+
+    def _return_cursor_to_position(self):
+        try:
+           self.editor.go_to_offset(self._return_offset)
+        except Exception:
+            raise CannotGoToPosition(self._return_offset)
+        try:
+            self.editor.open_fold()
+        except Exception:
+            # Fold opening error. Nothing to do.
+            pass
