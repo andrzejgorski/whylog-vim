@@ -1,3 +1,6 @@
+from whylog_vim.output_formater.teacher_formater import TeacherFormater
+
+
 class TeacherProxy(object):
     def __init__(self, teacher, editor, main_proxy):
         self.teacher = teacher
@@ -36,10 +39,26 @@ class TeacherProxy(object):
             self._return_cursor_to_position()
 
     def new_lesson(self):
-        self.performer.new_lesson()
+        front_input = self.editor.get_front_input()
+        self.teacher.add_line(next(parsers_ids), front_input, effect=True)
+        self.origin_file_name = self.editor.get_current_filename()
+
+        # TODO Add consts dialoges
+        print '### WHYLOG ### You added line as effect. Select cause and press <F4>.'
 
     def add_cause(self):
-        self.performer.add_cause()
+        front_input = self.editor.get_front_input()
+        self.teacher.add_line(next(parsers_ids), front_input)
+        self.editor.create_teacher_window()
+        self.print_teacher()
+
+    def print_teacher(self):
+        self.raw_rule = self.teacher.get_rule()
+        output = TeacherFormater.format_rule(self.raw_rule)
+        self.output = output
+        self.editor.set_teacher_output(output.get_content())
+        self.editor.set_syntax_folding()
+        self.main_proxy.set_state(EditorStates.TEACHER)
 
     def _set_cursor_position(self):
         self._return_offset = self.editor.get_offset()
@@ -54,9 +73,6 @@ class TeacherProxy(object):
         except Exception:
             # Fold opening error. Nothing to do.
             pass
-
-    def set_output(self, output):
-        self.output = output
 
     def set_return_function(self, return_function):
         self.return_function = return_function
