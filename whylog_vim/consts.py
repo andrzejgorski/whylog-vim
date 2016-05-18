@@ -23,6 +23,7 @@ class Messages(object):
     PRIMARY_KEY = 'This is the content and path of the line:'
     ADDED_EFFECT = '### WHYLOG ### You added line as effect. Select cause and press <F4>.'
 
+
 class EditorStates(object):
     EDITOR_NORMAL = 'editor normal'
     LOG_READER = 'query'
