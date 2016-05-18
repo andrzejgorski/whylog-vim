@@ -11,65 +11,12 @@ from whylog_vim.consts import (
 )
 
 
-#TODO Refactor this module.
-
-
-def get_parser_name(id_):
-    if id_ == 0:
-        return POC.EFFECT_LINE_NAME
-    else:
-        return POC.CAUSE_LINE_NAME % id_
-
-
-def get_log_types_message(parser):
-    result = [Messages.LOGTYPE]
-    result.append(POC.LINE_CONTENT % (parser._id, parser.line_content))
-    result.append(POC.META % (parser.line_resource_location, parser.line_offset))
-    return result
-
-
-def get_primary_key_message(parser):
-    result = [Messages.PRIMARY_KEY]
-    result.append(POC.LINE_CONTENT % (parser._id, parser.line_content))
-    result.append(POC.META % (parser.line_resource_location, parser.line_offset))
-    result.append(parser.pattern)
-    for group in parser.groups.keys():
-        result.append(POC.GROUP_CONVERTER %
-            (group, parser.groups[group].converter, parser.groups[group].content))
-    return result
-
-
-def get_constraint_message(parsers):
-    result = []
-    for parser in parsers:
-        result.append(POC.LINE_CONTENT % (parser._id, parser.line_content))
-        result.append(POC.META % (parser.line_resource_location, parser.line_offset))
-        result.append(parser.pattern)
-        for group in parser.groups.keys():
-            result.append(POC.GROUP_CONVERTER %
-                (group, parser.groups[group].converter, parser.groups[group].content))
-        result.append(TeacherConsts.EMPTY_LINE)
-    return result
-
-
-def to_buttons(elem_list):
-    result = '[%s]' % elem_list[0]
-    for elem in elem_list[1:]:
-        result += '\n[%s]' % elem
-    return result
-
-
 class OutputAgregator():
 
     def __init__(self):
         self.buttons_info = {}
         self.parsers = {}
         self.output_lines = []
-        self.window_type_to_message = {
-            WindowTypes.INPUT: Messages.INPUT_INFO,
-            WindowTypes.CASE: Messages.CASE_INFO,
-            WindowTypes.TEACHER: Messages.CASE_INFO,
-        }
 
     def add(self, element):
         self.output_lines.append(element)
@@ -92,18 +39,6 @@ class OutputAgregator():
 
     def add_commented(self, content):
         self.add(Messages.PREFIX % content)
-
-    def add_message(self, content, window_type=WindowTypes.INPUT):
-        if window_type == WindowTypes.TEACHER:
-            self.add_commented(Messages.TEACHER_HEADER)
-        else:
-            self.add_commented(Messages.INPUT_HEADER)
-        type_message = self.window_type_to_message[window_type]
-        self.add_commented(type_message)
-        for item in content:
-            self.add_commented(item)
-        if window_type == WindowTypes.INPUT:
-            self.add_commented(Messages.ENDING)
 
 
 class ParserFormater():
