@@ -1,6 +1,6 @@
 from whylog import LineSource, FrontInput
 
-from whylog_vim.input_reader.teacher_reader import get_button_name, filter_comments
+from whylog_vim.input_reader import get_button_name, filter_comments
 from whylog_vim.consts import WindowTypes, WindowSizes
 from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
 from whylog_vim.gui.windows import WhylogWindowManager
