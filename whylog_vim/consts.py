@@ -49,6 +49,3 @@ class ParserOutputs(object):
     GUESS_BUTTON = '[guess_regex]'
     REGEX_HEADER = '--- Regex: %s'
     LINE_CONTENT = '--- Line %s: %s'
-
-    EFFECT_LINE_NAME = 'effect'
-    CAUSE_LINE_NAME = 'cause_%s'
