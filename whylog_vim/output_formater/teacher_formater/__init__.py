@@ -26,12 +26,7 @@ class TeacherFormater(TeacherProxyUsingFromater):
         causes_lines = rule.parsers.keys()
         causes_lines.remove(effect_id)
         for line_id in causes_lines:
-            self.parser.format(
-                    output,
-                    rule.parsers[line_id],
-                    line_id,
-                    effect=False,
-                )
+            self.parser.format(output, rule.parsers[line_id], line_id, effect=False,)
 
     def format_rule(self, rule_intent, message=None):
         output = OutputAgregator()
