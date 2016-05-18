@@ -17,18 +17,18 @@ class InputMessages(object):
             output.add_commented(Messages.TEACHER_HEADER)
         else:
             output.add_commented(Messages.INPUT_HEADER)
-        output.add_commented(TYPE_TO_MESSGAE[window_type])
+        output.add_commented(cls.TYPE_TO_MESSGAE[window_type])
 
     @classmethod
     def get_log_types_message(cls, parser):
         output = OutputAggregator()
-        cls._add_message_prefix(ouptut, WindowTypes.INPUT)
+        cls._add_message_prefix(output, WindowTypes.INPUT)
         output.add_commented(Messages.LOGTYPE)
         output.add_commented(ParserOutputs.LINE_CONTENT % (parser._id, parser.line_content))
         output.add_commented(
             ParserOutputs.META % (parser.line_resource_location, parser.line_offset)
         )
-        output.add_commented(ENDING)
+        output.add_commented('')
         return output
 
     @classmethod
@@ -48,7 +48,7 @@ class InputMessages(object):
     @classmethod
     def get_primary_key_message(cls, parser):
         output = OutputAggregator()
-        cls._add_message_prefix(ouptut, WindowTypes.INPUT)
+        cls._add_message_prefix(output, WindowTypes.INPUT)
         output.add_commented(Messages.PRIMARY_KEY)
         cls._add_parser(output, parser)
         return output
@@ -56,7 +56,7 @@ class InputMessages(object):
     @classmethod
     def get_constraint_message(cls, parsers):
         output = OutputAggregator()
-        cls._add_message_prefix(ouptut, WindowTypes.INPUT)
+        cls._add_message_prefix(output, WindowTypes.INPUT)
         for parser in parsers:
             cls._add_parser(output, parser)
         return output
