@@ -11,7 +11,8 @@ class WhylogProxy(object):
         log_reader, teacher_generator = whylog_factory()
         self.teacher_generator = teacher_generator
         self.log_reader = LogReaderProxy(editor, log_reader)
-        self.new_teacher()
+        self.teacher = TeacherProxy(self.teacher_generator(), self.editor, self)
+        self._state = States.EDITOR_NORMAL
 
         self.action_handler = {
             States.EDITOR_NORMAL: (self.log_reader.new_query, States.LOG_READER),
