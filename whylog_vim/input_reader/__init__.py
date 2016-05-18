@@ -35,8 +35,15 @@ class ConstraintReader(object):
         for line in lines[1:]:
             match = ConstraintInput.GROUP.match(line)
             if match:
-                groups.append((get_id_from_name(match.group(Groups.GROUP_FST)), int(match.group(
-                    Groups.GROUP_SND))))
+                groups.append(
+                    (
+                        get_id_from_name(match.group(Groups.GROUP_FST)), int(
+                            match.group(
+                                Groups.GROUP_SND
+                            )
+                        )
+                    )
+                )
             else:
                 break
         else:
