@@ -13,7 +13,7 @@ class WindowContext(object):
 
 
 class Window(object):
-    def __init__(self, name, content=None, modifiable=False, splited_window_size=None):
+    def __init__(self, name, content, modifiable=False, splited_window_size=None):
         assert content
         self.context = WindowContext()
         if splited_window_size is None:
