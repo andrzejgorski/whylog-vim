@@ -1,7 +1,8 @@
 from whylog_vim.consts import WindowTypes, Messages
 from whylog_vim.gui.exceptions import (
-    CannotCloseWindow, CannotGetWindowContent, CannotFindWindowId,
-    CannotSetWindowContent, CannotSwitchToWindow)
+    CannotCloseWindow, CannotGetWindowContent, CannotFindWindowId, CannotSetWindowContent,
+    CannotSwitchToWindow
+)
 from whylog_vim.gui.files_manager import FilesManager
 from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
 from whylog_vim.const import Messages
@@ -54,12 +55,7 @@ class Window(object):
 
 class WhylogWindowManager(object):
 
-    whylog_windows = [
-        WindowTypes.QUERY,
-        WindowTypes.TEACHER,
-        WindowTypes.INPUT,
-        WindowTypes.CASE,
-    ]
+    whylog_windows = [WindowTypes.QUERY, WindowTypes.TEACHER, WindowTypes.INPUT, WindowTypes.CASE,]
 
     def __init__(self):
         self.windows = dict()
