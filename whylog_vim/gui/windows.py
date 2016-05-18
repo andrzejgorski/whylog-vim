@@ -1,6 +1,7 @@
 from whylog_vim.gui.exceptions import CannotFindWindowId
 from whylog_vim.gui.files_manager import FilesManager
 from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
+from whylog_vim.const import Messages
 
 
 class WindowContext(object):
@@ -14,7 +15,7 @@ class WindowContext(object):
 
 class Window(object):
     def __init__(self, name, content=None, modifiable=False, splited_window_size=None):
-        content = content or ''
+        content = content or Messages.DEFAULT_WINDOW
         self.context = WindowContext()
         if splited_window_size is None:
             VimUIWrapper.open_file_at_window(name)
