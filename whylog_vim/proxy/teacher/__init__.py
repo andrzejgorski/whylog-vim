@@ -5,6 +5,24 @@ class TeacherProxy(object):
         self.main_proxy = main_proxy
 
     def handle_menu_signal(self):
+        self._set_cursor_position()
+        line_number = self.editor.get_line_number()
+        meta = self.output.get_button_meta(line_number)
+        try:
+            func = meta[BMC.FUNCTION]
+        except KeyError:
+            try:
+                func = self.buttons[self.editor.get_button_name()]
+            except KeyError:
+                print 'This line is not editable'
+            else:
+                func(**meta)
+        else:
+            del meta[BMC.FUNCTION]
+            func(**meta)
+
+        if self.main_proxy.get_state() == EditorStates.TEACHER:
+            self._return_cursor_to_position()
         pass
 
     def read_input(self):
