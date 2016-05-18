@@ -1,4 +1,5 @@
 from whylog_vim.output_formater.teacher_formater import TeacherFormater
+from whylog_vim.proxy.teacher.utils import get_next_parser_id
 
 
 class TeacherProxy(object):
@@ -40,7 +41,7 @@ class TeacherProxy(object):
 
     def new_lesson(self):
         front_input = self.editor.get_front_input()
-        self.teacher.add_line(next(parsers_ids), front_input, effect=True)
+        self.teacher.add_line(get_next_parser_id(), front_input, effect=True)
         self.origin_file_name = self.editor.get_current_filename()
 
         # TODO Add consts dialoges
@@ -48,7 +49,7 @@ class TeacherProxy(object):
 
     def add_cause(self):
         front_input = self.editor.get_front_input()
-        self.teacher.add_line(next(parsers_ids), front_input)
+        self.teacher.add_line(get_next_parser_id(), front_input)
         self.editor.create_teacher_window()
         self.print_teacher()
 
