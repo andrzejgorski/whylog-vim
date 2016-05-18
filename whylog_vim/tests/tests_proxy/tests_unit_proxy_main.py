@@ -11,7 +11,8 @@ class UnitTestWhylogProxy(TestCase):
     def setUp(self):
         mock_editor = MagicMock()
         mock_editor.get_front_input.return_value = FrontInput(
-                1, 'line content', LineSource('host', 'path'))  # yapf:disable
+            1, 'line content', LineSource('host', 'path')
+        )
         self.whylog_proxy = WhylogProxy(mock_editor)
 
     def tests_unit_check_log_reader_states_of_whylog_proxy(self):
