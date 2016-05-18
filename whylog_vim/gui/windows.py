@@ -57,11 +57,11 @@ def catch_key_error(funciton):
             return function(window_type, *args, **kwargs)
         except KeyError:
             raise CannotSwitchToWindow(window_type)
+
     return wrapper
 
 
 class WhylogWindowManager(object):
-
     def __init__(self):
         self.windows = dict()
 
