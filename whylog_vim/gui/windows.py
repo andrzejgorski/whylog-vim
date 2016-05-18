@@ -101,4 +101,4 @@ class WhylogWindowManager(object):
         try:
             self.windows[window_type].set_content(content)
         except KeyError:
-            CannotSetWindowContent(window_type)
+            raise CannotSetWindowContent(window_type)
