@@ -2,8 +2,10 @@ try:
     import vim.error
 except:
     import vim
+
     class error(Exception):
         pass
+
     vim.error = error
 
 import six
