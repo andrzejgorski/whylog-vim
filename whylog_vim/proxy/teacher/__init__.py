@@ -1,3 +1,4 @@
+from whylog_vim.consts import EditorStates
 from whylog_vim.output_formater.teacher_formater import TeacherFormater
 from whylog_vim.proxy.teacher.utils import get_next_parser_id
 
