@@ -2,7 +2,7 @@ from whylog import LogReader, FrontInput, LineSource
 from whylog_vim.output_formater.log_reader_formater import LogReaderOutput
 
 
-class LogReaderProxy():
+class LogReaderProxy(object):
     def __init__(self, editor, log_reader):
         self.editor = editor
         self._log_reader = log_reader
