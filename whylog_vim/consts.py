@@ -1,3 +1,15 @@
+class WindowTypes(object):
+    QUERY = 'whylog_query_output'
+    TEACHER = 'whylog_teacher'
+    INPUT = 'whylog_input'
+    MESSAGE = 'whylog_message'
+    CASE = 'whylog_case'
+
+
+class WindowSizes(object):
+    QUERY_WINDOW = 10
+
+
 class Messages(object):
     COMMENT_PREFIX = '# %s'
     TEACHER_HEADER = 'You are using whylog teacher.'
@@ -9,16 +21,31 @@ class Messages(object):
     REGEX = 'This is the content of the line:'
     LOGTYPE = 'This is the content and path of the line:'
     PRIMARY_KEY = 'This is the content and path of the line:'
-    DEFAULT_WINDOW = 'This is Whylog Window. Something goes wrong. This message shouldn\' appear.'
 
 
-class WindowTypes(object):
-    QUERY = 'whylog_query_output'
-    TEACHER = 'whylog_teacher'
-    INPUT = 'whylog_input'
-    MESSAGE = 'whylog_message'
-    CASE = 'whylog_case'
+class EditorStates(object):
+    EDITOR_NORMAL = 'editor normal'
+    LOG_READER = 'query'
+    TEACHER = 'teacher menu'
+    ADD_CAUSE = 'add cause'
+    TEACHER_INPUT = 'input window'
+    EFFECT_ADDED = 'added effect'
 
 
-class WindowSizes():
-    QUERY_WINDOW = 10
+class ActionTypes(object):
+    STANDARD = 'standard action'
+    TEACHER = 'teacher action'
+
+
+class ParserOutputs(object):
+    GROUP_CONVERTER = 'group %s: %s, match: %s'
+    COPY_BUTTON = '[copy_line]'
+    DELETE_BUTTON = '[delete_line]'
+    LOG_TYPE = 'log type: %s'
+    MESSAGE_CONTENT = '=== %s: %s'
+    META = 'file: %s, offset: %s'
+    OTHERS_HEADER = '--- Other:'
+    PRIMARY_KEY = 'primary key groups: %s'
+    GUESS_BUTTON = '[guess_regex]'
+    REGEX_HEADER = '--- Regex: %s'
+    LINE_CONTENT = '--- Line %s: %s'
