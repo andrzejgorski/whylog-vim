@@ -1,3 +1,11 @@
+try:
+    import vim.error
+except:
+    import vim
+    class error(Exception):
+        pass
+    vim.error = error
+
 import six
 
 from whylog_vim.consts import EditorStates, Messages
@@ -47,5 +55,8 @@ class TeacherProxy(object):
         self._return_offset = self.editor.get_offset()
 
     def _return_cursor_to_position(self):
-        self.editor.go_to_offset(self._return_offset)
+        try:
+            self.editor.go_to_offset(self._return_offset)
+        except vim.error:
+            raise CannotGoToPosition(self._return_offset)
         self.editor.open_fold()
