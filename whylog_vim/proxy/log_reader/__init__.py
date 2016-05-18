@@ -3,7 +3,6 @@ from whylog_vim.output_formater.log_reader_formater import LogReaderOutput
 
 
 class LogReaderProxy():
-
     def __init__(self, editor, log_reader):
         self.editor = editor
         self._log_reader = log_reader
@@ -18,7 +17,7 @@ class LogReaderProxy():
 
     def _handle_signal_on_output(self):
         current_line = self.editor.get_current_line()
-        match = self.input_reader.match_output_line(current_line)
+        match = False
         if match is not False:
             file_name, offset = match
             self.editor.go_to_file(file_name, offset)
