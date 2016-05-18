@@ -37,4 +37,18 @@ class ActionTypes(object):
     TEACHER = 'teacher action'
 
 
-class ParserOutputs():
+class ParserOutputs(object):
+    GROUP_CONVERTER = 'group %s: %s, match: %s'
+    COPY_BUTTON = '[copy_line]'
+    DELETE_BUTTON = '[delete_line]'
+    LOG_TYPE = 'log type: %s'
+    MESSAGE_CONTENT = '=== %s: %s'
+    META = 'file: %s, offset: %s'
+    OTHERS_HEADER = '--- Other:'
+    PRIMARY_KEY = 'primary key groups: %s'
+    GUESS_BUTTON = '[guess_regex]'
+    REGEX_HEADER = '--- Regex: %s'
+    LINE_CONTENT = '--- Line %s: %s'
+
+    EFFECT_LINE_NAME = 'effect'
+    CAUSE_LINE_NAME = 'cause_%s'
