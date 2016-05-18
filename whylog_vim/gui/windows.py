@@ -1,3 +1,5 @@
+import six
+
 from whylog_vim.consts import WindowTypes
 from whylog_vim.gui.files_manager import FilesManager
 from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
@@ -55,7 +57,7 @@ class Window(object):
 
 class WhylogWindowManager(object):
 
-    whylog_windows = [WindowTypes.QUERY, WindowTypes.TEACHER, WindowTypes.INPUT, WindowTypes.CASE,]
+    whylog_windows = (WindowTypes.QUERY, WindowTypes.TEACHER, WindowTypes.INPUT, WindowTypes.CASE)
 
     def __init__(self):
         self.windows = dict()
@@ -77,12 +79,9 @@ class WhylogWindowManager(object):
             raise CannotSwitchToWindow(window_type)
 
     def get_window_id(self, window_type):
-        try:
-            window_id = self.windows[window_type].get_window_id()
-        except KeyError:
-            return None
-        else:
-            return window_id
+        window = self.windows.get(window_type)
+        if window is not None:
+            return window.get_window_id()
 
     def close_window(self, window_type):
         try:
@@ -96,7 +95,7 @@ class WhylogWindowManager(object):
         return not self.windows
 
     def get_windows_ids(self):
-        return [window.get_window_id() for window in self.windows.values()]
+        return [window.get_window_id() for window in six.itervalues(self.windows)]
 
     def set_content(self, window_type, content):
         try:
