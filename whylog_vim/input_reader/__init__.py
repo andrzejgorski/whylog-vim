@@ -15,7 +15,7 @@ class InputReader(object):
     @classmethod
     def get_button_name(cls, line, offset):
         offset -= 1
-        for match in re.finditer(RegexPatterns.BUTTON, line):
+        for match in RegexPatterns.BUTTON.finditer(line):
             if offset >= match.start(0) and offset < match.end(0):
                 return match.group(0)[1:-1]
 
