@@ -12,21 +12,13 @@ class LogReaderProxy():
         query_output = self._log_reader.get_causes(front_input)
 
         self.output = LogReaderOutput.format_query(front_input, query_output)
+        self.output.set_default_callback_function(self.editor.close_query_window)
         self.editor.create_query_window(self.output.get_content())
         self.editor.go_to_query_window()
 
-    def _handle_signal_on_output(self):
-        current_line = self.editor.get_current_line()
-        match = False
-        if match is not False:
-            file_name, offset = match
-            self.editor.go_to_file(file_name, offset)
-        else:
-            self.editor.close_query_window()
-
     def handle_action(self):
         if self.editor.cursor_at_whylog_windows():
-            self._handle_signal_on_output()
+            self.output.call_button(self.editor.get_current_line())
         else:
             self.editor.close_query_window()
 

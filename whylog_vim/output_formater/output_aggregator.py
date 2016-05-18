@@ -20,11 +20,15 @@ class OutputAggregator(object):
         line = line or self._get_current_line_number()
         self.buttons[line] = callback_function
 
+    def set_default_callback_function(self, default_callback_function):
+        self.default_callback_function = default_callback_function
+
     def call_button(self, line_number):
         try:
             self.buttons[line_number]()
         except KeyError:
-            pass
+            if self.default_callback_function:
+                self.default_callback_function()
 
     def _get_current_line_number(self):
         return len(self.output_lines)
