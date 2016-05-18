@@ -1,4 +1,6 @@
-from whylog_vim.gui.exceptions import CannotFindWindowId
+import six
+
+from whylog_vim.gui.exceptions import CannotFindWindowId, CannotSwitchToWindow
 from whylog_vim.gui.files_manager import FilesManager
 from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
 
@@ -46,3 +48,49 @@ class Window(object):
         if window_id:
             return window_id
         raise CannotFindWindowId(self.name)
+
+
+def catch_key_error(function):
+    def wrapper(window_type, *args, **kwargs):
+        try:
+            return function(window_type, *args, **kwargs)
+        except KeyError:
+            raise CannotSwitchToWindow(window_type)
+
+    return wrapper
+
+
+class WhylogWindowManager(object):
+    def __init__(self):
+        self.windows = dict()
+
+    def create_window(self, window_type, content, modifiable=False, size=None):
+        self.windows[window_type] = Window(window_type, content, modifiable, size)
+
+    @catch_key_error
+    def get_window_content(self, window_type):
+        return self.windows[window_type].get_content()
+
+    @catch_key_error
+    def go_to_window(self, window_type):
+        VimUIWrapper.go_to_window(self.windows[window_type].get_window_id())
+
+    def get_window_id(self, window_type):
+        window = self.windows.get(window_type)
+        if window is not None:
+            return window.get_window_id()
+
+    def close_window(self, window_type):
+        self.go_to_window(window_type)
+        VimUIWrapper.close_current_window()
+        del self.windows[window_type]
+
+    def are_windows_closed(self):
+        return not self.windows
+
+    def get_windows_ids(self):
+        return [window.get_window_id() for window in six.itervalues(self.windows)]
+
+    @catch_key_error
+    def set_content(self, window_type, content):
+        self.windows[window_type].set_content(content)

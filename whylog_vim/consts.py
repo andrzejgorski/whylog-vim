@@ -50,3 +50,28 @@ class ParserOutputs(object):
     GUESS_BUTTON = '[guess_regex]'
     REGEX_HEADER = '--- Regex: %s'
     LINE_CONTENT = '--- Line %s: %s'
+
+
+class Constraint(object):
+    ADD_BUTTON = 'add_constraint'
+    DELETE_BUTTON = 'delete_constraint'
+    GROUP = 'line: %s, group: %s'
+    HEADER = '=== Rule Constraints:'
+    PARAM = '%s: %s'
+    PARAMS_HEADER = 'params:'
+    TYPE = '--- Constraint: %s'
+
+
+class LogType(object):
+    NAME = '--- name: %s'
+    HOST_PATTERN = 'host pattern: %s'
+    PATH_PATTERN = ' path pattern: %s'
+    FILE_NAME_MATCHER = 'file name matcher: %s'
+    ADD_BUTTON = 'add_log_type'
+    CANCEL_BUTTON = 'cancel'
+
+
+class LineNames(object):
+    EFFECT = 'effect'
+    CAUSE = 'cause_%s'
+    CAUSE_PREFIX = 6
