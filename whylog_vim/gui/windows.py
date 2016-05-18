@@ -1,7 +1,8 @@
 from whylog_vim.consts import Messages, WindowTypes
-from whylog_vim.gui.exceptions import (CannotCloseWindow, CannotFindWindowId,
-                                       CannotGetWindowContent, CannotSetWindowContent,
-                                       CannotSwitchToWindow)
+from whylog_vim.gui.exceptions import (  # isort:skip
+    CannotCloseWindow, CannotFindWindowId, CannotGetWindowContent, CannotSetWindowContent,
+    CannotSwitchToWindow
+)
 from whylog_vim.gui.files_manager import FilesManager
 from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
 
