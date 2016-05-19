@@ -14,5 +14,5 @@ def tests_no_query_output():
         LogReader.ITEM, front_input.line_source, front_input.offset
     )
     assert content[1] == front_input.line_content
-    assert content[2] == '# ' + LogReader.EMPTY_OUTPUT
-    assert content[3] == '# ' + LogReader.EMPTY_OUTPUT_CONTINUE
+    assert content[3] == '# ' + LogReader.EMPTY_OUTPUT
+    assert content[4] == '# ' + LogReader.EMPTY_OUTPUT_CONTINUE

@@ -3,6 +3,8 @@ class LogReader(object):
     LINE_HEADER = '--- %s [%s offset %s]:'
     EMPTY_OUTPUT = 'There is no cause of this line in config.'
     EMPTY_OUTPUT_CONTINUE = 'To add new rules press WhylogTeach (<F4> by default).'
+    CONSTRAINT_LINKAGE = '--- constraints due to %s'
+    RESULT_HEADER = '=== Investigation Result %s'
 
 
 class TeacherMenu(object):
