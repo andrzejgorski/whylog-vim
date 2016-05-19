@@ -18,6 +18,10 @@ class LogReaderOutput(object):
     def format_investigation_result(cls, output, investigation_result):
         for line in investigation_result.lines:
             cls._format_input_line(output, line)
+        if investigation_result.constraints:
+            output.add(LogReader.CONSTRAINT_LINKAGE % investigation_result.constraints_linkage)
+            for constraint in investigation_result.constraints:
+                output.add(str(constraint))
 
     @classmethod
     def format_query(cls, front_input, query_output):
