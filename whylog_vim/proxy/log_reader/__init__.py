@@ -15,7 +15,7 @@ class LogReaderProxy(object):
         self.editor.go_to_query_window()
 
     def handle_action(self):
-        if self.editor.cursor_at_whylog_windows():
+        if self.editor.is_cursor_at_whylog_windows():
             self.output.call_button(self.editor.get_current_line())
         else:
             self.editor.close_query_window()
