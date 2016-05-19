@@ -21,6 +21,7 @@ class TeacherProxy(object):
         self.teacher = teacher
         self.editor = editor
         self.main_proxy = main_proxy
+        self.formater = TeacherFormater(self)
 
     def new_lesson(self):
         front_input = self.editor.get_front_input()
@@ -48,7 +49,7 @@ class TeacherProxy(object):
 
     def print_teacher(self):
         self.raw_rule = self.teacher.get_rule()
-        self.output = TeacherFormater.format_rule(self.raw_rule, None)
+        self.output = self.formater.format_rule(self.raw_rule, None)
         # here should be the result from validate method of Teacher
         self.editor.set_teacher_output(self.output.get_content())
         self.editor.set_syntax_folding()
