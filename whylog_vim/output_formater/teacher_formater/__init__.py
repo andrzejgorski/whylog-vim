@@ -5,6 +5,7 @@ from whylog_vim.consts import WindowTypes
 from whylog_vim.output_formater.consts import TeacherMenu
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
 from whylog_vim.consts import ParserOutputs
+from whylog_vim.utils import get_parser_name
 
 
 class TeacherProxyUsingFromater(object):
@@ -20,7 +21,7 @@ class ParserFormater(TeacherProxyUsingFromater):
         self._format_regexes(output, parser)
         self._format_line_others(output, parser)
         output.add('')
-        output.add(TeacherConsts.END_BRACKET)
+        output.add(TeacherMenu.END_BRACKET)
 
     def _format_line_info(self, output, parser, effect):
         output.add(ParserOutputs.MESSAGE_CONTENT % (get_parser_name(parser._id), parser.line_content))
@@ -37,7 +38,7 @@ class ParserFormater(TeacherProxyUsingFromater):
         output.add(parser.pattern)
         output.create_button(partial(self.teacher_proxy.edit_regex, parser._id))
         output.add(ParserOutputs.GUESS_BUTTON)
-        output.create_button(partial(self.teacher_proxy, parser._id))
+        output.create_button(partial(self.teacher_proxy.guess_regex, parser._id))
         output.add('')
         self._format_converters(output, parser.groups, parser._id)
         output.add('')
@@ -45,15 +46,15 @@ class ParserFormater(TeacherProxyUsingFromater):
     def _format_line_others(self, output, parser):
         output.add(ParserOutputs.OTHERS_HEADER)
         output.add(ParserOutputs.LOG_TYPE % parser.log_type_name)
-        output.create_button(partial(self.teacher_proxy, parser._id, parser.log_type_name))
+        output.create_button(partial(self.teacher_proxy.edit_log_type, parser._id, parser.log_type_name))
         output.add(ParserOutputs.PRIMARY_KEY % parser.primary_key_groups)
-        output.create_button(partial(self.teacher_performer.edit_primary_key_groups, parser._id, parser.primary_key_groups)
+        output.create_button(partial(self.teacher_proxy.edit_primary_key_groups, parser._id, parser.primary_key_groups))
 
-    def _format_converters_(self, output, groups, parser_id):
+    def _format_converters(self, output, groups, parser_id):
         for group in groups.keys():
             output.add(POC.GROUP_CONVERTER %
                 (group, groups[group].converter, groups[group].content))
-            output.create_button(partial(self.teacher_proxy.edit_group, parser_id,  group))
+            output.create_button(partial(self.teacher_proxy.edit_converter, parser_id, group))
 
 
 class ConstraintsFormater(TeacherProxyUsingFromater):

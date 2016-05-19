@@ -66,3 +66,24 @@ class TeacherProxy(object):
         except Exception:
             # tryied to open fold but cannot.
             pass
+
+    def edit_line_content(self, parser_id):
+        pass
+
+    def delete_parser(self, parser_id):
+        pass
+
+    def edit_regex(self, parser_id):
+        pass
+
+    def guess_regex(self, parser_id):
+        pass
+
+    def edit_converter(self, parser_id, group):
+        pass
+
+    def edit_log_type(self, parser_id):
+        pass
+
+    def edit_primary_key_groups(self, parser):
+        pass
