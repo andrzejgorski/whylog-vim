@@ -88,8 +88,8 @@ class TeacherProxy(object):
     def edit_primary_key_groups(self, parser):
         pass
 
-    def add_constraint(self):
+    def add_constraint(self, constraint):
         pass
 
-    def delete_constraint(self):
+    def delete_constraint(self, constraint):
         pass
