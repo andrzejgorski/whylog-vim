@@ -1,10 +1,9 @@
 import six
 from functools import partial
 
-from whylog_vim.consts import WindowTypes, ConstraintsOutputs
+from whylog_vim.consts import ConstraintsOutputs, ParserOutputs, WindowTypes
 from whylog_vim.output_formater.consts import TeacherMenu
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
-from whylog_vim.consts import ParserOutputs
 from whylog_vim.utils import get_parser_name
 
 
