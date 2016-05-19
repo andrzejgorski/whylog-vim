@@ -111,5 +111,5 @@ class VimEditor(object):
     def get_line_number(self):
         return VimUIWrapper.get_line_number()
 
-    def get_offset(self):
-        return VimUIWrapper.get_offset()
+    def get_line_offset(self):
+        return VimUIWrapper.get_line_offset()
