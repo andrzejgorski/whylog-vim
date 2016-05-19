@@ -24,7 +24,9 @@ class ParserFormater(TeacherProxyUsingFromater):
         output.add(TeacherMenu.END_BRACKET)
 
     def _format_line_info(self, output, parser, effect):
-        output.add(ParserOutputs.MESSAGE_CONTENT % (get_parser_name(parser._id), parser.line_content))
+        output.add(
+            ParserOutputs.MESSAGE_CONTENT % (get_parser_name(parser._id), parser.line_content)
+        )
         output.create_button(partial(self.teacher_proxy.edit_line_content, parser._id))
         output.add(ParserOutputs.META % (parser.line_resource_location, parser.line_offset))
         if not effect:
@@ -46,14 +48,24 @@ class ParserFormater(TeacherProxyUsingFromater):
     def _format_line_others(self, output, parser):
         output.add(ParserOutputs.OTHERS_HEADER)
         output.add(ParserOutputs.LOG_TYPE % parser.log_type_name)
-        output.create_button(partial(self.teacher_proxy.edit_log_type, parser._id, parser.log_type_name))
+        output.create_button(
+            partial(
+                self.teacher_proxy.edit_log_type, parser._id, parser.log_type_name
+            )
+        )
         output.add(ParserOutputs.PRIMARY_KEY % parser.primary_key_groups)
-        output.create_button(partial(self.teacher_proxy.edit_primary_key_groups, parser._id, parser.primary_key_groups))
+        output.create_button(
+            partial(
+                self.teacher_proxy.edit_primary_key_groups, parser._id, parser.primary_key_groups
+            )
+        )
 
     def _format_converters(self, output, groups, parser_id):
         for group in groups.keys():
-            output.add(POC.GROUP_CONVERTER %
-                (group, groups[group].converter, groups[group].content))
+            output.add(
+                ParserOutputs.GROUP_CONVERTER %
+                (group, groups[group].converter, groups[group].content)
+            )
             output.create_button(partial(self.teacher_proxy.edit_converter, parser_id, group))
 
 
