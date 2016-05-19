@@ -32,7 +32,6 @@ class TeacherProxy(object):
     def add_cause(self):
         front_input = self.editor.get_front_input()
         self.teacher.add_line(get_next_parser_id(), front_input)
-        self.editor.create_teacher_window()
         self.print_teacher()
 
     def handle_menu_signal(self):
@@ -43,24 +42,27 @@ class TeacherProxy(object):
 
     def read_input(self):
         if self.read_function():
-            self.editor.create_teacher_window()
-            self.performer.print_teacher()
+            self.print_teacher()
             self._return_cursor_to_position()
 
     def print_teacher(self):
         self.raw_rule = self.teacher.get_rule()
         self.output = self.formater.format_rule(self.raw_rule, None)
         # here should be the result from validate method of Teacher
-        self.editor.set_teacher_output(self.output.get_content())
+        self.editor.create_teacher_window(self.output.get_content())
         self.editor.set_syntax_folding()
         self.main_proxy.set_state(EditorStates.TEACHER)
 
     def _set_cursor_position(self):
-        self._return_offset = self.editor.get_offset()
+        self._return_offset = self.editor.get_line_offset()
 
     def _return_cursor_to_position(self):
         try:
             self.editor.go_to_offset(self._return_offset)
         except vim.error:
             raise CannotGoToPosition(self._return_offset)
-        self.editor.open_fold()
+        try:
+            self.editor.open_fold()
+        except Exception:
+            # tryied to open fold but cannot.
+            pass
