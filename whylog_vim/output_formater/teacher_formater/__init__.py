@@ -7,11 +7,11 @@ from whylog_vim.output_formater.output_aggregator import OutputAggregator
 
 class TeacherProxyUsingFromater(object):
     def __init__(self, teacher_proxy):
-        self.parser = ParserFormater(teacher_proxy)
+        self.teacher_proxy = teacher_proxy
 
 
 class ParserFormater(TeacherProxyUsingFromater):
-    def format_parser(self, output, parser_id, effect=True):
+    def format_parser(self, output, parser, parser_id, effect=True):
         pass
 
 
@@ -29,9 +29,9 @@ class TeacherFormater(TeacherProxyUsingFromater):
     def _format_causes(self, output, rule, effect_id):
         for line_id in six.iterkeys(rule.parsers):
             if line_id != effect_id:
-                self.parser.format(output, rule.parsers[line_id], line_id, effect=False,)
+                self.parser.format_parser(output, rule.parsers[line_id], line_id, effect=False,)
 
-    def format_rule(self, rule_intent, message=None):
+    def format_rule(self, rule_intent, validation_result):
         output = OutputAggregator()
         output.add_commented(WindowTypes.TEACHER)
         effect_id = rule_intent.effect_id
