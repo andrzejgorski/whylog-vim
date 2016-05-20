@@ -17,6 +17,7 @@ class TeacherMenuTests(TestCase):
         self.editor.get_line_number.return_value = numb
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = ['some line']
+        self.assertNotEqual(self.whylog_proxy.teacher.rule.parsers[0].line_content, 'some line')
         self.whylog_proxy.action()
         self.assertEqual(self.whylog_proxy.teacher.rule.parsers[0].line_content, 'some line')
 
