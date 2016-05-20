@@ -16,14 +16,6 @@ from whylog_vim.proxy.teacher.utils import get_next_parser_id, MenuHandler
 from whylog_vim.proxy.teacher.exceptions import CannotGoToPosition
 
 
-def print_teacher(function):
-    def wrapper(self, *agrs, **kwargs):
-        function(self, *args, **kwargs)
-        self.print_teacher()
-
-    return wrapper
-
-
 class TeacherProxy(MenuHandler):
     def __init__(self, teacher, editor, main_proxy):
         self.teacher = teacher
