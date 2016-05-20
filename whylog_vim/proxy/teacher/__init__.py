@@ -9,11 +9,20 @@ except:
     vim.error = error
 
 import six
+from functools import partial
 
-from whylog_vim.consts import EditorStates, Messages
+from whylog import FrontInput
+from whylog_vim.consts import EditorStates, Messages, ReadMessages
 from whylog_vim.output_formater.teacher_formater import TeacherFormater
 from whylog_vim.proxy.teacher.utils import get_next_parser_id
 from whylog_vim.proxy.teacher.exceptions import CannotGoToPosition
+
+
+def print_teacher(function):
+    def wrapper(self, *agrs, **kwargs):
+        function(self, *args, **kwargs)
+        self.print_teacher()
+    return wrapper
 
 
 class TeacherProxy(object):
@@ -46,8 +55,8 @@ class TeacherProxy(object):
             self._return_cursor_to_position()
 
     def print_teacher(self):
-        self.raw_rule = self.teacher.get_rule()
-        self.output = self.formater.format_rule(self.raw_rule, None)
+        self.rule = self.teacher.get_rule()
+        self.output = self.formater.format_rule(self.rule, None)
         # here should be the result from validate method of Teacher
         self.editor.create_teacher_window(self.output.get_content())
         self.editor.set_syntax_folding()
@@ -68,7 +77,19 @@ class TeacherProxy(object):
             pass
 
     def edit_line_content(self, parser_id):
-        pass
+        old_line_content = [self.rule.parsers[parser_id].line_content]
+        self.main_proxy.create_input_window(old_line_content)
+        self.read_function = partial(self.back_edit_line_content, parser_id)
+
+    def back_edit_line_content(self, parser_id):
+        content = self.editor.get_input_content()
+        if len(content) == 1:
+            front_input = FrontInput(None, content[0], None)
+            self.teacher.add_line(parser_id, front_input)
+            return True
+        else:
+            six.print_(ReadMessages.TOO_MANY_LINES)
+            return False
 
     def delete_parser(self, parser_id):
         pass

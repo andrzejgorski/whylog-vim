@@ -85,3 +85,7 @@ class LineNames(object):
     EFFECT = 'effect'
     CAUSE = 'cause_%s'
     CAUSE_PREFIX = 6
+
+
+class ReadMessages(object):
+    TOO_MANY_LINES = '! Warning ! You can put only single line as content of parser.'
