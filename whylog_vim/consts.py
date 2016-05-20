@@ -52,6 +52,16 @@ class ParserOutputs(object):
     LINE_CONTENT = '--- Line %s: %s'
 
 
+class ConstraintsOutputs(object):
+    ADD_BUTTON = '[add_constraint]'
+    DELETE_BUTTON = '[delete_constraint]'
+    GROUP = 'line: %s, group: %s'
+    HEADER = '=== Rule Constraints:'
+    PARAM = '%s: %s'
+    PARAMS_HEADER = 'params:'
+    TYPE = '--- Constraint: %s'
+
+
 class Constraint(object):
     ADD_BUTTON = 'add_constraint'
     DELETE_BUTTON = 'delete_constraint'

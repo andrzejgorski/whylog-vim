@@ -1,10 +1,9 @@
 import six
 from functools import partial
 
-from whylog_vim.consts import WindowTypes
+from whylog_vim.consts import ConstraintsOutputs, ParserOutputs, WindowTypes
 from whylog_vim.output_formater.consts import TeacherMenu
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
-from whylog_vim.consts import ParserOutputs
 from whylog_vim.utils import get_parser_name
 
 
@@ -49,9 +48,7 @@ class ParserFormater(TeacherProxyUsingFromater):
         output.add(ParserOutputs.OTHERS_HEADER)
         output.add(ParserOutputs.LOG_TYPE % parser.log_type_name)
         output.create_button(
-            partial(
-                self.teacher_proxy.edit_log_type, parser._id, parser.log_type_name
-            )
+            partial(self.teacher_proxy.edit_log_type, parser._id, parser.log_type_name)
         )
         output.add(ParserOutputs.PRIMARY_KEY % parser.primary_key_groups)
         output.create_button(
@@ -71,7 +68,31 @@ class ParserFormater(TeacherProxyUsingFromater):
 
 class ConstraintsFormater(TeacherProxyUsingFromater):
     def format_constraints(self, output, constraints):
-        pass
+        output.add(ConstraintsOutputs.HEADER)
+        output.add(ConstraintsOutputs.ADD_BUTTON)
+        output.create_button(self.teacher_proxy.add_constraint)
+        output.add('')
+        for constraint in constraints:
+            self._format_single(output, constraint)
+        output.add(TeacherMenu.END_BRACKET)
+
+    def _format_single(self, output, constraint):
+        output.add(ConstraintsOutputs.TYPE % constraint.type)
+        output.create_button(partial(self.teacher_proxy.edit_constraint, constraint))
+        output.add(ConstraintsOutputs.DELETE_BUTTON)
+        # TODO in this line should be constraint id
+        output.create_button(partial(self.teacher_proxy.delete_constraint, constraint))
+        for group in constraint.groups:
+            output.add(ConstraintsOutputs.GROUP % (get_parser_name(group[0]), group[1]))
+        if constraint.params:
+            self._format_params(output, constraint)
+        output.add(TeacherMenu.EMPTY_LINE)
+
+    def _format_params(self, output, constraint):
+        output.add(ConstraintsOutputs.PARAMS_HEADER)
+        params = constraint.params
+        for param in six.iterkeys(params.keys):
+            output.add(ConstraintsOutputs.PARAM % (param, params[param]))
 
 
 class TeacherFormater(TeacherProxyUsingFromater):
