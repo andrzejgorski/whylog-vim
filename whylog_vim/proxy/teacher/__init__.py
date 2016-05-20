@@ -9,10 +9,8 @@ except:
     vim.error = error
 
 import six
-from functools import partial
 
-from whylog import FrontInput
-from whylog_vim.consts import EditorStates, Messages, ReadMessages
+from whylog_vim.consts import EditorStates, Messages
 from whylog_vim.output_formater.teacher_formater import TeacherFormater
 from whylog_vim.proxy.teacher.utils import get_next_parser_id, MenuHandler
 from whylog_vim.proxy.teacher.exceptions import CannotGoToPosition
