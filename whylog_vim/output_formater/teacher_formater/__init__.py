@@ -48,9 +48,7 @@ class ParserFormater(TeacherProxyUsingFromater):
         output.add(ParserOutputs.OTHERS_HEADER)
         output.add(ParserOutputs.LOG_TYPE % parser.log_type_name)
         output.create_button(
-            partial(
-                self.teacher_proxy.edit_log_type, parser._id, parser.log_type_name
-            )
+            partial(self.teacher_proxy.edit_log_type, parser._id, parser.log_type_name)
         )
         output.add(ParserOutputs.PRIMARY_KEY % parser.primary_key_groups)
         output.create_button(
