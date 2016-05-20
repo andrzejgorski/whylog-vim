@@ -22,7 +22,6 @@ class Messages(object):
     LOGTYPE = 'This is the content and path of the line:'
     PRIMARY_KEY = 'This is the content and path of the line:'
     ADDED_EFFECT = '### WHYLOG ### You added line as effect. Select cause and press <F4>.'
-    WARNING_PREFIX = '! Warning ! %s'
 
 
 class EditorStates(object):
@@ -88,5 +87,9 @@ class LineNames(object):
     CAUSE_PREFIX = 6
 
 
+class Templates(object):
+    READ_ERROR = '! Error ! %s'
+
+
 class ReadMessages(object):
-    TOO_MANY_LINES = Messages.WARNING_PREFIX % 'You can put only single line as content of parser.'
+    TOO_MANY_LINES = Templates.READ_ERROR % 'You can put only single line as content of parser.'
