@@ -22,6 +22,7 @@ def print_teacher(function):
     def wrapper(self, *agrs, **kwargs):
         function(self, *args, **kwargs)
         self.print_teacher()
+
     return wrapper
 
 
