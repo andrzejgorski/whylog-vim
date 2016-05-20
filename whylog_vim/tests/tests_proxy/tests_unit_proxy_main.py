@@ -5,15 +5,12 @@ from whylog import FrontInput, LineSource
 
 from whylog_vim.consts import EditorStates as States
 from whylog_vim.proxy import WhylogProxy
+from . import create_mock_editor
 
 
 class UnitTestWhylogProxy(TestCase):
     def setUp(self):
-        mock_editor = MagicMock()
-        mock_editor.get_front_input.return_value = FrontInput(
-            1, 'line content', LineSource('host', 'path')
-        )
-        self.whylog_proxy = WhylogProxy(mock_editor)
+        self.whylog_proxy = WhylogProxy(create_mock_editor())
 
     def tests_unit_check_log_reader_states_of_whylog_proxy(self):
         with patch('whylog.log_reader.LogReader.get_causes') as mock:
