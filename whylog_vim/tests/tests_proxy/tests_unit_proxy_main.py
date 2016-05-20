@@ -1,7 +1,5 @@
 from unittest import TestCase
-from mock import MagicMock, patch
-
-from whylog import FrontInput, LineSource
+from mock import patch
 
 from whylog_vim.consts import EditorStates as States
 from whylog_vim.proxy import WhylogProxy
