@@ -1,5 +1,6 @@
 import six
-from unittest import TestCase
+import platform
+from unittest import TestCase, skip
 from . import create_mock_editor
 from whylog_vim.proxy import WhylogProxy
 from mock import patch
@@ -12,6 +13,7 @@ class TeacherMenuTests(TestCase):
         self.whylog_proxy.teach()
         self.whylog_proxy.teach()
 
+    @skip(platform.system() == 'java')
     def tests_edit_content(self):
         numb = next(six.iterkeys(self.whylog_proxy.teacher.output.buttons))
         self.editor.get_line_number.return_value = numb
@@ -21,6 +23,7 @@ class TeacherMenuTests(TestCase):
         self.whylog_proxy.action()
         self.assertEqual(self.whylog_proxy.teacher.rule.parsers[0].line_content, 'some line')
 
+    @skip(platform.system() == 'java')
     @patch('six.print_')
     def tests_edit_content_to_many_lines_fail(self, my_print):
         numb = next(six.iterkeys(self.whylog_proxy.teacher.output.buttons))
