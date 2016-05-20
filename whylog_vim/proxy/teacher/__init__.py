@@ -14,7 +14,7 @@ from functools import partial
 from whylog import FrontInput
 from whylog_vim.consts import EditorStates, Messages, ReadMessages
 from whylog_vim.output_formater.teacher_formater import TeacherFormater
-from whylog_vim.proxy.teacher.utils import get_next_parser_id
+from whylog_vim.proxy.teacher.utils import get_next_parser_id, MenuHandler
 from whylog_vim.proxy.teacher.exceptions import CannotGoToPosition
 
 
@@ -26,7 +26,7 @@ def print_teacher(function):
     return wrapper
 
 
-class TeacherProxy(object):
+class TeacherProxy(MenuHandler):
     def __init__(self, teacher, editor, main_proxy):
         self.teacher = teacher
         self.editor = editor
@@ -76,21 +76,6 @@ class TeacherProxy(object):
         except Exception:
             # tryied to open fold but cannot.
             pass
-
-    def edit_line_content(self, parser_id):
-        old_line_content = [self.rule.parsers[parser_id].line_content]
-        self.main_proxy.create_input_window(old_line_content)
-        self.read_function = partial(self.back_edit_line_content, parser_id)
-
-    def back_edit_line_content(self, parser_id):
-        content = self.editor.get_input_content()
-        if len(content) == 1:
-            front_input = FrontInput(None, content[0], None)
-            self.teacher.add_line(parser_id, front_input)
-            return True
-        else:
-            six.print_(ReadMessages.TOO_MANY_LINES)
-            return False
 
     def delete_parser(self, parser_id):
         pass
