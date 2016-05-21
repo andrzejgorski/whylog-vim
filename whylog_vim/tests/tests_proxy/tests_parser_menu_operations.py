@@ -12,7 +12,7 @@ try:
     from unittest import skipIf
 except ImportError:
     # for python 2.6
-    from whylog_vim.tests.tests_proxy.utils import skipIf
+    from unittest2 import skipIf
 
 
 class TeacherMenuTests(TestCase):

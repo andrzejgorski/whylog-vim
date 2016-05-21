@@ -2,4 +2,5 @@ isort
 mock
 nose
 pyflakes
+unittest2
 yapf

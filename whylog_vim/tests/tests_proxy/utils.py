@@ -10,16 +10,3 @@ def create_mock_editor():
         1, 'line content', LineSource('host', 'path')
     )
     return mock_editor
-
-
-def skipIf(condition, message):
-    def real_decorator(function):
-        def wrapper(*args, **kwargs):
-            if condition:
-                function(args, **kwargs)
-            else:
-                six.print_(message)
-
-        return wrapper
-
-    return real_decorator
