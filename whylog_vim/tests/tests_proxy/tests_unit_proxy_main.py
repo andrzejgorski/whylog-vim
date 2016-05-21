@@ -3,7 +3,7 @@ from mock import patch
 
 from whylog_vim.consts import EditorStates as States
 from whylog_vim.proxy import WhylogProxy
-from . import create_mock_editor
+from whylog_vim.tests.tests_proxy.utils import create_mock_editor
 
 
 class UnitTestWhylogProxy(TestCase):

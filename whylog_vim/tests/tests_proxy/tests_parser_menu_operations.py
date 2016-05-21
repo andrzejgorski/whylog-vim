@@ -6,7 +6,7 @@ from mock import patch, call
 
 from whylog_vim.proxy import WhylogProxy
 from whylog_vim.consts import ReadMessages
-from . import create_mock_editor
+from whylog_vim.tests.tests_proxy.utils import create_mock_editor
 
 
 class TeacherMenuTests(TestCase):
