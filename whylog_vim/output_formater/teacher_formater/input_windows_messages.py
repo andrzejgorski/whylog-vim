@@ -1,7 +1,7 @@
 import six
 
 from whylog_vim.consts import Messages, ParserOutputs, WindowTypes
-from whylog_vim.output_fromater.output_aggregator import OutputAggregator
+from whylog_vim.output_formater.output_aggregator import OutputAggregator
 
 
 class InputMessages(object):
@@ -12,23 +12,25 @@ class InputMessages(object):
     }
 
     @classmethod
-    def _add_message_prefix(cls, output, window_type):
+    def _create_prefix(cls, window_type):
+        output = OutputAggregator()
         if window_type == WindowTypes.TEACHER:
             output.add_commented(Messages.TEACHER_HEADER)
         else:
             output.add_commented(Messages.INPUT_HEADER)
-        output.add_commented(cls.TYPE_TO_MESSGAE[window_type])
+        output.add_commented(cls.TYPE_TO_MESSAGE[window_type])
+        return output
 
     @classmethod
     def get_log_types_message(cls, parser):
-        output = OutputAggregator()
-        cls._add_message_prefix(output, WindowTypes.INPUT)
+        output = cls._create_prefix(WindowTypes.INPUT)
         output.add_commented(Messages.LOGTYPE)
         output.add_commented(ParserOutputs.LINE_CONTENT % (parser._id, parser.line_content))
         output.add_commented(
             ParserOutputs.META % (parser.line_resource_location, parser.line_offset)
         )
         output.add_commented('')
+        output.add_commented(Messages.ENDING)
         return output
 
     @classmethod
@@ -47,16 +49,23 @@ class InputMessages(object):
 
     @classmethod
     def get_primary_key_message(cls, parser):
-        output = OutputAggregator()
-        cls._add_message_prefix(output, WindowTypes.INPUT)
+        output = cls._create_prefix(WindowTypes.INPUT)
         output.add_commented(Messages.PRIMARY_KEY)
         cls._add_parser(output, parser)
+        output.add_commented(Messages.ENDING)
         return output
 
     @classmethod
     def get_constraint_message(cls, parsers):
-        output = OutputAggregator()
-        cls._add_message_prefix(output, WindowTypes.INPUT)
+        output = cls._create_prefix(output, WindowTypes.INPUT)
         for parser in parsers:
             cls._add_parser(output, parser)
+        output.add_commented(Messages.ENDING)
+        return output
+
+    @classmethod
+    def get_edit_line_message(cls, old_content):
+        output = cls._create_prefix(WindowTypes.INPUT)
+        output.add_commented(Messages.ENDING)
+        output.add(old_content)
         return output
