@@ -14,7 +14,9 @@ class MenuFunction(object):
         return self.function_name == other.function_name and self.args == other.args and self.kwargs == other.kwargs
 
     def __repr__(self):
-        return '<Menu Funtion:: function name: %s, args: %s, kwargs: %s>' % (self.function_name, self.args, self.kwargs)
+        return '<Menu Funtion:: function name: %s, args: %s, kwargs: %s>' % (
+            self.function_name, self.args, self.kwargs
+        )
 
     def __hash__(self):
         return hash(self.function_name)
