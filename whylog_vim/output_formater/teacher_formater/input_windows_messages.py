@@ -57,7 +57,7 @@ class InputMessages(object):
 
     @classmethod
     def get_constraint_message(cls, parsers):
-        output = cls._create_prefix(output, WindowTypes.INPUT)
+        output = cls._create_prefix(WindowTypes.INPUT)
         for parser in parsers:
             cls._add_parser(output, parser)
         output.add_commented(Messages.ENDING)
