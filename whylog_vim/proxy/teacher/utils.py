@@ -1,7 +1,5 @@
 from functools import partial
 
-import six
-
 from whylog import FrontInput
 from whylog_vim.output_formater.teacher_formater.input_windows_messages import InputMessages
 from whylog_vim.input_reader.teacher_reader import TeacherReader

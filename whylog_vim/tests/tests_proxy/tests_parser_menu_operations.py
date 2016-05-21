@@ -1,8 +1,5 @@
-import platform
-
-import six
 from mock import call, patch
-from unittest2 import TestCase, skipIf
+from unittest2 import TestCase
 
 from whylog_vim.consts import ReadMessages, FunctionNames, EditorStates
 from whylog_vim.proxy import WhylogProxy
