@@ -17,7 +17,6 @@ class TeacherMenuTests(TestCase):
         self.whylog_proxy.teach()
         self.whylog_proxy.teach()
 
-    @skipIf(platform.system() == 'Java', 'not supported on jython')
     def tests_edit_content(self):
         self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.get_line_number(
             MenuFunction(FunctionNames.EDIT_LINE_CONTENT, 0)
@@ -30,7 +29,6 @@ class TeacherMenuTests(TestCase):
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER)
 
     @patch('six.print_')
-    @skipIf(platform.system() == 'Java', 'not supported in jython')
     def tests_edit_content_to_many_lines_fail(self, mock_print):
         self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.get_line_number(
             MenuFunction(FunctionNames.EDIT_LINE_CONTENT, 0)
@@ -41,7 +39,6 @@ class TeacherMenuTests(TestCase):
         self.assertEqual(mock_print.call_args, call(ReadMessages.TOO_MANY_LINES))
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER_INPUT)
 
-    @skipIf(platform.system() == 'Java', 'not supported in jython')
     def tests_edit_regex(self):
         self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.get_line_number(
             MenuFunction(FunctionNames.EDIT_REGEX, 0)
@@ -53,7 +50,6 @@ class TeacherMenuTests(TestCase):
         self.assertEqual(self.whylog_proxy.teacher.rule.parsers[0].pattern, TestConsts.REGEX + '$')
 
     @patch('six.print_')
-    @skipIf(platform.system() == 'Java', 'not supported in jython')
     def tests_edit_regex_to_many_lines_fail(self, mock_print):
         self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.get_line_number(
             MenuFunction(FunctionNames.EDIT_REGEX, 0)
