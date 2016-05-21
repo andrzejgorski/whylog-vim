@@ -21,9 +21,9 @@ class TeacherMenuTests(TestCase):
         self.whylog_proxy.teach()
         self.whylog_proxy.teach()
 
-    @skipIf(platform.system() == 'java', 'not supported on jython')
+    @skipIf(platform.system() == 'Java', 'not supported on jython')
     def tests_edit_content(self):
-        assert platform.system() != 'java'
+        assert platform.system() != 'Java'
         numb = next(six.iterkeys(self.whylog_proxy.teacher.output.buttons))
         self.editor.get_line_number.return_value = numb
         self.whylog_proxy.action()
@@ -33,9 +33,9 @@ class TeacherMenuTests(TestCase):
         self.assertEqual(self.whylog_proxy.teacher.rule.parsers[0].line_content, 'some line')
 
     @patch('six.print_')
-    @skipIf(platform.system() == 'java', 'not supported in jython')
+    @skipIf(platform.system() == 'Java', 'not supported in jython')
     def tests_edit_content_to_many_lines_fail(self, mock_print):
-        assert platform.system() != 'java'
+        assert platform.system() != 'Java'
         numb = next(six.iterkeys(self.whylog_proxy.teacher.output.buttons))
         self.editor.get_line_number.return_value = numb
         self.whylog_proxy.action()
