@@ -8,10 +8,11 @@ from whylog_vim.exceptions import UnknownAction
 class WhylogProxy(object):
     def __init__(self, editor):
         self.editor = editor
-        log_reader, teacher_generator = whylog_factory()
+        log_reader, teacher_generator, config = whylog_factory()
+        self.config = config
         self.teacher_generator = teacher_generator
-        self.log_reader = LogReaderProxy(editor, log_reader)
-        self.teacher = TeacherProxy(self.teacher_generator(), self.editor, self)
+        self.log_reader = LogReaderProxy(editor, log_reader, config)
+        self.teacher = TeacherProxy(self.teacher_generator(), config, self.editor, self)
         self._state = States.EDITOR_NORMAL
 
         self.action_handler = {
@@ -57,7 +58,7 @@ class WhylogProxy(object):
             action_function()
 
     def new_teacher(self):
-        self.teacher = TeacherProxy(self.teacher_generator(), self.editor, self)
+        self.teacher = TeacherProxy(self.teacher_generator(), config, self.editor, self)
         self._state = States.EDITOR_NORMAL
 
     def create_input_window(self, content):
