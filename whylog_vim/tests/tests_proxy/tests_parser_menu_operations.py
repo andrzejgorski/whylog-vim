@@ -1,11 +1,16 @@
 import platform
-from unittest import TestCase, skipIf
+from unittest import TestCase
+try:
+    from unittest import skipIf
+except ImportError:
+    # for python 2.6
+    from whylog_vim.tests.tests_proxy.utils import skipIf
 
 import six
-from mock import patch, call
+from mock import call, patch
 
-from whylog_vim.proxy import WhylogProxy
 from whylog_vim.consts import ReadMessages
+from whylog_vim.proxy import WhylogProxy
 from whylog_vim.tests.tests_proxy.utils import create_mock_editor
 
 
