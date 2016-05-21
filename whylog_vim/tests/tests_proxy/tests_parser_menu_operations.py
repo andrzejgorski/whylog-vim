@@ -23,6 +23,7 @@ class TeacherMenuTests(TestCase):
 
     @skipIf(platform.system() == 'java', 'not supported on jython')
     def tests_edit_content(self):
+        assert platform.system() != 'java'
         numb = next(six.iterkeys(self.whylog_proxy.teacher.output.buttons))
         self.editor.get_line_number.return_value = numb
         self.whylog_proxy.action()
@@ -34,6 +35,7 @@ class TeacherMenuTests(TestCase):
     @patch('six.print_')
     @skipIf(platform.system() == 'java', 'not supported in jython')
     def tests_edit_content_to_many_lines_fail(self, mock_print):
+        assert platform.system() != 'java'
         numb = next(six.iterkeys(self.whylog_proxy.teacher.output.buttons))
         self.editor.get_line_number.return_value = numb
         self.whylog_proxy.action()

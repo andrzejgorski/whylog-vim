@@ -1,4 +1,7 @@
 from mock import MagicMock
+
+import six
+
 from whylog import FrontInput, LineSource
 
 
