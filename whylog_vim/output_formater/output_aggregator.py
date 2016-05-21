@@ -46,8 +46,8 @@ class OutputAggregator(object):
     def set_default_callback_function(self, default_callback_function):
         self.default_callback_function = default_callback_function
 
-    def call_by_meta(self, function_meta):
-        self.call_button(self.function_lines[function_meta])
+    def call_by_menu_function(self, menu_function):
+        self.call_button(self.function_lines[menu_function])
 
     def get_line_number(self, function_meta):
         return self.function_lines[function_meta]
