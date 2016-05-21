@@ -3,9 +3,13 @@ from whylog_vim.consts import Messages
 
 class OutputAggregator(object):
     def __init__(self):
+        def pass_function():
+            pass
+
         self.function_lines = {}
         self.callbacks = {}
         self.output_lines = []
+        self.default_callback_function = pass_function
 
     def add(self, element):
         self.output_lines.append(element)
@@ -32,13 +36,11 @@ class OutputAggregator(object):
         return self.function_lines[function_meta]
 
     def call_button(self, line_number):
-        try:
-            self.callbacks[line_number]()
-        except KeyError:
-            try:
-                self.default_callback_function()
-            except AttributeError:
-                pass
+        function = self.callbacks.get(line_number)
+        if function:
+            function()
+        else:
+            self.default_callback_function()
 
     def _get_current_line_number(self):
         return len(self.output_lines)
