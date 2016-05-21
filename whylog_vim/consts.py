@@ -93,3 +93,8 @@ class Templates(object):
 
 class ReadMessages(object):
     TOO_MANY_LINES = Templates.READ_ERROR % 'You can put only single line as content of parser.'
+
+
+class FunctionNames(object):
+    EDIT_LINE_CONTENT = 'edit line content'
+    EDIT_REGEX = 'edit regex'

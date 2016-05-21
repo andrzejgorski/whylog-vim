@@ -1,14 +1,10 @@
 from functools import partial
-from itertools import count
 
 import six
 
 from whylog import FrontInput
 from whylog_vim.output_formater.teacher_formater.input_windows_messages import InputMessages
 from whylog_vim.input_reader.teacher_reader import TeacherReader
-
-get_next_parser_id = partial(next, count(0))
-get_next_constraints_id = partial(next, count(0))
 
 
 class MenuHandler(object):

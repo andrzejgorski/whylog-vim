@@ -8,11 +8,13 @@ except:
 
     vim.error = error
 
+from functools import partial
+from itertools import count
 import six
 
 from whylog_vim.consts import EditorStates, Messages
 from whylog_vim.output_formater.teacher_formater import TeacherFormater
-from whylog_vim.proxy.teacher.utils import get_next_parser_id, MenuHandler
+from whylog_vim.proxy.teacher.utils import MenuHandler
 from whylog_vim.proxy.teacher.exceptions import CannotGoToPosition
 
 
@@ -23,16 +25,18 @@ class TeacherProxy(MenuHandler):
         self.editor = editor
         self.main_proxy = main_proxy
         self.formater = TeacherFormater(self)
+        self.get_next_parser_id = partial(next, count(0))
+        self.get_next_constraints_id = partial(next, count(0))
 
     def new_lesson(self):
         front_input = self.editor.get_front_input()
-        self.teacher.add_line(get_next_parser_id(), front_input, effect=True)
+        self.teacher.add_line(self.get_next_parser_id(), front_input, effect=True)
         self.origin_file_name = self.editor.get_current_filename()
         six.print_(Messages.ADDED_EFFECT)
 
     def add_cause(self):
         front_input = self.editor.get_front_input()
-        self.teacher.add_line(get_next_parser_id(), front_input)
+        self.teacher.add_line(self.get_next_parser_id(), front_input)
         self.print_teacher()
 
     def handle_menu_signal(self):

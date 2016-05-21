@@ -1,5 +1,5 @@
 from functools import partial
-from whylog_vim.output_formater.output_aggregator import OutputAggregator
+from whylog_vim.output_formater.output_aggregator import OutputAggregator, MenuFunction
 
 
 def tests_basic_output_aggregator():
@@ -17,12 +17,12 @@ def tests_basic_output_aggregator():
     output.add('Another line.')
     output.add('Clickable line.')
 
-    output.create_button(partial(some_object.test_function, param1='foo ', param2='bar'))
+    output.create_button(partial(some_object.test_function, param1='foo ', param2='bar'), MenuFunction('functin name', param1='foo ', param2='bar'))
 
     output.add('Next line.')
     output.add('Next Clickable line.')
 
-    output.create_button(partial(some_object.test_function2, param1=100, param2=50))
+    output.create_button(partial(some_object.test_function2, param1=100, param2=50), MenuFunction('funciton2 name', param1=100, param2=50))
 
     content = [
         'Some line.', 'Another line.', 'Clickable line.', 'Next line.', 'Next Clickable line.'
