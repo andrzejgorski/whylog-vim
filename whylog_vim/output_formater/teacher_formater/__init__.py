@@ -15,7 +15,7 @@ class TeacherProxyUsingFromater(object):
 class ParserFormater(TeacherProxyUsingFromater):
     def format_parser(self, output, parser, parser_id, effect=True):
         # TODO tell Ewa to do that
-        parser._id = parser_id
+        parser.line_id = parser_id
         self._format_line_info(output, parser, effect)
         self._format_regexes(output, parser)
         self._format_line_others(output, parser)
@@ -24,36 +24,36 @@ class ParserFormater(TeacherProxyUsingFromater):
 
     def _format_line_info(self, output, parser, effect):
         output.add(
-            ParserOutputs.MESSAGE_CONTENT % (get_parser_name(parser._id), parser.line_content)
+            ParserOutputs.MESSAGE_CONTENT % (get_parser_name(parser.line_id), parser.line_content)
         )
-        output.create_button(partial(self.teacher_proxy.edit_line_content, parser._id))
+        output.create_button(partial(self.teacher_proxy.edit_line_content, parser))
         output.add(ParserOutputs.META % (parser.line_resource_location, parser.line_offset))
         if not effect:
             output.add(ParserOutputs.COPY_BUTTON)
             output.add(ParserOutputs.DELETE_BUTTON)
-            output.create_button(partial(self.teacher_proxy.delete_parser, parser._id))
+            output.create_button(partial(self.teacher_proxy.delete_parser, parser))
         output.add('')
 
     def _format_regexes(self, output, parser):
         output.add(ParserOutputs.REGEX_HEADER % parser.pattern_name)
         output.add(parser.pattern)
-        output.create_button(partial(self.teacher_proxy.edit_regex, parser._id))
+        output.create_button(partial(self.teacher_proxy.edit_regex, parser))
         output.add(ParserOutputs.GUESS_BUTTON)
-        output.create_button(partial(self.teacher_proxy.guess_regex, parser._id))
+        output.create_button(partial(self.teacher_proxy.guess_regex, parser))
         output.add('')
-        self._format_converters(output, parser.groups, parser._id)
+        self._format_converters(output, parser.groups, parser.line_id)
         output.add('')
 
     def _format_line_others(self, output, parser):
         output.add(ParserOutputs.OTHERS_HEADER)
         output.add(ParserOutputs.LOG_TYPE % parser.log_type_name)
         output.create_button(
-            partial(self.teacher_proxy.edit_log_type, parser._id, parser.log_type_name)
+            partial(self.teacher_proxy.edit_log_type, parser, parser.log_type_name)
         )
         output.add(ParserOutputs.PRIMARY_KEY % parser.primary_key_groups)
         output.create_button(
             partial(
-                self.teacher_proxy.edit_primary_key_groups, parser._id, parser.primary_key_groups
+                self.teacher_proxy.edit_primary_key_groups, parser, parser.primary_key_groups
             )
         )
 

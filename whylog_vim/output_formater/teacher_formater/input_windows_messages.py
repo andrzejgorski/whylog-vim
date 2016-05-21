@@ -69,3 +69,12 @@ class InputMessages(object):
         output.add_commented(Messages.ENDING)
         output.add(old_content)
         return output
+
+    @classmethod
+    def get_edit_regex(cls, line_content, old_regex):
+        output = cls._create_prefix(WindowTypes.INPUT)
+        output.add_commented(Messages.CONTENT_OF_LINE)
+        output.add_commented(line_content)
+        output.add_commented(Messages.ENDING)
+        output.add(old_regex)
+        return output
