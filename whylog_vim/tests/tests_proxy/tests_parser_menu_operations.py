@@ -1,9 +1,9 @@
 from mock import call, patch
 from unittest2 import TestCase
 
-from whylog_vim.consts import ReadMessages, FunctionNames, EditorStates
+from whylog_vim.consts import EditorStates, FunctionNames, ReadMessages
 from whylog_vim.proxy import WhylogProxy
-from whylog_vim.tests.tests_proxy.utils import create_mock_editor, TestConsts
+from whylog_vim.tests.tests_proxy.utils import TestConsts, create_mock_editor
 
 
 class TeacherMenuTests(TestCase):
