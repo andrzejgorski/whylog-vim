@@ -1,4 +1,4 @@
-from unittest import TestCase
+from unittest2 import TestCase
 from mock import patch
 
 from whylog_vim.consts import EditorStates as States
