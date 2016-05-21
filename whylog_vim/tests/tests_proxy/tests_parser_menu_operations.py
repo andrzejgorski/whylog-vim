@@ -1,8 +1,8 @@
 import platform
-from unittest2 import skipIf, TestCase
 
 import six
 from mock import call, patch
+from unittest2 import TestCase, skipIf
 
 from whylog_vim.consts import ReadMessages
 from whylog_vim.proxy import WhylogProxy

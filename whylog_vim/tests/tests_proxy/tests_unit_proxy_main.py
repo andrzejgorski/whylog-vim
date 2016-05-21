@@ -1,5 +1,5 @@
-from unittest2 import TestCase
 from mock import patch
+from unittest2 import TestCase
 
 from whylog_vim.consts import EditorStates as States
 from whylog_vim.proxy import WhylogProxy
