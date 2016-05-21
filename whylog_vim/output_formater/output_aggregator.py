@@ -4,24 +4,6 @@ from functools import partial
 from whylog_vim.consts import Messages
 
 
-class MenuFunction(object):
-    def __init__(self, function_name, *args, **kwargs):
-        self.function_name = function_name
-        self.args = args
-        self.kwargs = kwargs
-
-    def __eq__(self, other):
-        return self.function_name == other.function_name and self.args == other.args and self.kwargs == other.kwargs
-
-    def __repr__(self):
-        return '<Menu Funtion:: function name: %s, args: %s, kwargs: %s>' % (
-            self.function_name, self.args, self.kwargs
-        )
-
-    def __hash__(self):
-        return hash(self.function_name)
-
-
 class OutputAggregator(object):
     def __init__(self):
         self.function_lines = {}

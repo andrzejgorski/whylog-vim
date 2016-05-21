@@ -1,5 +1,5 @@
 from functools import partial
-from whylog_vim.output_formater.output_aggregator import OutputAggregator, MenuFunction
+from whylog_vim.output_formater.output_aggregator import OutputAggregator
 
 
 def tests_basic_output_aggregator():
@@ -23,10 +23,10 @@ def tests_basic_output_aggregator():
             param1='foo ',
             param2='bar'
         ),
-        MenuFunction(
+        (
             'functin name',
-            param1='foo ',
-            param2='bar'
+            'foo ',
+            'bar'
         )
     )
 
@@ -39,10 +39,10 @@ def tests_basic_output_aggregator():
             param1=100,
             param2=50
         ),
-        MenuFunction(
+        (
             'funciton2 name',
-            param1=100,
-            param2=50
+            100,
+            50
         )
     )
 

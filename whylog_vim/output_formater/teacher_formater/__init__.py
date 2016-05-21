@@ -3,7 +3,7 @@ from functools import partial
 
 from whylog_vim.consts import ConstraintsOutputs, ParserOutputs, WindowTypes, FunctionNames
 from whylog_vim.output_formater.consts import TeacherMenu
-from whylog_vim.output_formater.output_aggregator import OutputAggregator, MenuFunction
+from whylog_vim.output_formater.output_aggregator import OutputAggregator
 from whylog_vim.utils import get_parser_name
 
 
@@ -27,7 +27,7 @@ class ParserFormater(TeacherProxyUsingFromater):
             ParserOutputs.MESSAGE_CONTENT % (get_parser_name(parser.line_id), parser.line_content)
         )
         output.create_button(
-            partial(self.teacher_proxy.edit_line_content, parser), MenuFunction(
+            partial(self.teacher_proxy.edit_line_content, parser), (
                 FunctionNames.EDIT_LINE_CONTENT, parser.line_id
             )
         )
@@ -35,14 +35,14 @@ class ParserFormater(TeacherProxyUsingFromater):
         if not effect:
             output.add(ParserOutputs.COPY_BUTTON)
             output.add(ParserOutputs.DELETE_BUTTON)
-            # output.create_button(ComparablePartial(self.teacher_proxy.delete_parser, parser._id))
+            # output.create_button(partial(self.teacher_proxy.delete_parser, parser._id))
         output.add('')
 
     def _format_regexes(self, output, parser):
         output.add(ParserOutputs.REGEX_HEADER % parser.pattern_name)
         output.add(parser.pattern)
         output.create_button(
-            partial(self.teacher_proxy.edit_regex, parser), MenuFunction(
+            partial(self.teacher_proxy.edit_regex, parser), (
                 FunctionNames.EDIT_REGEX, parser.line_id
             )
         )
@@ -71,7 +71,7 @@ class ParserFormater(TeacherProxyUsingFromater):
                 ParserOutputs.GROUP_CONVERTER %
                 (group, groups[group].converter, groups[group].content)
             )
-            # output.create_button(ComparablePartial(self.teacher_proxy.edit_converter, parser_id, group))
+            # output.create_button(partial(self.teacher_proxy.edit_converter, parser_id, group))
 
 
 class ConstraintsFormater(TeacherProxyUsingFromater):
@@ -86,10 +86,10 @@ class ConstraintsFormater(TeacherProxyUsingFromater):
 
     def _format_single(self, output, constraint):
         output.add(ConstraintsOutputs.TYPE % constraint.type)
-        # output.create_button(ComparablePartial(self.teacher_proxy.edit_constraint, constraint))
+        # output.create_button(partial(self.teacher_proxy.edit_constraint, constraint))
         output.add(ConstraintsOutputs.DELETE_BUTTON)
         # TODO in this line should be constraint id
-        # output.create_button(ComparablePartial(self.teacher_proxy.delete_constraint, constraint))
+        # output.create_button(partial(self.teacher_proxy.delete_constraint, constraint))
         for group in constraint.groups:
             output.add(ConstraintsOutputs.GROUP % (get_parser_name(group[0]), group[1]))
         if constraint.params:

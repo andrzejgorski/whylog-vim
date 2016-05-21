@@ -7,7 +7,6 @@ from unittest2 import TestCase, skipIf
 from whylog_vim.consts import ReadMessages, FunctionNames, EditorStates
 from whylog_vim.proxy import WhylogProxy
 from whylog_vim.tests.tests_proxy.utils import create_mock_editor, TestConsts
-from whylog_vim.output_formater.output_aggregator import MenuFunction
 
 
 class TeacherMenuTests(TestCase):
@@ -19,7 +18,7 @@ class TeacherMenuTests(TestCase):
 
     def tests_edit_content(self):
         self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.get_line_number(
-            MenuFunction(FunctionNames.EDIT_LINE_CONTENT, 0)
+            (FunctionNames.EDIT_LINE_CONTENT, 0)
         )
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = ['some line']
@@ -31,7 +30,7 @@ class TeacherMenuTests(TestCase):
     @patch('six.print_')
     def tests_edit_content_to_many_lines_fail(self, mock_print):
         self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.get_line_number(
-            MenuFunction(FunctionNames.EDIT_LINE_CONTENT, 0)
+            (FunctionNames.EDIT_LINE_CONTENT, 0)
         )
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = ['some line', 'and another']
@@ -41,7 +40,7 @@ class TeacherMenuTests(TestCase):
 
     def tests_edit_regex(self):
         self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.get_line_number(
-            MenuFunction(FunctionNames.EDIT_REGEX, 0)
+            (FunctionNames.EDIT_REGEX, 0)
         )
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = [TestConsts.REGEX]
@@ -52,7 +51,7 @@ class TeacherMenuTests(TestCase):
     @patch('six.print_')
     def tests_edit_regex_to_many_lines_fail(self, mock_print):
         self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.get_line_number(
-            MenuFunction(FunctionNames.EDIT_REGEX, 0)
+            (FunctionNames.EDIT_REGEX, 0)
         )
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = [TestConsts.REGEX, 'and another']
