@@ -6,18 +6,22 @@ from whylog_vim.gui.vim_ui_wrapper import VimUIWrapper
 
 
 class WindowContext(object):
+    def __init__(self, modifiable):
+        self.modifiable = modifiable
+
     def __enter__(self):
         VimUIWrapper.set_modifiable()
         return VimUIWrapper.get_buffer()
 
     def __exit__(self, type_, value, traceback):
-        VimUIWrapper.set_nomodifible()
+        if not self.modifiable:
+            VimUIWrapper.set_nomodifible()
 
 
 class Window(object):
     def __init__(self, name, content, modifiable=False, splited_window_size=None):
         assert content
-        self.context = WindowContext()
+        self.context = WindowContext(modifiable)
         if splited_window_size is None:
             VimUIWrapper.open_file_at_window(name)
         else:

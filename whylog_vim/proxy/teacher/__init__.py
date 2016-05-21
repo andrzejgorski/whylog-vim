@@ -12,11 +12,11 @@ import six
 
 from whylog_vim.consts import EditorStates, Messages
 from whylog_vim.output_formater.teacher_formater import TeacherFormater
-from whylog_vim.proxy.teacher.utils import get_next_parser_id
+from whylog_vim.proxy.teacher.utils import get_next_parser_id, MenuHandler
 from whylog_vim.proxy.teacher.exceptions import CannotGoToPosition
 
 
-class TeacherProxy(object):
+class TeacherProxy(MenuHandler):
     def __init__(self, teacher, editor, main_proxy):
         self.teacher = teacher
         self.editor = editor
@@ -46,8 +46,8 @@ class TeacherProxy(object):
             self._return_cursor_to_position()
 
     def print_teacher(self):
-        self.raw_rule = self.teacher.get_rule()
-        self.output = self.formater.format_rule(self.raw_rule, None)
+        self.rule = self.teacher.get_rule()
+        self.output = self.formater.format_rule(self.rule, None)
         # here should be the result from validate method of Teacher
         self.editor.create_teacher_window(self.output.get_content())
         self.editor.set_syntax_folding()
@@ -66,9 +66,6 @@ class TeacherProxy(object):
         except Exception:
             # tryied to open fold but cannot.
             pass
-
-    def edit_line_content(self, parser_id):
-        pass
 
     def delete_parser(self, parser_id):
         pass

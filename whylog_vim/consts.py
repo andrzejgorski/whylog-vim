@@ -85,3 +85,11 @@ class LineNames(object):
     EFFECT = 'effect'
     CAUSE = 'cause_%s'
     CAUSE_PREFIX = 6
+
+
+class Templates(object):
+    READ_ERROR = '! Error ! %s'
+
+
+class ReadMessages(object):
+    TOO_MANY_LINES = Templates.READ_ERROR % 'You can put only single line as content of parser.'
