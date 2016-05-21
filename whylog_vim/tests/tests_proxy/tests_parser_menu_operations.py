@@ -1,10 +1,12 @@
-import six
 import platform
 from unittest import TestCase, skipIf
+
+import six
 from mock import patch, call
-from . import create_mock_editor
+
 from whylog_vim.proxy import WhylogProxy
 from whylog_vim.consts import ReadMessages
+from . import create_mock_editor
 
 
 class TeacherMenuTests(TestCase):
