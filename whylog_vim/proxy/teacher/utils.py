@@ -1,7 +1,8 @@
-import six
-
 from functools import partial
 from itertools import count
+
+import six
+
 from whylog import FrontInput
 from whylog_vim.consts import ReadMessages
 from whylog_vim.output_formater.teacher_formater.input_windows_messages import InputMessages
