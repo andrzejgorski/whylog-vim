@@ -11,11 +11,13 @@ class UnitTestWhylogProxy(TestCase):
         self.whylog_proxy = WhylogProxy(create_mock_editor())
 
     def tests_unit_check_log_reader_states_of_whylog_proxy(self):
-        self.assertEqual(self.whylog_proxy.get_state(), States.EDITOR_NORMAL)
-        self.whylog_proxy.action()
-        self.assertEqual(self.whylog_proxy.get_state(), States.LOG_READER)
-        self.whylog_proxy.action()
-        self.assertEqual(self.whylog_proxy.get_state(), States.LOG_READER)
+        with patch('whylog.log_reader.LogReader.get_causes') as mock:
+            mock.return_value = []
+            self.assertEqual(self.whylog_proxy.get_state(), States.EDITOR_NORMAL)
+            self.whylog_proxy.action()
+            self.assertEqual(self.whylog_proxy.get_state(), States.LOG_READER)
+            self.whylog_proxy.action()
+            self.assertEqual(self.whylog_proxy.get_state(), States.LOG_READER)
 
     def tests_unit_check_teacher_states_of_whylog_proxy(self):
         self.assertEqual(self.whylog_proxy.get_state(), States.EDITOR_NORMAL)
