@@ -58,7 +58,7 @@ class WhylogProxy(object):
             action_function()
 
     def new_teacher(self):
-        self.teacher = TeacherProxy(self.teacher_generator(), config, self.editor, self)
+        self.teacher = TeacherProxy(self.teacher_generator(), self.config, self.editor, self)
         self._state = States.EDITOR_NORMAL
 
     def create_input_window(self, content):
