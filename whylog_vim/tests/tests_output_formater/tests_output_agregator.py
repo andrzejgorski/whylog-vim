@@ -18,16 +18,24 @@ def tests_basic_output_aggregator():
     output.add('Clickable line.')
 
     output.create_button(
-        partial(some_object.test_function, param1='foo ',
-                param2='bar'), ('functin name', 'foo ', 'bar')
+        partial(
+            some_object.test_function,
+            param1='foo ',
+            param2='bar'
+        ),
+        ('functin name', 'foo ', 'bar')
     )
 
     output.add('Next line.')
     output.add('Next Clickable line.')
 
     output.create_button(
-        partial(some_object.test_function2, param1=100,
-                param2=50), ('funciton2 name', 100, 50)
+        partial(
+            some_object.test_function2,
+            param1=100,
+            param2=50
+        ),
+        ('funciton2 name', 100, 50)
     )
 
     content = [
