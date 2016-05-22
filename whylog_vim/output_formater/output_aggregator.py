@@ -36,11 +36,8 @@ class OutputAggregator(object):
         return self.function_lines[function_meta]
 
     def call_button(self, line_number):
-        function = self.callbacks.get(line_number)
-        if function:
-            function()
-        else:
-            self.default_callback_function()
+        callback = self.callbacks.get(line_number, self.default_callback_function)
+        return callback()
 
     def _get_current_line_number(self):
         return len(self.output_lines)
