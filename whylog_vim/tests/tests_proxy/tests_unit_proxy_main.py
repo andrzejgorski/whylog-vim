@@ -1,7 +1,8 @@
-from mock import patch, call
+from mock import call, patch
 from unittest2 import TestCase
 
-from whylog_vim.consts import EditorStates as States, Messages
+from whylog_vim.consts import EditorStates as States
+from whylog_vim.consts import Messages
 from whylog_vim.proxy import WhylogProxy
 from whylog_vim.tests.tests_proxy.utils import create_mock_editor
 
