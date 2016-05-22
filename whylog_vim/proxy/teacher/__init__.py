@@ -19,6 +19,7 @@ from whylog_vim.proxy.teacher.exceptions import CannotGoToPosition
 class TeacherProxy(MenuHandler):
     def __init__(self, teacher, config, editor, main_proxy):
         self.teacher = teacher
+        self.config = config
         self.editor = editor
         self.main_proxy = main_proxy
         self.formater = TeacherFormater(self)
