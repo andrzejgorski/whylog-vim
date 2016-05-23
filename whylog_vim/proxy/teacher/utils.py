@@ -14,7 +14,7 @@ get_next_constraints_id = partial(next, count(0))
 class MenuHandler(object):
     def edit_line_content(self, parser_id):
         output = InputMessages.get_edit_line_message(self.rule.parsers[parser_id].line_content)
-        effect = rule.effect_id == parser_id
+        effect = self.rule.effect_id == parser_id
         self.main_proxy.create_input_window(output.get_content())
         self.read_function = partial(self.back_after_edit_line_content, parser_id, effect)
 
