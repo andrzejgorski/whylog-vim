@@ -110,6 +110,7 @@ class TeacherFormater(TeacherProxyUsingFromater):
         output = OutputAggregator()
         output.add_commented(WindowTypes.TEACHER)
         effect_id = rule_intent.effect_id
+
         self.parser.format_parser(output, rule_intent.parsers[effect_id], effect_id, effect=True)
         self._format_causes(output, rule_intent, effect_id)
         self.constraint.format_constraints(output, rule_intent.constraints)
