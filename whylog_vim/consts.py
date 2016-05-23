@@ -22,7 +22,7 @@ class Messages(object):
     LOGTYPE = 'This is the content and path of the line:'
     PRIMARY_KEY = 'This is the content and path of the line:'
     ADDED_EFFECT = '### WHYLOG ### You added line as effect. Select cause and press <F4>.'
-    EMPTY_DATA_BASE = 'There is nothing in database. Add rules to get queries.'
+    EMPTY_DATABASE = 'There is nothing in database. Add rules to get queries.'
 
 
 class EditorStates(object):
