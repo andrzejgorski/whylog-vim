@@ -19,7 +19,7 @@ class LogReaderProxy(object):
         try:
             query_output = self._log_reader.get_causes(front_input)
         except NoLogTypeError:
-            log_types = [l for l in self._config.get_all_log_types()]
+            log_types = [logType for logType in self._config.get_all_log_types()]
             if log_types:
                 self._ask_log_type(log_types)
             else:
