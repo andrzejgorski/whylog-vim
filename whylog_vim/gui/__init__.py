@@ -13,9 +13,7 @@ class VimEditor(object):
 
     def get_input_content(self):
         return InputReader.filter_comments(
-            self.window_manager.get_window_content(
-                WindowTypes.INPUT
-            )
+            self.window_manager.get_window_content(WindowTypes.INPUT)
         )
 
     def create_case_window(self, default_input=None):

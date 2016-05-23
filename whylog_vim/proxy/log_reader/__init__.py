@@ -23,7 +23,7 @@ class LogReaderProxy(object):
             if log_types:
                 self._ask_log_type(log_types)
             else:
-                six.print_(Messages.EMPTY_DATA_BASE)
+                six.print_(Messages.EMPTY_DATABASE)
                 self._main_proxy.set_state(EditorStates.EDITOR_NORMAL)
         else:
             self.output = LogReaderOutput.format_query(front_input, query_output)

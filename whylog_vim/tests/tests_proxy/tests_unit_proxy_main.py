@@ -34,4 +34,4 @@ class UnitTestWhylogProxy(TestCase):
         self.whylog_proxy.action()
         self.assertEqual(self.whylog_proxy.get_state(), States.EDITOR_NORMAL)
         assert mock_print.called
-        self.assertEqual(mock_print.call_args, call(Messages.EMPTY_DATA_BASE))
+        self.assertEqual(mock_print.call_args, call(Messages.EMPTY_DATABASE))
