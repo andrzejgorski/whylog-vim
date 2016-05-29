@@ -10,7 +10,13 @@ class LogReaderProxy(object):
 
     def new_query(self):
         front_input = self.editor.get_front_input()
-        query_output = self.log_reader.get_causes(front_input, {self.editor.log_type: [front_input.line_source]})
+        query_output = self.log_reader.get_causes(
+            front_input, {
+                self.editor.log_type: [
+                    front_input.line_source
+                ]
+            }
+        )
         self.output = LogReaderOutput.format_query(front_input, query_output)
         self.output.set_default_callback_function(self.editor.close_query_window)
         self.editor.create_query_window(self.output.get_content())

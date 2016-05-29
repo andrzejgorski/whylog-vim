@@ -83,7 +83,11 @@ class InputMessages(object):
 
     @classmethod
     def _format_log_type(cls, output, log_type, read_function):
-        create_button_param = (partial(read_function, log_type), (FunctionNames.READ_LOG_TYPE, log_type.name))
+        create_button_param = (
+            partial(read_function, log_type), (
+                FunctionNames.READ_LOG_TYPE, log_type.name
+            )
+        )
         output.add(LogType.NAME % log_type.name)
         output.create_button(*create_button_param)
         for matcher in log_type.filename_matchers:
