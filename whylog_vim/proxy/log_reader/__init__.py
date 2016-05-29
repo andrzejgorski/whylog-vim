@@ -2,13 +2,15 @@ from whylog_vim.output_formater.log_reader_formater import LogReaderOutput
 
 
 class LogReaderProxy(object):
-    def __init__(self, editor, log_reader):
+    def __init__(self, log_reader, config, editor, main_proxy):
+        self.log_reader = log_reader
+        self.config = config
         self.editor = editor
-        self._log_reader = log_reader
+        self.main_proxy = main_proxy
 
     def new_query(self):
         front_input = self.editor.get_front_input()
-        query_output = self._log_reader.get_causes(front_input)
+        query_output = self.log_reader.get_causes(front_input)
         self.output = LogReaderOutput.format_query(front_input, query_output)
         self.output.set_default_callback_function(self.editor.close_query_window)
         self.editor.create_query_window(self.output.get_content())
