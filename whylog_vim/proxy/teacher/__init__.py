@@ -92,3 +92,6 @@ class TeacherProxy(MenuHandler):
 
     def delete_constraint(self, constraint):
         pass
+
+    def copy_parser(self, parser):
+        pass

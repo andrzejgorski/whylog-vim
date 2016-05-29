@@ -34,8 +34,17 @@ class ParserFormater(TeacherProxyUsingFromater):
         output.add(ParserOutputs.META % (parser.line_resource_location, parser.line_offset))
         if not effect:
             output.add(ParserOutputs.COPY_BUTTON)
+            output.create_button(
+                partial(self.teacher_proxy.copy_parser, parser), (
+                    FunctionNames.COPY_PARSER, parser.line_id
+                )
+            )
             output.add(ParserOutputs.DELETE_BUTTON)
-            # output.create_button(partial(self.teacher_proxy.delete_parser, parser._id))
+            output.create_button(
+                partial(self.teacher_proxy.delete_parser, parser), (
+                    FunctionNames.DELETE_PARSER, parser.line_id
+                )
+            )
         output.add('')
 
     def _format_regexes(self, output, parser):
@@ -47,31 +56,40 @@ class ParserFormater(TeacherProxyUsingFromater):
             )
         )
         output.add(ParserOutputs.GUESS_BUTTON)
-        # output.create_button(partial(self.teacher_proxy.guess_regex, parser))
+        output.create_button(
+            partial(self.teacher_proxy.guess_regex, parser), (
+                FunctionNames.GUESS_REGEX, parser.line_id
+            )
+        )
         output.add('')
-        self._format_converters(output, parser.groups, parser.line_id)
-        output.add('')
+        self._format_converters(output, parser.groups, parser)
 
     def _format_line_others(self, output, parser):
         output.add(ParserOutputs.OTHERS_HEADER)
         output.add(ParserOutputs.LOG_TYPE % parser.log_type_name)
-        # output.create_button(
-        #    partial(self.teacher_proxy.edit_log_type, parser, parser.log_type_name)
-        # )
+        output.create_button(
+            partial(self.teacher_proxy.edit_log_type, parser, parser.log_type_name), (
+                FunctionNames.EDIT_LOG_TYPE, parser.line_id
+            )
+        )
         output.add(ParserOutputs.PRIMARY_KEY % parser.primary_key_groups)
-        # output.create_button(
-        #    partial(
-        #        self.teacher_proxy.edit_primary_key_groups, parser, parser.primary_key_groups
-        #    )
-        # )
+        output.create_button(
+            partial(
+                self.teacher_proxy.edit_primary_key_groups, parser,
+                parser.primary_key_groups), (FunctionNames.EDIT_PRIMARY_KEY_GROUPS, parser.line_id)
+        )
 
-    def _format_converters(self, output, groups, parser_id):
+    def _format_converters(self, output, groups, parser):
         for group in groups.keys():
             output.add(
                 ParserOutputs.GROUP_CONVERTER %
                 (group, groups[group].converter, groups[group].content)
             )
-            # output.create_button(partial(self.teacher_proxy.edit_converter, parser_id, group))
+            output.create_button(
+                partial(self.teacher_proxy.edit_converter, parser.line_id, group), (
+                    FunctionNames.EDIT_CONVERTER, parser.line_id, group
+                )
+            )
 
 
 class ConstraintsFormater(TeacherProxyUsingFromater):

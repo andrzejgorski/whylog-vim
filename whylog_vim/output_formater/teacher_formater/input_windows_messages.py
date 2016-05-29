@@ -71,7 +71,7 @@ class InputMessages(object):
         return output
 
     @classmethod
-    def get_edit_regex(cls, line_content, old_regex):
+    def get_edit_regex_message(cls, line_content, old_regex):
         output = cls._create_prefix(WindowTypes.INPUT)
         output.add_commented(Messages.CONTENT_OF_LINE)
         output.add_commented(line_content)
