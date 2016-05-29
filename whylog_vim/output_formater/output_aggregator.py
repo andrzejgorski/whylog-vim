@@ -1,10 +1,10 @@
 from whylog_vim.consts import Messages
 
+def pass_function():
+    pass
 
 class OutputAggregator(object):
     def __init__(self):
-        def pass_function():
-            pass
 
         self.function_lines = {}
         self.callbacks = {}
