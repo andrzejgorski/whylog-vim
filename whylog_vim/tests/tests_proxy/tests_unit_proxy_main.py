@@ -3,12 +3,12 @@ from unittest2 import TestCase
 
 from whylog_vim.consts import EditorStates as States
 from whylog_vim.proxy import WhylogProxy
-from whylog_vim.tests.tests_proxy.utils import create_mock_editor
+from whylog_vim.tests.tests_proxy.utils import create_mock_editor, create_whylog_proxy
 
 
 class UnitTestWhylogProxy(TestCase):
     def setUp(self):
-        self.whylog_proxy = WhylogProxy(create_mock_editor())
+        self.whylog_proxy = create_whylog_proxy(create_mock_editor())
 
     def tests_unit_check_log_reader_states_of_whylog_proxy(self):
         with patch('whylog.log_reader.LogReader.get_causes') as mock:

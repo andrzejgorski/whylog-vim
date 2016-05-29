@@ -9,7 +9,7 @@ from whylog_vim.tests.tests_proxy.utils import TestConsts, create_mock_editor
 class TeacherMenuTests(TestCase):
     def setUp(self):
         self.editor = create_mock_editor()
-        self.whylog_proxy = WhylogProxy(self.editor)
+        self.whylog_proxy = create_whylog_proxy(self.editor)
         self.whylog_proxy.teach()
         self.whylog_proxy.teach()
 
