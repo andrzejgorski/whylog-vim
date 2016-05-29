@@ -1,7 +1,9 @@
 import six
+from functools import partial
 
-from whylog_vim.consts import Messages, ParserOutputs, WindowTypes
+from whylog_vim.consts import Messages, ParserOutputs, WindowTypes, LogType
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
+from whylog_vim.output_formater.utils import convert_to_buttons
 
 
 class InputMessages(object):
@@ -78,3 +80,15 @@ class InputMessages(object):
         output.add_commented(Messages.ENDING)
         output.add(old_regex)
         return output
+
+    @classmethod
+    def _format_log_type(output, log_type):
+        output.add(LogType.NAME % log_type.name)
+
+    @classmethod
+    def get_main_set_log_type_message(cls, log_types):
+        output = cls._create_prefix(WindowTypes.CASE)
+        output.add_commented(Messages.LOGTYPE)
+        output.add_commented(Messages.ENDING)
+        for log_type in log_types:
+            cls._format_log_type(output, log_type)
