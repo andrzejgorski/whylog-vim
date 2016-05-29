@@ -6,17 +6,17 @@ from whylog_vim.output_formater.teacher_formater.input_windows_messages import I
 
 
 class MenuHandler(object):
-    def edit_line_content(self, parser_id):
-        output = InputMessages.get_edit_line_message(self.rule.parsers[parser_id].line_content)
-        effect = self.rule.effect_id == parser_id
+    def edit_line_content(self, parser):
+        output = InputMessages.get_edit_line_message(parser.line_content)
+        effect = self.rule.effect_id == parser.line_id
         self.main_proxy.create_input_window(output.get_content())
-        self.read_function = partial(self.back_after_edit_line_content, parser_id, effect)
+        self.read_function = partial(self.back_after_edit_line_content, parser, effect)
 
-    def back_after_edit_line_content(self, parser_id, effect):
-        content = self.editor.get_input_content()
-        if len(content) == 1:
-            front_input = FrontInput(None, content[0], None)
-            self.teacher.add_line(parser_id, front_input, effect)
+    def back_after_edit_line_content(self, parser, effect):
+        content = TeacherReader.read_single_line(self.editor.get_input_content())
+        if content:
+            front_input = FrontInput(None, content, None)
+            self.teacher.add_line(parser.line_id, front_input, effect)
             return True
         return False
 
