@@ -33,4 +33,5 @@ class MenuHandler(object):
         return False
 
     def delete_parser(self, parser):
-        pass
+        self.teacher.remove_line(parser.line_id)
+        self.print_teacher()
