@@ -14,6 +14,7 @@ class WhylogProxy(object):
         self.log_reader = LogReaderProxy(log_reader, config, editor, self)
         self.teacher = TeacherProxy(self.teacher_generator(), config, self.editor, self)
         self._state = States.EDITOR_NORMAL
+        self.log_type = None
 
         self.action_handler = {
             States.EDITOR_NORMAL: (self.log_reader.new_query, States.LOG_READER),
@@ -30,6 +31,9 @@ class WhylogProxy(object):
     def _read_input(self):
         if self.editor.is_cursor_at_input_window() or self.editor.is_cursor_at_case_window():
             self.teacher.read_input()
+
+    def set_log_type(self):
+        pass
 
     def set_state(self, state):
         self._state = state
@@ -56,6 +60,7 @@ class WhylogProxy(object):
         else:
             self._state = state
             action_function()
+
 
     def new_teacher(self):
         self.teacher = TeacherProxy(self.teacher_generator(), self.config, self.editor, self)
