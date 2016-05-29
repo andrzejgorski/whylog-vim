@@ -31,3 +31,6 @@ class MenuHandler(object):
             self.teacher.update_pattern(parser.line_id, content)
             return True
         return False
+
+    def delete_parser(self, parser):
+        pass

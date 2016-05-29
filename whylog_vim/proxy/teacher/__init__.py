@@ -72,9 +72,6 @@ class TeacherProxy(MenuHandler):
             # tryied to open fold but cannot.
             pass
 
-    def delete_parser(self, parser_id):
-        pass
-
     def guess_regex(self, parser_id):
         pass
 
