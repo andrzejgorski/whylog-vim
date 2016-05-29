@@ -1,7 +1,7 @@
 import six
 from functools import partial
 
-from whylog_vim.consts import Messages, ParserOutputs, WindowTypes, LogType
+from whylog_vim.consts import Messages, ParserOutputs, WindowTypes, LogType, DefaultContent
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
 from whylog_vim.output_formater.utils import convert_to_buttons
 
@@ -82,13 +82,26 @@ class InputMessages(object):
         return output
 
     @classmethod
-    def _format_log_type(output, log_type):
+    def _format_log_type(cls, output, log_type, read_function):
+        create_button_param = (partial(read_function, log_type), (FunctionNames.READ_LOG_TYPE, log_type.name))
         output.add(LogType.NAME % log_type.name)
+        output.create_button(*create_button_param)
+        for matcher in log_type.filename_matchers:
+            host_pattern = matcher.host_pattern or DefaultContent.UNDEFINED
+            path_pattern = matcher.path_pattern or DefaultContent.UNDEFINED
+            super_parser = matcher.super_parser.regex.pattern or DefaultContent.UNDEFINED
+
+            output.add(LogType.HOST_PATTERN % host_pattern)
+            output.create_button(*create_button_param)
+            output.add(LogType.PATH_PATTERN % path_pattern)
+            output.create_button(*create_button_param)
+            output.add(LogType.SUPER_PARSER % super_parser)
+            output.create_button(*create_button_param)
 
     @classmethod
-    def get_main_set_log_type_message(cls, log_types):
+    def get_main_set_log_type_message(cls, log_types, read_function):
         output = cls._create_prefix(WindowTypes.CASE)
-        output.add_commented(Messages.LOGTYPE)
-        output.add_commented(Messages.ENDING)
+        output.add_commented(Messages.SELECT_LOG_TYPE)
         for log_type in log_types:
-            cls._format_log_type(output, log_type)
+            cls._format_log_type(output, log_type, read_function)
+        return output

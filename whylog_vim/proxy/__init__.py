@@ -1,8 +1,10 @@
+from functools import partial
 from whylog import whylog_factory
 from whylog_vim.proxy.teacher import TeacherProxy
 from whylog_vim.proxy.log_reader import LogReaderProxy
 from whylog_vim.consts import EditorStates as States, ActionTypes
 from whylog_vim.exceptions import UnknownAction
+from whylog_vim.output_formater.input_windows_messages import InputMessages
 
 
 class WhylogProxy(object):
@@ -27,21 +29,30 @@ class WhylogProxy(object):
             States.EDITOR_NORMAL: (self.teacher.new_lesson, States.ADD_CAUSE),
             States.ADD_CAUSE: (self.teacher.add_cause, States.TEACHER),
         }
+        self.handlers = {
+            ActionTypes.STANDARD: self.action_handler,
+            ActionTypes.TEACHER: self.teach_handler,
+        }
 
     def _read_input(self):
         if self.editor.is_cursor_at_input_window() or self.editor.is_cursor_at_case_window():
             self.teacher.read_input()
 
-    def set_log_type(self):
-        if not self.log_type:
-            line_source = self.editor.get_line_source()
-            log_type = self.config.get_log_type(line_source)
-            if log_type:
-                self.log_type = log_type
-            else:
-                self._state = States.ASK_LOG_TYPE
-                log_types = self.config.get_all_log_types()
-                self.editor.create_input_window(log_types)
+    def set_log_type(self, action_after_set_log_type):
+        line_source = self.editor.get_line_source()
+        log_type = self.config.get_log_type(line_source)
+        if log_type:
+            self.log_type = log_type
+        else:
+            self._state = States.ASK_LOG_TYPE
+            log_types = self.config.get_all_log_types()
+            output = InputMessages.get_main_set_log_type_message(log_types, partial(self.read_log_type, action_after_set_log_type))
+            self.ask_log_type_output = output
+            self.editor.create_case_window(output.get_content())
+
+    def read_log_type(self, action, log_type):
+        self.log_type = log_type
+        self._handle_action(action)
 
     def set_state(self, state):
         self._state = state
@@ -50,26 +61,27 @@ class WhylogProxy(object):
         return self._state
 
     def action(self):
-        self._handle_action(self.action_handler, ActionTypes.STANDARD)
+        self._handle_action(ActionTypes.STANDARD)
 
     def teach(self):
-        self._handle_action(self.teach_handler, ActionTypes.TEACHER)
+        self._handle_action(ActionTypes.TEACHER)
 
     def _update_normal_state(self):
         if not self.editor.is_any_whylog_window_open() and self._state != States.ADD_CAUSE:
             self._state = States.EDITOR_NORMAL
 
-    def _handle_action(self, handler, action_type):
-        self.set_log_type()
-        self._update_normal_state()
-        try:
-            action_function, state = handler[self._state]
-        except KeyError:
-            raise UnknownAction(action_type, self._state)
+    def _handle_action(self, action_type):
+        if not self.log_type and self._state != States.ASK_LOG_TYPE:
+            self.set_log_type(action_type)
         else:
-            self._state = state
-            action_function()
-
+            self._update_normal_state()
+            try:
+                action_function, state = self.handlers[action_type][self._state]
+            except KeyError:
+                raise UnknownAction(action_type, self._state)
+            else:
+                self._state = state
+                action_function()
 
     def new_teacher(self):
         self.teacher = TeacherProxy(self.teacher_generator(), self.config, self.editor, self)

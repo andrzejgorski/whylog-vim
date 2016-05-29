@@ -23,6 +23,7 @@ syn keyword converters int
 syn keyword converters float
 
 syn match warnings '!!.*!!'
+syn match warnings 'undefined'
 
 syn match prefixes 'file:'
 syn match prefixes 'offset:'
@@ -31,6 +32,7 @@ syn match prefixes 'parser:'
 syn match prefixes 'group:'
 syn match prefixes 'host pattern:'
 syn match prefixes 'path pattern:'
+syn match prefixes 'super parser regex:'
 syn match prefixes 'file name matcher:'
 syn match prefixes 'primary key groups:'
 syn match prefixes 'group_converter \d\+:'
