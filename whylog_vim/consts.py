@@ -104,3 +104,5 @@ class FunctionNames(object):
     EDIT_LOG_TYPE = 'edit log type'
     EDIT_PRIMARY_KEY_GROUPS = 'edit primary key groups'
     ADD_CONSTRAINT = 'add constraint'
+    EDIT_CONSTRAINT = 'edit constraint'
+    DELETE_CONSTRAINT = 'delete constraint'
