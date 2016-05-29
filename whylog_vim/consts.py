@@ -31,6 +31,7 @@ class EditorStates(object):
     ADD_CAUSE = 'add cause'
     TEACHER_INPUT = 'input window'
     EFFECT_ADDED = 'added effect'
+    ASK_LOG_TYPE = 'ask log type'
 
 
 class ActionTypes(object):

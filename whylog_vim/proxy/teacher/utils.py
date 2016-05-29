@@ -2,7 +2,8 @@ from functools import partial
 
 from whylog import FrontInput
 from whylog_vim.input_reader.teacher_reader import TeacherReader
-from whylog_vim.output_formater.teacher_formater.input_windows_messages import InputMessages
+from whylog_vim.consts import ReadMessages
+from whylog_vim.output_formater.input_windows_messages import InputMessages
 
 
 class MenuHandler(object):

@@ -13,4 +13,5 @@ def create_mock_editor():
     mock_editor.get_front_input.return_value = FrontInput(
         1, TestConsts.LINE, LineSource('host', 'path')
     )
+    mock_editor.get_line_source.return_value = LineSource('host', 'path')
     return mock_editor

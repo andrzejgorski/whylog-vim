@@ -14,7 +14,6 @@ class WhylogProxy(object):
         self.log_reader = LogReaderProxy(log_reader, config, editor, self)
         self.teacher = TeacherProxy(self.teacher_generator(), config, self.editor, self)
         self._state = States.EDITOR_NORMAL
-        self.log_type = None
 
         self.action_handler = {
             States.EDITOR_NORMAL: (self.log_reader.new_query, States.LOG_READER),
@@ -33,7 +32,14 @@ class WhylogProxy(object):
             self.teacher.read_input()
 
     def set_log_type(self):
-        pass
+        line_source = self.editor.get_line_source()
+        log_type = self.config.get_log_type(line_source)
+        if log_type:
+            self.log_type = log_type
+        else:
+            self._state = States.ASK_LOG_TYPE
+            log_types = self.config.get_all_log_types()
+            self.editor.create_input_window(log_types)
 
     def set_state(self, state):
         self._state = state
@@ -52,6 +58,7 @@ class WhylogProxy(object):
             self._state = States.EDITOR_NORMAL
 
     def _handle_action(self, handler, action_type):
+        self.set_log_type()
         self._update_normal_state()
         try:
             action_function, state = handler[self._state]

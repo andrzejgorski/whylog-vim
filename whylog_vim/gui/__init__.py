@@ -53,16 +53,19 @@ class VimEditor(object):
             VimUIWrapper.get_current_line(), VimUIWrapper.get_column()
         )
 
+    def get_line_source(self):
+        filename = self.get_current_filename()
+        # TODO add proper host
+        host = 'localhost'
+        return LineSource(host, filename)
+
     def get_front_input(self):
         """
         This method returns Front Input object of the line where cursor is.
         """
-        filename = self.get_current_filename()
-        # TODO add proper host
-        host = 'localhost'
         cursor_position = VimUIWrapper.get_cursor_offset()
         line_content = VimUIWrapper.get_current_line()
-        line_source = LineSource(host, filename)
+        line_source = self.get_line_source()
         return FrontInput(cursor_position, line_content, line_source)
 
     def close_query_window(self):
