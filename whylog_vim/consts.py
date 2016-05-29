@@ -109,6 +109,7 @@ class FunctionNames(object):
     ADD_CONSTRAINT = 'add constraint'
     EDIT_CONSTRAINT = 'edit constraint'
     DELETE_CONSTRAINT = 'delete constraint'
+    READ_LOG_TYPE = 'read log type'
 
 
 class DefaultContent(object):

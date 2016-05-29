@@ -3,7 +3,7 @@ from unittest2 import TestCase
 
 from whylog_vim.consts import EditorStates, FunctionNames, ReadMessages
 from whylog_vim.proxy import WhylogProxy
-from whylog_vim.tests.tests_proxy.utils import TestConsts, create_mock_editor
+from whylog_vim.tests.tests_proxy.utils import TestConsts, create_mock_editor, create_whylog_proxy
 
 
 class TeacherMenuTests(TestCase):
