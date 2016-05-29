@@ -96,7 +96,7 @@ class ConstraintsFormater(TeacherProxyUsingFromater):
     def format_constraints(self, output, constraints):
         output.add(ConstraintsOutputs.HEADER)
         output.add(ConstraintsOutputs.ADD_BUTTON)
-        # output.create_button(self.teacher_proxy.add_constraint)
+        output.create_button(self.teacher_proxy.add_constraint, (FunctionNames.ADD_CONSTRAINT))
         output.add('')
         for constraint in constraints:
             self._format_single(output, constraint)
@@ -104,10 +104,17 @@ class ConstraintsFormater(TeacherProxyUsingFromater):
 
     def _format_single(self, output, constraint):
         output.add(ConstraintsOutputs.TYPE % constraint.type)
-        # output.create_button(partial(self.teacher_proxy.edit_constraint, constraint))
+        output.create_button(
+            partial(self.teacher_proxy.edit_constraint, constraint), (
+                FunctionNames.EDIT_CONSTRAINT, constraint.self_id
+            )
+        )
         output.add(ConstraintsOutputs.DELETE_BUTTON)
-        # TODO in this line should be constraint id
-        # output.create_button(partial(self.teacher_proxy.delete_constraint, constraint))
+        output.create_button(
+            partial(self.teacher_proxy.delete_constraint, constraint), (
+                FunctionNames.DELETE_CONSTRAINT, constraint.self_id
+            )
+        )
         for group in constraint.groups:
             output.add(ConstraintsOutputs.GROUP % (get_parser_name(group[0]), group[1]))
         if constraint.params:

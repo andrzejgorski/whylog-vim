@@ -103,3 +103,4 @@ class FunctionNames(object):
     GUESS_REGEX = 'guess regex'
     EDIT_LOG_TYPE = 'edit log type'
     EDIT_PRIMARY_KEY_GROUPS = 'edit primary key groups'
+    ADD_CONSTRAINT = 'add constraint'
