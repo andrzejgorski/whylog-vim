@@ -63,3 +63,5 @@ class TeacherMenuTests(TestCase):
         self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 2)
         self.whylog_proxy.action()
         self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 1)
+        # Check if effect parser is not deleted.
+        self.assertEqual(self.whylog_proxy.teacher.rule.parsers.keys()[0], 0)
