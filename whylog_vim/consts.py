@@ -18,7 +18,7 @@ class Messages(object):
     INPUT_INFO = 'Enter the content below the commented block and press <F3>.'
     CASE_INFO = 'Select an option and press <F3>'
     CONVERTER = 'This is the match of the group: %s'
-    REGEX = 'This is the content of the line:'
+    CONTENT_OF_LINE = 'This is the content of the line:'
     LOGTYPE = 'This is the content and path of the line:'
     PRIMARY_KEY = 'This is the content and path of the line:'
     ADDED_EFFECT = '### WHYLOG ### You added line as effect. Select cause and press <F4>.'
@@ -93,3 +93,16 @@ class Templates(object):
 
 class ReadMessages(object):
     TOO_MANY_LINES = Templates.READ_ERROR % 'You can put only single line as content of parser.'
+
+
+class FunctionNames(object):
+    EDIT_LINE_CONTENT = 'edit line content'
+    EDIT_REGEX = 'edit regex'
+    COPY_PARSER = 'copy paser'
+    DELETE_PARSER = 'delete paser'
+    GUESS_REGEX = 'guess regex'
+    EDIT_LOG_TYPE = 'edit log type'
+    EDIT_PRIMARY_KEY_GROUPS = 'edit primary key groups'
+    ADD_CONSTRAINT = 'add constraint'
+    EDIT_CONSTRAINT = 'edit constraint'
+    DELETE_CONSTRAINT = 'delete constraint'

@@ -1,7 +1,7 @@
 import six
 from functools import partial
 
-from whylog_vim.consts import ConstraintsOutputs, ParserOutputs, WindowTypes
+from whylog_vim.consts import ConstraintsOutputs, ParserOutputs, WindowTypes, FunctionNames
 from whylog_vim.output_formater.consts import TeacherMenu
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
 from whylog_vim.utils import get_parser_name
@@ -15,7 +15,7 @@ class TeacherProxyUsingFromater(object):
 class ParserFormater(TeacherProxyUsingFromater):
     def format_parser(self, output, parser, parser_id, effect=True):
         # TODO tell Ewa to do that
-        parser._id = parser_id
+        parser.line_id = parser_id
         self._format_line_info(output, parser, effect)
         self._format_regexes(output, parser)
         self._format_line_others(output, parser)
@@ -24,53 +24,79 @@ class ParserFormater(TeacherProxyUsingFromater):
 
     def _format_line_info(self, output, parser, effect):
         output.add(
-            ParserOutputs.MESSAGE_CONTENT % (get_parser_name(parser._id), parser.line_content)
+            ParserOutputs.MESSAGE_CONTENT % (get_parser_name(parser.line_id), parser.line_content)
         )
-        output.create_button(partial(self.teacher_proxy.edit_line_content, parser._id))
+        output.create_button(
+            partial(self.teacher_proxy.edit_line_content, parser), (
+                FunctionNames.EDIT_LINE_CONTENT, parser.line_id
+            )
+        )
         output.add(ParserOutputs.META % (parser.line_resource_location, parser.line_offset))
         if not effect:
             output.add(ParserOutputs.COPY_BUTTON)
+            output.create_button(
+                partial(self.teacher_proxy.copy_parser, parser), (
+                    FunctionNames.COPY_PARSER, parser.line_id
+                )
+            )
             output.add(ParserOutputs.DELETE_BUTTON)
-            output.create_button(partial(self.teacher_proxy.delete_parser, parser._id))
+            output.create_button(
+                partial(self.teacher_proxy.delete_parser, parser), (
+                    FunctionNames.DELETE_PARSER, parser.line_id
+                )
+            )
         output.add('')
 
     def _format_regexes(self, output, parser):
         output.add(ParserOutputs.REGEX_HEADER % parser.pattern_name)
         output.add(parser.pattern)
-        output.create_button(partial(self.teacher_proxy.edit_regex, parser._id))
+        output.create_button(
+            partial(self.teacher_proxy.edit_regex, parser), (
+                FunctionNames.EDIT_REGEX, parser.line_id
+            )
+        )
         output.add(ParserOutputs.GUESS_BUTTON)
-        output.create_button(partial(self.teacher_proxy.guess_regex, parser._id))
+        output.create_button(
+            partial(self.teacher_proxy.guess_regex, parser), (
+                FunctionNames.GUESS_REGEX, parser.line_id
+            )
+        )
         output.add('')
-        self._format_converters(output, parser.groups, parser._id)
-        output.add('')
+        self._format_converters(output, parser.groups, parser)
 
     def _format_line_others(self, output, parser):
         output.add(ParserOutputs.OTHERS_HEADER)
         output.add(ParserOutputs.LOG_TYPE % parser.log_type_name)
         output.create_button(
-            partial(self.teacher_proxy.edit_log_type, parser._id, parser.log_type_name)
+            partial(self.teacher_proxy.edit_log_type, parser, parser.log_type_name), (
+                FunctionNames.EDIT_LOG_TYPE, parser.line_id
+            )
         )
         output.add(ParserOutputs.PRIMARY_KEY % parser.primary_key_groups)
         output.create_button(
             partial(
-                self.teacher_proxy.edit_primary_key_groups, parser._id, parser.primary_key_groups
-            )
+                self.teacher_proxy.edit_primary_key_groups, parser,
+                parser.primary_key_groups), (FunctionNames.EDIT_PRIMARY_KEY_GROUPS, parser.line_id)
         )
 
-    def _format_converters(self, output, groups, parser_id):
+    def _format_converters(self, output, groups, parser):
         for group in groups.keys():
             output.add(
                 ParserOutputs.GROUP_CONVERTER %
                 (group, groups[group].converter, groups[group].content)
             )
-            output.create_button(partial(self.teacher_proxy.edit_converter, parser_id, group))
+            output.create_button(
+                partial(self.teacher_proxy.edit_converter, parser.line_id, group), (
+                    FunctionNames.EDIT_CONVERTER, parser.line_id, group
+                )
+            )
 
 
 class ConstraintsFormater(TeacherProxyUsingFromater):
     def format_constraints(self, output, constraints):
         output.add(ConstraintsOutputs.HEADER)
         output.add(ConstraintsOutputs.ADD_BUTTON)
-        output.create_button(self.teacher_proxy.add_constraint)
+        output.create_button(self.teacher_proxy.add_constraint, (FunctionNames.ADD_CONSTRAINT))
         output.add('')
         for constraint in constraints:
             self._format_single(output, constraint)
@@ -78,15 +104,22 @@ class ConstraintsFormater(TeacherProxyUsingFromater):
 
     def _format_single(self, output, constraint):
         output.add(ConstraintsOutputs.TYPE % constraint.type)
-        output.create_button(partial(self.teacher_proxy.edit_constraint, constraint))
+        output.create_button(
+            partial(self.teacher_proxy.edit_constraint, constraint), (
+                FunctionNames.EDIT_CONSTRAINT, constraint.self_id
+            )
+        )
         output.add(ConstraintsOutputs.DELETE_BUTTON)
-        # TODO in this line should be constraint id
-        output.create_button(partial(self.teacher_proxy.delete_constraint, constraint))
+        output.create_button(
+            partial(self.teacher_proxy.delete_constraint, constraint), (
+                FunctionNames.DELETE_CONSTRAINT, constraint.self_id
+            )
+        )
         for group in constraint.groups:
             output.add(ConstraintsOutputs.GROUP % (get_parser_name(group[0]), group[1]))
         if constraint.params:
             self._format_params(output, constraint)
-        output.add(TeacherMenu.EMPTY_LINE)
+        output.add('')
 
     def _format_params(self, output, constraint):
         output.add(ConstraintsOutputs.PARAMS_HEADER)
