@@ -15,7 +15,8 @@ class TeacherMenuTests(TestCase):
 
     def tests_edit_content(self):
         self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.EDIT_LINE_CONTENT, 0)]
+            FunctionNames.EDIT_LINE_CONTENT, 0
+        )]
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = ['some line']
         self.assertNotEqual(self.whylog_proxy.teacher.rule.parsers[0].line_content, 'some line')
@@ -26,7 +27,8 @@ class TeacherMenuTests(TestCase):
     @patch('six.print_')
     def tests_edit_content_to_many_lines_fail(self, mock_print):
         self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.EDIT_LINE_CONTENT, 0)]
+            FunctionNames.EDIT_LINE_CONTENT, 0
+        )]
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = ['some line', 'and another']
         self.whylog_proxy.action()
@@ -35,7 +37,8 @@ class TeacherMenuTests(TestCase):
 
     def tests_edit_regex(self):
         self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.EDIT_REGEX, 0)]
+            FunctionNames.EDIT_REGEX, 0
+        )]
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = [TestConsts.REGEX]
         self.whylog_proxy.action()
@@ -45,7 +48,8 @@ class TeacherMenuTests(TestCase):
     @patch('six.print_')
     def tests_edit_regex_to_many_lines_fail(self, mock_print):
         self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.EDIT_REGEX, 0)]
+            FunctionNames.EDIT_REGEX, 0
+        )]
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = [TestConsts.REGEX, 'and another']
         self.whylog_proxy.action()

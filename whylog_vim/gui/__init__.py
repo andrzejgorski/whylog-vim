@@ -80,19 +80,16 @@ class VimEditor(object):
         return VimUIWrapper.get_current_window_id() in self.window_manager.get_windows_ids()
 
     def is_cursor_at_teacher_window(self):
-        return VimUIWrapper.get_current_window_id() == self.window_manager.get_window_id(
-            WindowTypes.TEACHER
-        )
+        return VimUIWrapper.get_current_window_id(
+        ) == self.window_manager.get_window_id(WindowTypes.TEACHER)
 
     def is_cursor_at_input_window(self):
-        return VimUIWrapper.get_current_window_id() == self.window_manager.get_window_id(
-            WindowTypes.INPUT
-        )
+        return VimUIWrapper.get_current_window_id(
+        ) == self.window_manager.get_window_id(WindowTypes.INPUT)
 
     def is_cursor_at_case_window(self):
-        return VimUIWrapper.get_current_window_id() == self.window_manager.get_window_id(
-            WindowTypes.CASE
-        )
+        return VimUIWrapper.get_current_window_id(
+        ) == self.window_manager.get_window_id(WindowTypes.CASE)
 
     def go_to_query_window(self):
         self.window_manager.go_to_window(WindowTypes.QUERY)
