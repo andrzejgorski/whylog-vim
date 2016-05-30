@@ -1,9 +1,9 @@
 from functools import partial
 
 import six
-from whylog_vim.consts import (  # isort: skip
-    Messages, ParserOutputs, WindowTypes, LogType, DefaultContent, FunctionNames  # isort: skip
-)  # isort: skip
+from whylog_vim.consts import (  # isort:skip
+    Messages, ParserOutputs, WindowTypes, LogType, DefaultContent, FunctionNames  # isort:skip
+)  # isort:skip
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
 
 
