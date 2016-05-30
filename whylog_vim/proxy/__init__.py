@@ -48,9 +48,7 @@ class WhylogProxy(object):
             self._state = States.ASK_LOG_TYPE
             log_types = self.config.get_all_log_types()
             output = InputMessages.get_main_set_log_type_message(
-                log_types, partial(
-                    self.set_log_type, action_after_set_log_type
-                )
+                log_types, partial(self.set_log_type, action_after_set_log_type)
             )
             self.ask_log_type_output = output
             self.editor.create_case_window(output.get_content())

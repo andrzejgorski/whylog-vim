@@ -35,9 +35,7 @@ class UnitTestWhylogProxy(TestCase):
             self.whylog_proxy.action()
             self.assertEqual(self.whylog_proxy.get_state(), States.ASK_LOG_TYPE)
             self.editor.get_line_number.return_value = self.whylog_proxy.ask_log_type_output.function_lines[
-                (
-                    FunctionNames.READ_LOG_TYPE, 'default'
-                )
+                (FunctionNames.READ_LOG_TYPE, 'default')
             ]
             self.whylog_proxy.action()
             self.assertEqual(self.whylog_proxy.get_state(), States.LOG_READER)
