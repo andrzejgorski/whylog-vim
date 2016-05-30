@@ -1,3 +1,4 @@
+import six
 from mock import call, patch
 from unittest2 import TestCase
 
@@ -64,4 +65,4 @@ class TeacherMenuTests(TestCase):
         self.whylog_proxy.action()
         self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 1)
         # Check if effect parser is not deleted.
-        self.assertEqual(self.whylog_proxy.teacher.rule.parsers.keys()[0], 0)
+        self.assertEqual(next(six.iterkeys(self.whylog_proxy.teacher.rule.parsers)), 0)
