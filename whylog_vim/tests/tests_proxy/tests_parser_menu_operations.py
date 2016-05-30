@@ -58,7 +58,8 @@ class TeacherMenuTests(TestCase):
 
     def tests_delete_parser(self):
         self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.DELETE_PARSER, 1)]
+            FunctionNames.DELETE_PARSER, 1
+        )]
         self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 2)
         self.whylog_proxy.action()
         self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 1)
