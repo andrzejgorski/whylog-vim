@@ -69,6 +69,8 @@ class WhylogWindowManager(object):
         self.windows = dict()
 
     def create_window(self, window_type, content, modifiable=False, size=None):
+        self.origin_filename = VimUIWrapper.get_current_filename()
+        self.origin_offset = VimUIWrapper.get_cursor_offset()
         self.windows[window_type] = Window(window_type, content, modifiable, size)
 
     @catch_key_error
@@ -85,6 +87,7 @@ class WhylogWindowManager(object):
             return window.get_window_id()
 
     def close_window(self, window_type):
+        FilesManager.go_to_file(self.origin_filename, self.origin_offset)
         self.go_to_window(window_type)
         VimUIWrapper.close_current_window()
         del self.windows[window_type]

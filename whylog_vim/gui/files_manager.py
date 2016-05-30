@@ -30,3 +30,7 @@ class FilesManager(object):
             VimUIWrapper.split_window()
             VimUIWrapper.open_file_at_window(file_name)
         VimUIWrapper.go_to_offset(offset)
+
+    @classmethod
+    def get_windows_count(cls):
+        return len(VimUIWrapper.get_windows())

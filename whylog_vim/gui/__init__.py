@@ -72,6 +72,9 @@ class VimEditor(object):
     def close_teacher_window(self):
         self.window_manager.close_window(WindowTypes.TEACHER)
 
+    def close_teacher_window(self):
+        self.window_manager.close_window(WindowTypes.CASE)
+
     def is_cursor_at_whylog_windows(self):
         return VimUIWrapper.get_current_window_id() in self.window_manager.get_windows_ids()
 
