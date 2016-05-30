@@ -1,3 +1,4 @@
+import six
 from mock import call, patch
 from unittest2 import TestCase
 
@@ -55,3 +56,13 @@ class TeacherMenuTests(TestCase):
         self.whylog_proxy.action()
         self.assertEqual(mock_print.call_args, call(ReadMessages.TOO_MANY_LINES))
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER_INPUT)
+
+    def tests_delete_parser(self):
+        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
+            FunctionNames.DELETE_PARSER, 1
+        )]
+        self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 2)
+        self.whylog_proxy.action()
+        self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 1)
+        # Check if effect parser is not deleted.
+        self.assertEqual(next(six.iterkeys(self.whylog_proxy.teacher.rule.parsers)), 0)
