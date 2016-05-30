@@ -3,7 +3,6 @@ from functools import partial
 
 from whylog_vim.consts import Messages, ParserOutputs, WindowTypes, LogType, DefaultContent, FunctionNames
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
-from whylog_vim.output_formater.utils import convert_to_buttons
 
 
 class InputMessages(object):
