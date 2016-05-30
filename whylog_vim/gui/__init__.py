@@ -65,10 +65,7 @@ class VimEditor(object):
         cursor_position = VimUIWrapper.get_cursor_offset()
         line_content = VimUIWrapper.get_current_line()
         line_source = self.get_line_source()
-        front_input = FrontInput(cursor_position, line_content, line_source)
-        if self.log_type:
-            front_input.log_type = self.log_type
-        return front_input
+        return FrontInput(cursor_position, line_content, line_source)
 
     def close_query_window(self):
         self.window_manager.close_window(WindowTypes.QUERY)
