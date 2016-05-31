@@ -116,3 +116,7 @@ class WhylogProxy(object):
     def create_case_window(self, content):
         self.editor.create_case_window(content)
         self._state = States.TEACHER_INPUT
+
+    def create_new_log_type(self):
+        self.output = InputMessages.get_case_log_types_parser(parser, log_types, partial(self.set_parser_log_type, parser))
+        self.read_function = partial(self.back_after_create_new_log_type, parser)

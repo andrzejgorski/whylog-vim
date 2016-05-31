@@ -52,7 +52,7 @@ class InputMessages(object):
         output.add(LogType.NAME)
 
     @classmethod
-    def get_add_log_types_on_parser(cls, parser, log_types, read_function):
+    def get_add_log_types_on_parser(cls, parser):
         output = cls._parser_add_log_type_messages(parser, WindowTypes.INPUT)
         cls._add_log_type_template(output)
         return output
