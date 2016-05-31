@@ -1,8 +1,10 @@
 from functools import partial
 
 from whylog import FrontInput
+from whylog.constraints.constraint_manager import ConstraintRegistry
 from whylog_vim.input_reader.teacher_reader import TeacherReader
 from whylog_vim.output_formater.input_windows_messages import InputMessages
+from whylog_vim.input_reader import InputReader, ConstraintReader
 
 
 class MenuHandler(object):
@@ -60,3 +62,34 @@ class MenuHandler(object):
         primary_keys = TeacherReader.read_primary_key_groups(self.editor.get_input_content())
         self.teacher.set_primary_key(parser.line_id, primary_keys)
         return True
+
+    def add_constraint(self):
+        self.output = InputMessages.select_constraint(self.rule.parsers.values())
+        self.main_proxy.create_case_window(self.output.get_content())
+        self.read_function = self.write_constraint
+
+    def write_constraint(self):
+        button_name = self.editor.get_button_name()
+        constraints = ConstraintRegistry.CONSTRAINTS.keys()
+        if button_name in constraints:
+            self.output = InputMessages.add_constraint(self.rule.parsers.values(), button_name)
+            self.main_proxy.create_input_window(self.output.get_content())
+            self.read_function = self.read_constraint
+        else:
+            six.print_('Wrong name')
+        return False
+
+    def read_constraint(self):
+        constraint = ConstraintReader.create_constraint(self.editor.get_input_content())
+        self.teacher.register_constraint(self.get_next_constraints_id(), constraint)
+        return True
+
+    def edit_constraint(self, constraint):
+        self.teacher.remove_constraint(constraint.id_)
+        self.output = InputMessages.add_constraint(self.rule.parsers.values(), constraint.type)
+        self.main_proxy.create_input_window(self.output.get_content())
+        self.read_function = self.read_constraint
+
+    def delete_constraint(self, constraint):
+        self.teacher.remove_constraint(constraint.id_)
+        self.print_teacher()

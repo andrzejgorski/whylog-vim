@@ -83,11 +83,5 @@ class TeacherProxy(MenuHandler):
     def edit_converter(self, parser_id, group):
         pass
 
-    def add_constraint(self, constraint):
-        pass
-
-    def delete_constraint(self, constraint):
-        pass
-
     def copy_parser(self, parser):
         pass

@@ -86,7 +86,7 @@ class ParserFormater(TeacherProxyUsingFromater):
         for group in groups.keys():
             output.add(
                 ParserOutputs.GROUP_CONVERTER %
-                (group, groups[group].converter, groups[group].content)
+                (group, groups[group].converter_type, groups[group].content)
             )
             output.create_button(
                 partial(self.teacher_proxy.edit_converter, parser.line_id, group), (
@@ -109,13 +109,13 @@ class ConstraintsFormater(TeacherProxyUsingFromater):
         output.add(ConstraintsOutputs.TYPE % constraint.type)
         output.create_button(
             partial(self.teacher_proxy.edit_constraint, constraint), (
-                FunctionNames.EDIT_CONSTRAINT, constraint.self_id
+                FunctionNames.EDIT_CONSTRAINT, constraint.id_
             )
         )
         output.add(ConstraintsOutputs.DELETE_BUTTON)
         output.create_button(
             partial(self.teacher_proxy.delete_constraint, constraint), (
-                FunctionNames.DELETE_CONSTRAINT, constraint.self_id
+                FunctionNames.DELETE_CONSTRAINT, constraint.id_
             )
         )
         for group in constraint.groups:
