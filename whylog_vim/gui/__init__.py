@@ -10,7 +10,6 @@ from whylog_vim.gui.files_manager import FilesManager
 class VimEditor(object):
     def __init__(self):
         self.window_manager = WhylogWindowManager()
-        self.log_type = None
 
     def get_input_content(self):
         return InputReader.filter_comments(
