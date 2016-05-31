@@ -106,7 +106,9 @@ class MenuHandler(object):
         pass
 
     def return_to_file(self):
-        pass
+        self.main_proxy.set_state(EditorStates.ADD_CAUSE)
+        self.editor.close_teacher_window()
 
     def save(self):
-        pass
+        self.teacher.save()
+        self.editor.close_teacher_window()
