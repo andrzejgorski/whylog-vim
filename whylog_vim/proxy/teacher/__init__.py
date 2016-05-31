@@ -83,9 +83,6 @@ class TeacherProxy(MenuHandler):
     def edit_converter(self, parser_id, group):
         pass
 
-    def edit_log_type(self, parser_id):
-        pass
-
     def edit_primary_key_groups(self, parser):
         pass
 
