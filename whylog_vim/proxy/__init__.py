@@ -62,7 +62,7 @@ class WhylogProxy(object):
     def create_set_log_type_menu(self, action_after_set_log_type, line_source):
         self._state = States.ASK_LOG_TYPE
         log_types = self.config.get_all_log_types()
-        output = InputMessages.get_main_set_log_type_message(
+        output = InputMessages.get_case_log_type_main(
             log_types, partial(self.set_log_type, action_after_set_log_type, line_source)
         )
         self.ask_log_type_output = output
