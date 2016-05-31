@@ -5,6 +5,7 @@ from whylog.constraints.constraint_manager import ConstraintRegistry
 from whylog_vim.input_reader.teacher_reader import TeacherReader
 from whylog_vim.output_formater.input_windows_messages import InputMessages
 from whylog_vim.input_reader import InputReader, ConstraintReader
+from whylog_vim.consts import EditorStates
 
 
 class MenuHandler(object):
@@ -111,7 +112,9 @@ class MenuHandler(object):
         pass
 
     def return_to_file(self):
-        pass
+        self.main_proxy.set_state(EditorStates.ADD_CAUSE)
+        self.editor.close_teacher_window()
 
     def save(self):
-        pass
+        self.teacher.save()
+        self.editor.close_teacher_window()
