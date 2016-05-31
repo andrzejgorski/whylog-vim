@@ -46,7 +46,7 @@ class MenuHandler(object):
 
     def set_parser_log_type(self, parser, log_type):
         self.teacher.set_log_type(parser.line_id, log_type)
-        self.print_teacher()
+        return True
 
     def call_button(self):
         return self.output.call_button(self.editor.get_line_number())
