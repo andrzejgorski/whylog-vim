@@ -39,7 +39,12 @@ class WhylogProxy(object):
         if self.editor.is_cursor_at_input_window() or self.editor.is_cursor_at_case_window():
             self.teacher.read_input()
 
-    def set_log_type_manualy(self, action_after_set_log_type):
+    def try_to_set_log_type_automatic(self, action_after_set_log_type):
+        """
+        This function is trying to set the log type automatic by the function
+        config get_log_type. If it isn't possible it creates new windows,
+        which asks user for the logtype.
+        """
         line_source = self.editor.get_line_source()
         if self.log_types.get(line_source):
             return True
@@ -88,7 +93,7 @@ class WhylogProxy(object):
             self._state = States.EDITOR_NORMAL
 
     def _handle_action(self, action_type):
-        if self.set_log_type_manualy(action_type):
+        if self.try_to_set_log_type_automatic(action_type):
             self._update_normal_state()
             try:
                 action_function, state = self.handlers[action_type][self._state]
