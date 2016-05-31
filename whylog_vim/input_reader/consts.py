@@ -51,4 +51,4 @@ class ConstraintInput(object):
     TYPE = re.compile(_prepare_default(Constraint.TYPE))
     GROUP = re.compile(_prepare_group(Constraint.GROUP))
     PARAM = re.compile(_prepare_params(Constraint.PARAM))
-    PARAMS_HEADER = Constraint.PARAMS_HEADER
+    PARAMS_HEADER = re.compile(Constraint.PARAMS_HEADER)

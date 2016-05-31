@@ -127,7 +127,7 @@ class ConstraintsFormater(TeacherProxyUsingFromater):
     def _format_params(self, output, constraint):
         output.add(ConstraintsOutputs.PARAMS_HEADER)
         params = constraint.params
-        for param in six.iterkeys(params.keys):
+        for param in six.iterkeys(params):
             output.add(ConstraintsOutputs.PARAM % (param, params[param]))
 
 
