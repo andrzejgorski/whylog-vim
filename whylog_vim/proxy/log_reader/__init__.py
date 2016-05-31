@@ -12,7 +12,7 @@ class LogReaderProxy(object):
         front_input = self.editor.get_front_input()
         query_output = self.log_reader.get_causes(
             front_input, {
-                self.editor.log_type: [
+                self.main_proxy.log_types[front_input.line_source]: [
                     front_input.line_source
                 ]
             }
