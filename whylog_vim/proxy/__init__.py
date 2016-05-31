@@ -6,6 +6,7 @@ from whylog_vim.consts import EditorStates as States, ActionTypes
 from whylog_vim.exceptions import UnknownAction
 from whylog_vim.output_formater.input_windows_messages import InputMessages
 
+
 class WhylogProxy(object):
     def __init__(self, editor):
         self.editor = editor
