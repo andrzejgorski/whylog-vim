@@ -61,7 +61,11 @@ class ParserFormater(TeacherProxyUsingFromater):
 
     def _format_line_others(self, output, parser):
         output.add(ParserOutputs.OTHERS_HEADER)
-        output.add(ParserOutputs.LOG_TYPE % parser.log_type_name.name)
+        if parser.log_type_name:
+            log_type = parser.log_type_name.name
+        else:
+            log_type = None
+        output.add(ParserOutputs.LOG_TYPE % log_type)
         output.create_button(
             partial(self.teacher_proxy.edit_log_type, parser),
             (FunctionNames.EDIT_LOG_TYPE, parser.line_id)
