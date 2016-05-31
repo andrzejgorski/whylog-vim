@@ -76,12 +76,3 @@ class TeacherProxy(MenuHandler):
         except Exception:
             # tryied to open fold but cannot.
             pass
-
-    def guess_regex(self, parser_id):
-        pass
-
-    def edit_converter(self, parser_id, group):
-        pass
-
-    def copy_parser(self, parser):
-        pass

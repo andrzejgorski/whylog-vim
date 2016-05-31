@@ -151,7 +151,11 @@ class TeacherFormater(TeacherProxyUsingFromater):
         self.constraint.format_constraints(output, rule_intent.constraints)
         output.add(TeacherMenu.BUTTONS_HEADER)
         output.add(TeacherMenu.ABANDON_BUTTON)
+        output.create_button(self.teacher_proxy.abandon_rule, FunctionNames.ABANDON_RULE)
         output.add(TeacherMenu.VERIFY_BUTTON)
+        output.create_button(self.teacher_proxy.verify, FunctionNames.VERIFY)
         output.add(TeacherMenu.RETURN_BUTTON)
+        output.create_button(self.teacher_proxy.return_to_file, FunctionNames.RETURN_TO_FILE)
         output.add(TeacherMenu.SAVE_BUTTON)
+        output.create_button(self.teacher_proxy.save, FunctionNames.SAVE)
         return output

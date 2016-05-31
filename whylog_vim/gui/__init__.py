@@ -72,7 +72,7 @@ class VimEditor(object):
     def close_teacher_window(self):
         self.window_manager.close_window(WindowTypes.TEACHER)
 
-    def close_teacher_window(self):
+    def close_case_window(self):
         self.window_manager.close_window(WindowTypes.CASE)
 
     def is_cursor_at_whylog_windows(self):

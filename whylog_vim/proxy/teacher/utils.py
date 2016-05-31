@@ -93,3 +93,25 @@ class MenuHandler(object):
     def delete_constraint(self, constraint):
         self.teacher.remove_constraint(constraint.id_)
         self.print_teacher()
+
+    def guess_regex(self, parser_id):
+        pass
+
+    def edit_converter(self, parser_id, group):
+        pass
+
+    def copy_parser(self, parser):
+        pass
+
+    def abandon_rule(self):
+        self.main_proxy.new_teacher()
+        self.editor.close_teacher_window()
+
+    def verify(self):
+        pass
+
+    def return_to_file(self):
+        pass
+
+    def save(self):
+        pass

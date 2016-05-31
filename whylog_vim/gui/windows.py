@@ -69,8 +69,9 @@ class WhylogWindowManager(object):
         self.windows = dict()
 
     def create_window(self, window_type, content, modifiable=False, size=None):
-        self.origin_filename = VimUIWrapper.get_current_filename()
-        self.origin_offset = VimUIWrapper.get_cursor_offset()
+        if not self.windows:
+            self.origin_filename = VimUIWrapper.get_current_filename()
+            self.origin_offset = VimUIWrapper.get_cursor_offset()
         self.windows[window_type] = Window(window_type, content, modifiable, size)
         for window in six.iterkeys(self.windows):
             if self.origin_filename.endswith(window):
