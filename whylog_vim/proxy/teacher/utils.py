@@ -35,3 +35,9 @@ class MenuHandler(object):
     def delete_parser(self, parser):
         self.teacher.remove_line(parser.line_id)
         self.print_teacher()
+
+    def edit_log_type(self, parser):
+        pass
+
+    def back_after_edit_log_type(self, parser):
+        pass
