@@ -39,6 +39,8 @@ class WhylogProxy(object):
             self.teacher.read_input()
 
     def set_log_type_manualy(self, action_after_set_log_type):
+        if self.editor.is_any_whylog_window_open():
+            return True
         line_source = self.editor.get_line_source()
         if self.log_types.get(line_source):
             return True

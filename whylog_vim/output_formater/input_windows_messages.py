@@ -28,7 +28,7 @@ class InputMessages(object):
     def get_log_types_message(cls, parser, log_types, read_function):
         output = cls._create_prefix(WindowTypes.INPUT)
         output.add_commented(Messages.LOGTYPE)
-        output.add_commented(ParserOutputs.LINE_CONTENT % (parser._id, parser.line_content))
+        output.add_commented(ParserOutputs.LINE_CONTENT % (parser.line_id, parser.line_content))
         output.add_commented(
             ParserOutputs.META % (parser.line_resource_location, parser.line_offset)
         )
@@ -40,7 +40,7 @@ class InputMessages(object):
 
     @classmethod
     def _add_parser(cls, output, parser):
-        output.add_commented(ParserOutputs.LINE_CONTENT % (parser._id, parser.line_content))
+        output.add_commented(ParserOutputs.LINE_CONTENT % (parser.line_id, parser.line_content))
         output.add_commented(
             ParserOutputs.META % (parser.line_resource_location, parser.line_offset)
         )
