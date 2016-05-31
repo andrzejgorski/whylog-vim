@@ -72,6 +72,10 @@ class WhylogWindowManager(object):
         self.origin_filename = VimUIWrapper.get_current_filename()
         self.origin_offset = VimUIWrapper.get_cursor_offset()
         self.windows[window_type] = Window(window_type, content, modifiable, size)
+        for window in six.iterkeys(self.windows):
+            if self.origin_filename.endswith(window):
+                del self.windows[window]
+                break
 
     @catch_key_error
     def get_window_content(self, window_type):
