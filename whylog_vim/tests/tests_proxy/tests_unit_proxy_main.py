@@ -33,7 +33,9 @@ class UnitTestWhylogProxy(TestCase):
         with patch('whylog.log_reader.LogReader.get_causes') as mock:
             mock.return_value = []
             self.assertEqual(self.whylog_proxy.get_state(), States.EDITOR_NORMAL)
+            self.editor.is_any_whylog_window_open.return_value = False
             self.whylog_proxy.action()
+            self.editor.is_any_whylog_window_open.return_value = True
             self.assertEqual(self.whylog_proxy.get_state(), States.ASK_LOG_TYPE)
             self.editor.get_line_number.return_value = self.whylog_proxy.ask_log_type_output.function_lines[
                 (FunctionNames.READ_LOG_TYPE, 'default')
