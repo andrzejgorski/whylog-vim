@@ -1,10 +1,12 @@
 from functools import partial
 
 import six
-from whylog_vim.consts import (  # isort:skip
-    Messages, ParserOutputs, WindowTypes, LogType, DefaultContent, FunctionNames  # isort:skip
-)  # isort:skip
+from whylog.constraints.constraint_manager import ConstraintRegistry
+from whylog_vim.consts import (
+    Messages, ParserOutputs, WindowTypes, LogType, DefaultContent, FunctionNames, ConstraintsOutputs
+)
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
+from whylog_vim.output_formater.utils import convert_to_buttons_list
 
 
 class InputMessages(object):
@@ -109,7 +111,7 @@ class InputMessages(object):
         for group in six.iterkeys(parser.groups):
             output.add_commented(
                 ParserOutputs.GROUP_CONVERTER %
-                (group, parser.groups[group].converter, parser.groups[group].content)
+                (group, parser.groups[group].converter_type, parser.groups[group].content)
             )
         output.add_commented('')
 
@@ -123,11 +125,34 @@ class InputMessages(object):
         return output
 
     @classmethod
-    def get_constraint_message(cls, parsers):
-        output = cls._create_prefix(WindowTypes.INPUT)
+    def _get_constraint_message(cls, parsers, window):
+        output = cls._create_prefix(window)
         for parser in parsers:
             cls._add_parser(output, parser)
         output.add_commented(Messages.ENDING)
+        return output
+
+    @classmethod
+    def add_constraint(cls, parsers, constraint_name):
+        output = cls._get_constraint_message(parsers, WindowTypes.INPUT)
+        constraint = ConstraintRegistry.constraint_from_name(constraint_name)
+        output.add(ConstraintsOutputs.TYPE % constraint_name)
+        output.add(ConstraintsOutputs.GROUP % ('effect', '1'))
+        output.add(ConstraintsOutputs.GROUP % ('cause_1', '1'))
+        params = constraint.PARAMS
+        if params:
+            output.add(ConstraintsOutputs.PARAMS_HEADER)
+            for param in params:
+                output.add(ConstraintsOutputs.PARAM % (param, '<put value>'))
+        return output
+
+    @classmethod
+    def select_constraint(cls, parsers):
+        output = cls._get_constraint_message(parsers, WindowTypes.CASE)
+        constraints = ConstraintRegistry.CONSTRAINTS.keys()
+        buttons = convert_to_buttons_list(constraints)
+        for button in buttons:
+            output.add(button)
         return output
 
     @classmethod
