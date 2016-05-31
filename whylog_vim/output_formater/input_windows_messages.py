@@ -119,6 +119,7 @@ class InputMessages(object):
         output.add_commented(Messages.PRIMARY_KEY)
         cls._add_parser(output, parser)
         output.add_commented(Messages.ENDING)
+        output.add(parser.primary_key)
         return output
 
     @classmethod
