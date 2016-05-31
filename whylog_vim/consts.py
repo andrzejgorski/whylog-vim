@@ -12,6 +12,7 @@ class WindowSizes(object):
 
 class Messages(object):
     COMMENT_PREFIX = '# %s'
+    SELECT_LOG_TYPE = 'Whylog cannot recognize the log type of this file.'
     TEACHER_HEADER = 'You are using whylog teacher.'
     INPUT_HEADER = 'This is whylog input window.'
     ENDING = 'Do not change the commented text above.'
@@ -31,6 +32,7 @@ class EditorStates(object):
     ADD_CAUSE = 'add cause'
     TEACHER_INPUT = 'input window'
     EFFECT_ADDED = 'added effect'
+    ASK_LOG_TYPE = 'ask log type'
 
 
 class ActionTypes(object):
@@ -73,9 +75,10 @@ class Constraint(object):
 
 
 class LogType(object):
-    NAME = '--- name: %s'
+    NAME = '--- log type name: %s'
     HOST_PATTERN = 'host pattern: %s'
     PATH_PATTERN = ' path pattern: %s'
+    SUPER_PARSER = ' super parser regex: %s'
     FILE_NAME_MATCHER = 'file name matcher: %s'
     ADD_BUTTON = 'add_log_type'
     CANCEL_BUTTON = 'cancel'
@@ -106,3 +109,8 @@ class FunctionNames(object):
     ADD_CONSTRAINT = 'add constraint'
     EDIT_CONSTRAINT = 'edit constraint'
     DELETE_CONSTRAINT = 'delete constraint'
+    READ_LOG_TYPE = 'read log type'
+
+
+class DefaultContent(object):
+    UNDEFINED = 'undefined'

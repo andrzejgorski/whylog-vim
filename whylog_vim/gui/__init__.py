@@ -13,9 +13,7 @@ class VimEditor(object):
 
     def get_input_content(self):
         return InputReader.filter_comments(
-            self.window_manager.get_window_content(
-                WindowTypes.INPUT
-            )
+            self.window_manager.get_window_content(WindowTypes.INPUT)
         )
 
     def create_case_window(self, default_input=None):
@@ -53,16 +51,19 @@ class VimEditor(object):
             VimUIWrapper.get_current_line(), VimUIWrapper.get_column()
         )
 
+    def get_line_source(self):
+        filename = self.get_current_filename()
+        # TODO add proper host
+        host = 'localhost'
+        return LineSource(host, filename)
+
     def get_front_input(self):
         """
         This method returns Front Input object of the line where cursor is.
         """
-        filename = self.get_current_filename()
-        # TODO add proper host
-        host = 'localhost'
         cursor_position = VimUIWrapper.get_cursor_offset()
         line_content = VimUIWrapper.get_current_line()
-        line_source = LineSource(host, filename)
+        line_source = self.get_line_source()
         return FrontInput(cursor_position, line_content, line_source)
 
     def close_query_window(self):
@@ -75,19 +76,16 @@ class VimEditor(object):
         return VimUIWrapper.get_current_window_id() in self.window_manager.get_windows_ids()
 
     def is_cursor_at_teacher_window(self):
-        return VimUIWrapper.get_current_window_id() == self.window_manager.get_window_id(
-            WindowTypes.TEACHER
-        )
+        return VimUIWrapper.get_current_window_id(
+        ) == self.window_manager.get_window_id(WindowTypes.TEACHER)
 
     def is_cursor_at_input_window(self):
-        return VimUIWrapper.get_current_window_id() == self.window_manager.get_window_id(
-            WindowTypes.INPUT
-        )
+        return VimUIWrapper.get_current_window_id(
+        ) == self.window_manager.get_window_id(WindowTypes.INPUT)
 
     def is_cursor_at_case_window(self):
-        return VimUIWrapper.get_current_window_id() == self.window_manager.get_window_id(
-            WindowTypes.CASE
-        )
+        return VimUIWrapper.get_current_window_id(
+        ) == self.window_manager.get_window_id(WindowTypes.CASE)
 
     def go_to_query_window(self):
         self.window_manager.go_to_window(WindowTypes.QUERY)

@@ -3,14 +3,13 @@ from mock import call, patch
 from unittest2 import TestCase
 
 from whylog_vim.consts import EditorStates, FunctionNames, ReadMessages
-from whylog_vim.proxy import WhylogProxy
-from whylog_vim.tests.tests_proxy.utils import TestConsts, create_mock_editor
+from whylog_vim.tests.tests_proxy.utils import TestConsts, create_mock_editor, create_whylog_proxy, create_line_source
 
 
 class TeacherMenuTests(TestCase):
     def setUp(self):
         self.editor = create_mock_editor()
-        self.whylog_proxy = WhylogProxy(self.editor)
+        self.whylog_proxy = create_whylog_proxy(self.editor)
         self.whylog_proxy.teach()
         self.whylog_proxy.teach()
 
