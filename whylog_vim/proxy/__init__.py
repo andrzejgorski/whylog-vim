@@ -35,8 +35,7 @@ class WhylogProxy(object):
         }
 
     def _read_input(self):
-        if self.editor.is_cursor_at_input_window() or self.editor.is_cursor_at_case_window():
-            self.teacher.read_input()
+        self.teacher.read_input()
 
     def try_to_set_log_type_automatic(self, action_after_set_log_type):
         """
