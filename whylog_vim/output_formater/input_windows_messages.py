@@ -25,7 +25,7 @@ class InputMessages(object):
         return output
 
     @classmethod
-    def get_log_types_message(cls, parser):
+    def get_log_types_message(cls, parser, log_types, read_function):
         output = cls._create_prefix(WindowTypes.INPUT)
         output.add_commented(Messages.LOGTYPE)
         output.add_commented(ParserOutputs.LINE_CONTENT % (parser._id, parser.line_content))
@@ -33,7 +33,9 @@ class InputMessages(object):
             ParserOutputs.META % (parser.line_resource_location, parser.line_offset)
         )
         output.add_commented('')
+        output.add_commented(Messages.SELECT_LOG_TYPE)
         output.add_commented(Messages.ENDING)
+        cls._format_menu_for_log_type(output, log_types, read_function)
         return output
 
     @classmethod
@@ -102,9 +104,13 @@ class InputMessages(object):
             output.create_button(*create_button_param)
 
     @classmethod
+    def _format_menu_for_log_type(cls, output, log_types, read_function):
+        for log_type in log_types:
+            cls._format_log_type(output, log_type, read_function)
+
+    @classmethod
     def get_main_set_log_type_message(cls, log_types, read_function):
         output = cls._create_prefix(WindowTypes.CASE)
         output.add_commented(Messages.SELECT_LOG_TYPE)
-        for log_type in log_types:
-            cls._format_log_type(output, log_type, read_function)
+        cls._format_menu_for_log_type(output, log_types, read_function)
         return output
