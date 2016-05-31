@@ -37,7 +37,13 @@ class MenuHandler(object):
         self.print_teacher()
 
     def edit_log_type(self, parser):
-        pass
+        log_types = self.config.get_all_log_types()
+        self.output = InputMessages.get_log_types_message(parser, log_types, partial(self.set_parser_log_type, parser))
+        self.main_proxy.create_case_window(output.get_content())
+        self.read_function = self.call_button
 
-    def back_after_edit_log_type(self, parser):
-        pass
+    def set_parser_log_type(self, parser, log_type):
+        self.teacher.set_log_type(parser.id, log_type)
+
+    def call_button(self):
+        self.output.call_button(self.editor.get_line_number())
