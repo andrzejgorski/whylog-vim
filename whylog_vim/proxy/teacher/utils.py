@@ -23,8 +23,7 @@ class MenuHandler(object):
     def edit_regex(self, parser):
         output = InputMessages.get_edit_regex_message(parser.line_content, parser.pattern)
         self.main_proxy.create_input_window(output.get_content())
-        self.read_function = partial(self.back_after_edit_regex, parser)
-
+        self.read_function = partial(self.back_after_edit_regex, parser) 
     def back_after_edit_regex(self, parser):
         content = TeacherReader.read_single_line(self.editor.get_input_content())
         if content:
@@ -38,7 +37,9 @@ class MenuHandler(object):
 
     def edit_log_type(self, parser):
         log_types = self.config.get_all_log_types()
-        self.output = InputMessages.get_case_log_types_parser(parser, log_types, partial(self.set_parser_log_type, parser))
+        self.output = InputMessages.get_case_log_types_parser(
+            parser, log_types, partial(self.set_parser_log_type, parser)
+        )
         self.main_proxy.create_case_window(self.output.get_content())
         self.read_function = self.call_button
 
@@ -46,11 +47,14 @@ class MenuHandler(object):
         self.teacher.set_log_type(parser.line_id, log_type)
         return True
 
-    def create_new_log_type(self, parser):
-        self.read_function = partial(self.back_after_create_new_log_type, parser)
-
-    def back_after_create_new_log_type(self, parser):
-        return True
-
     def call_button(self):
         return self.output.call_button(self.editor.get_line_number())
+
+    def edit_primary_key_groups(self, parser):
+        self.output = InputMessages.get_primary_key_message(parser)
+        self.main_proxy.create_input_window(self.output.get_content())
+        self.read_function = partial(self.back_after_edit_primary_key_groups)
+
+    def back_after_edit_primary_key_groups(self, parser):
+        primary_keys = TeacherReader.read_primary_key_groups(self.editor.get_input_content())
+        self.teacher.set_primary_key(parser.line_id, primary_keys)
