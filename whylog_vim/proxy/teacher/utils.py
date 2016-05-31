@@ -23,7 +23,8 @@ class MenuHandler(object):
     def edit_regex(self, parser):
         output = InputMessages.get_edit_regex_message(parser.line_content, parser.pattern)
         self.main_proxy.create_input_window(output.get_content())
-        self.read_function = partial(self.back_after_edit_regex, parser) 
+        self.read_function = partial(self.back_after_edit_regex, parser)
+
     def back_after_edit_regex(self, parser):
         content = TeacherReader.read_single_line(self.editor.get_input_content())
         if content:
@@ -53,8 +54,9 @@ class MenuHandler(object):
     def edit_primary_key_groups(self, parser):
         self.output = InputMessages.get_primary_key_message(parser)
         self.main_proxy.create_input_window(self.output.get_content())
-        self.read_function = partial(self.back_after_edit_primary_key_groups)
+        self.read_function = partial(self.back_after_edit_primary_key_groups, parser)
 
     def back_after_edit_primary_key_groups(self, parser):
         primary_keys = TeacherReader.read_primary_key_groups(self.editor.get_input_content())
         self.teacher.set_primary_key(parser.line_id, primary_keys)
+        return True

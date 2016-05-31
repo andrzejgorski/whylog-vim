@@ -119,7 +119,7 @@ class InputMessages(object):
         output.add_commented(Messages.PRIMARY_KEY)
         cls._add_parser(output, parser)
         output.add_commented(Messages.ENDING)
-        output.add(parser.primary_key)
+        output.add(', '.join([str(num) for num in parser.primary_key_groups]))
         return output
 
     @classmethod
