@@ -95,11 +95,19 @@ class MenuHandler(object):
         self.teacher.remove_constraint(constraint.id_)
         self.print_teacher()
 
-    def guess_regex(self, parser_id):
+    def guess_regex(self, parser):
         pass
 
-    def edit_converter(self, parser_id, group):
-        pass
+    def edit_converter(self, parser, group):
+        match = self.rule.parsers[parser.id_].groups[group].content
+        self.output = InputMessages.get_converters(match)
+        self.main_proxy.create_case_window(self.output.get_content())
+        self.read_function = partial(self.set_converter, parser, group)
+
+    def set_converter(self, parser, group):
+        converter = self.editor.get_button_name()
+        self.teacher.set_converter(parser.id_, group, converter)
+        return True
 
     def copy_parser(self, parser):
         pass

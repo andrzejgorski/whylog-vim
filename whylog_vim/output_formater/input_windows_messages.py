@@ -2,6 +2,7 @@ from functools import partial
 
 import six
 from whylog.constraints.constraint_manager import ConstraintRegistry
+from whylog.converters import CONVERTION_MAPPING
 from whylog_vim.consts import (
     Messages, ParserOutputs, WindowTypes, LogType, DefaultContent, FunctionNames, ConstraintsOutputs
 )
@@ -151,6 +152,16 @@ class InputMessages(object):
         output = cls._get_constraint_message(parsers, WindowTypes.CASE)
         constraints = ConstraintRegistry.CONSTRAINTS.keys()
         buttons = convert_to_buttons_list(constraints)
+        for button in buttons:
+            output.add(button)
+        return output
+
+    @classmethod
+    def get_converters(cls, match):
+        output = cls._create_prefix(WindowTypes.CASE)
+        output.add_commented(Messages.CONVERTER % match)
+        converters = CONVERTION_MAPPING.keys()
+        buttons = convert_to_buttons_list(converters)
         for button in buttons:
             output.add(button)
         return output

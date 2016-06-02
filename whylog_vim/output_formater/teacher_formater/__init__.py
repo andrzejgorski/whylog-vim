@@ -89,7 +89,7 @@ class ParserFormater(TeacherProxyUsingFromater):
                 (group, groups[group].converter_type, groups[group].content)
             )
             output.create_button(
-                partial(self.teacher_proxy.edit_converter, parser.line_id, group), (
+                partial(self.teacher_proxy.edit_converter, parser, group), (
                     FunctionNames.EDIT_CONVERTER, parser.line_id, group
                 )
             )
