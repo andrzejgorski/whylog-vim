@@ -67,7 +67,7 @@ class ParserFormater(TeacherProxyUsingFromater):
     def _format_line_others(self, output, parser):
         output.add(ParserOutputs.OTHERS_HEADER)
         if parser.log_type_name:
-            log_type = parser.log_type_name.name
+            log_type = parser.log_type_name
         else:
             log_type = None
         output.add(ParserOutputs.LOG_TYPE % log_type)

@@ -48,7 +48,7 @@ class MenuHandler(object):
         self.read_function = self.call_button
 
     def set_parser_log_type(self, parser, log_type):
-        self.teacher.set_log_type(parser.line_id, log_type)
+        self.teacher.set_log_type(parser.line_id, log_type.name)
         return True
 
     def call_button(self):
