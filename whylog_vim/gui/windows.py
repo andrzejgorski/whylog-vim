@@ -98,6 +98,11 @@ class WhylogWindowManager(object):
         del self.windows[window_type]
 
     def are_windows_closed(self):
+        for window in self.windows.keys():
+            try:
+                self.windows[window].get_window_id()
+            except CannotFindWindowId:
+                del self.windows[window]
         return not self.windows
 
     def get_windows_ids(self):
