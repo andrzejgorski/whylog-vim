@@ -1,3 +1,4 @@
+import six
 from functools import partial
 from whylog import whylog_factory
 from whylog_vim.proxy.teacher import TeacherProxy
@@ -70,7 +71,6 @@ class WhylogProxy(object):
 
     def set_log_type(self, action, line_source, log_type):
         self.log_types[line_source] = log_type
-        self.editor.log_type = log_type
         self._state = States.EDITOR_NORMAL
         self.editor.close_case_window()
         self._handle_action(action)
@@ -97,7 +97,8 @@ class WhylogProxy(object):
             try:
                 action_function, state = self.handlers[action_type][self._state]
             except KeyError:
-                raise UnknownAction(action_type, self._state)
+                six.print_('UnknownAction')
+                # raise UnknownAction(action_type, self._state)
             else:
                 self._state = state
                 action_function()

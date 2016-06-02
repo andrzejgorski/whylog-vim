@@ -31,7 +31,7 @@ class TeacherProxy(MenuHandler):
     def _add_line(self, front_input, effect=False):
         id = self.get_next_parser_id()
         self.teacher.add_line(id, front_input, effect)
-        self.teacher.set_log_type(id, self.editor.log_type.name)
+        self.teacher.set_log_type(id, self.main_proxy.log_types[front_input.line_source].name)
 
     def new_lesson(self):
         front_input = self.editor.get_front_input()

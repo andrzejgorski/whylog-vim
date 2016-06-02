@@ -117,4 +117,5 @@ class MenuHandler(object):
 
     def save(self):
         self.teacher.save()
+        self.main_proxy.new_teacher()
         self.editor.close_teacher_window()
