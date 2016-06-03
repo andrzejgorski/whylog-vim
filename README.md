@@ -30,11 +30,14 @@ cd whylog
 ```
 
 
-Add to your .vimrc file these two lines:
+Add to your .vimrc file these lines:
 
 ```vim
 map <f3> :call whylog#Whylog_Action()<CR>
 map <f4> :call whylog#Whylog_Teach()<CR>
+execute pathogen#infect()
+syntax on
+filetype plugin indent on
 ```
 
 
