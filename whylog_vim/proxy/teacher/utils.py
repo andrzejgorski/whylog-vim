@@ -95,9 +95,6 @@ class MenuHandler(object):
         self.teacher.remove_constraint(constraint.id_)
         self.print_teacher()
 
-    def guess_regex(self, parser):
-        pass
-
     def edit_converter(self, parser, group):
         match = self.rule.parsers[parser.id_].groups[group].content
         self.output = InputMessages.get_converters(match)
@@ -109,15 +106,9 @@ class MenuHandler(object):
         self.teacher.set_converter(parser.id_, group, converter)
         return True
 
-    def copy_parser(self, parser):
-        pass
-
     def abandon_rule(self):
         self.main_proxy.new_teacher()
         self.editor.close_teacher_window()
-
-    def verify(self):
-        pass
 
     def return_to_file(self):
         self.main_proxy.set_state(EditorStates.ADD_CAUSE)

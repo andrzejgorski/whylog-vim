@@ -14,7 +14,6 @@ class TeacherProxyUsingFromater(object):
 
 class ParserFormater(TeacherProxyUsingFromater):
     def format_parser(self, output, parser, parser_id, effect=True):
-        # TODO tell Ewa to do that
         parser.line_id = parser_id
         self._format_line_info(output, parser, effect)
         self._format_regexes(output, parser)
@@ -33,12 +32,13 @@ class ParserFormater(TeacherProxyUsingFromater):
         )
         output.add(ParserOutputs.META % (parser.line_resource_location, parser.line_offset))
         if not effect:
-            output.add(ParserOutputs.COPY_BUTTON)
-            output.create_button(
-                partial(self.teacher_proxy.copy_parser, parser), (
-                    FunctionNames.COPY_PARSER, parser.line_id
-                )
-            )
+            # TODO in later version
+            # output.add(ParserOutputs.COPY_BUTTON)
+            # output.create_button(
+            #     partial(self.teacher_proxy.copy_parser, parser), (
+            #         FunctionNames.COPY_PARSER, parser.line_id
+            #     )
+            # )
             output.add(ParserOutputs.DELETE_BUTTON)
             output.create_button(
                 partial(self.teacher_proxy.delete_parser, parser), (
@@ -55,12 +55,13 @@ class ParserFormater(TeacherProxyUsingFromater):
                 FunctionNames.EDIT_REGEX, parser.line_id
             )
         )
-        output.add(ParserOutputs.GUESS_BUTTON)
-        output.create_button(
-            partial(self.teacher_proxy.guess_regex, parser), (
-                FunctionNames.GUESS_REGEX, parser.line_id
-            )
-        )
+        # TODO in later version
+        # output.add(ParserOutputs.GUESS_BUTTON)
+        # output.create_button(
+        #     partial(self.teacher_proxy.guess_regex, parser), (
+        #         FunctionNames.GUESS_REGEX, parser.line_id
+        #     )
+        # )
         output.add('')
         self._format_converters(output, parser.groups, parser)
 
@@ -152,8 +153,9 @@ class TeacherFormater(TeacherProxyUsingFromater):
         output.add(TeacherMenu.BUTTONS_HEADER)
         output.add(TeacherMenu.ABANDON_BUTTON)
         output.create_button(self.teacher_proxy.abandon_rule, FunctionNames.ABANDON_RULE)
-        output.add(TeacherMenu.VERIFY_BUTTON)
-        output.create_button(self.teacher_proxy.verify, FunctionNames.VERIFY)
+        # TODO in later version
+        # output.add(TeacherMenu.VERIFY_BUTTON)
+        # output.create_button(self.teacher_proxy.verify, FunctionNames.VERIFY)
         output.add(TeacherMenu.RETURN_BUTTON)
         output.create_button(self.teacher_proxy.return_to_file, FunctionNames.RETURN_TO_FILE)
         output.add(TeacherMenu.SAVE_BUTTON)
