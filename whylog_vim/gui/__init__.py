@@ -52,7 +52,7 @@ class VimEditor(object):
         )
 
     def get_line_source(self):
-        filename = self.get_current_filename()
+        filename = self.get_filepath()
         # TODO add proper host
         host = 'localhost'
         return LineSource(host, filename)
@@ -103,8 +103,8 @@ class VimEditor(object):
     def get_current_line(self):
         return VimUIWrapper.get_current_line()
 
-    def get_current_filename(self):
-        return VimUIWrapper.get_current_filename()
+    def get_filepath(self):
+        return VimUIWrapper.get_filepath()
 
     def get_line_number(self):
         return VimUIWrapper.get_line_number()

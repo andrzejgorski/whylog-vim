@@ -28,15 +28,20 @@ class TeacherProxy(MenuHandler):
         self.get_next_parser_id = partial(next, count(0))
         self.get_next_constraints_id = partial(next, count(0))
 
+    def _add_line(self, front_input, effect=False):
+        id_ = self.get_next_parser_id()
+        self.teacher.add_line(id_, front_input, effect)
+        self.teacher.set_log_type(id_, self.editor.log_type)
+
     def new_lesson(self):
         front_input = self.editor.get_front_input()
-        self.teacher.add_line(self.get_next_parser_id(), front_input, effect=True)
-        self.origin_file_name = self.editor.get_current_filename()
+        self._add_line(front_input, effect=True)
+        self.origin_file_name = self.editor.get_filepath()
         six.print_(Messages.ADDED_EFFECT)
 
     def add_cause(self):
         front_input = self.editor.get_front_input()
-        self.teacher.add_line(self.get_next_parser_id(), front_input)
+        self._add_line(front_input)
         self.print_teacher()
 
     def handle_menu_signal(self):
@@ -76,9 +81,6 @@ class TeacherProxy(MenuHandler):
         pass
 
     def edit_converter(self, parser_id, group):
-        pass
-
-    def edit_log_type(self, parser_id):
         pass
 
     def edit_primary_key_groups(self, parser):

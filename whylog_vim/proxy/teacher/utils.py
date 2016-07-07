@@ -35,3 +35,18 @@ class MenuHandler(object):
     def delete_parser(self, parser):
         self.teacher.remove_line(parser.line_id)
         self.print_teacher()
+
+    def edit_log_type(self, parser):
+        log_types = self.config.get_all_log_types()
+        self.output = InputMessages.get_log_types_message(
+            parser, log_types, partial(self.set_parser_log_type, parser)
+        )
+        self.main_proxy.create_case_window(self.output.get_content())
+        self.read_function = self.call_button
+
+    def set_parser_log_type(self, parser, log_type):
+        self.teacher.set_log_type(parser.line_id, log_type)
+        return True
+
+    def call_button(self):
+        return self.output.call_button(self.editor.get_line_number())
