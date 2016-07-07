@@ -36,7 +36,7 @@ class TeacherProxy(MenuHandler):
     def new_lesson(self):
         front_input = self.editor.get_front_input()
         self._add_line(front_input, effect=True)
-        self.origin_file_name = self.editor.get_current_filename()
+        self.origin_file_name = self.editor.get_filepath()
         six.print_(Messages.ADDED_EFFECT)
 
     def add_cause(self):

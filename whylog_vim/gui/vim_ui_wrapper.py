@@ -68,8 +68,12 @@ class VimUIWrapper(object):
         vim.command(':set foldmethod=syntax')
 
     @classmethod
-    def get_current_filename(cls):
+    def get_filepath(cls):
         return vim.current.buffer.name
+
+    @classmethod
+    def get_filename(cls):
+        return vim.eval('expand("%:t")')
 
     @classmethod
     def get_line_number(cls):
