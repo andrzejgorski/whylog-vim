@@ -76,7 +76,7 @@ class ParserFormater(TeacherProxyUsingFromater):
         for group in groups.keys():
             output.add(
                 ParserOutputs.GROUP_CONVERTER %
-                (group, groups[group].converter, groups[group].content)
+                (group, groups[group].converter_type, groups[group].content)
             )
             output.create_button(
                 partial(self.teacher_proxy.edit_converter, parser.line_id, group),
