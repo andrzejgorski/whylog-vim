@@ -1,10 +1,11 @@
+import six
 from functools import partial
 
 from whylog import FrontInput
 from whylog.constraints.constraint_manager import ConstraintRegistry
 from whylog_vim.input_reader.teacher_reader import TeacherReader
 from whylog_vim.output_formater.input_windows_messages import InputMessages
-from whylog_vim.input_reader import InputReader, ConstraintReader
+from whylog_vim.input_reader import ConstraintReader
 
 
 class MenuHandler(object):

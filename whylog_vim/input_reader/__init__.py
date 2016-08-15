@@ -1,5 +1,4 @@
 from whylog.constraints.constraint_manager import ConstraintRegistry
-from whylog.constraints.const import ConstraintType
 from whylog_vim.input_reader.consts import RegexPatterns, ConstraintInput, Groups
 from whylog_vim.utils import get_id_from_name
 

@@ -1,6 +1,5 @@
 import six
 from whylog_vim.consts import ReadMessages
-from whylog_vim.input_reader import InputReader
 
 
 class TeacherReader(object):
