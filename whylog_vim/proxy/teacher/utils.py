@@ -54,14 +54,10 @@ class MenuHandler(object):
         return self.output.call_button(self.editor.get_line_number())
 
     def edit_primary_key_groups(self, parser):
-        self.output = InputMessages.get_primary_key_message(parser)
-        self.main_proxy.create_input_window(self.output.get_content())
-        self.read_function = partial(self.back_after_edit_primary_key_groups, parser)
+        pass
 
     def back_after_edit_primary_key_groups(self, parser):
-        primary_keys = TeacherReader.read_primary_key_groups(self.editor.get_input_content())
-        self.teacher.set_primary_key(parser.line_id, primary_keys)
-        return True
+        pass
 
     def add_constraint(self):
         self.output = InputMessages.select_constraint(self.rule.parsers.values())

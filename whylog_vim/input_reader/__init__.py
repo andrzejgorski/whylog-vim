@@ -34,11 +34,8 @@ class ConstraintReader(object):
                 if match:
                     groups.append(
                         (
-                            get_id_from_name(match.group(Groups.GROUP1)), int(
-                                match.group(
-                                    Groups.GROUP2
-                                )
-                            )
+                            get_id_from_name(match.group(Groups.GROUP1)),
+                            int(match.group(Groups.GROUP2))
                         )
                     )
                 else:

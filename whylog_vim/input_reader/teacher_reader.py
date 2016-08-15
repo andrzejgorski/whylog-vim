@@ -10,9 +10,3 @@ class TeacherReader(object):
             return editor_input[0]
         else:
             six.print_(ReadMessages.TOO_MANY_LINES)
-
-    @classmethod
-    def read_primary_key_groups(cls, editor_input):
-        line = cls.read_single_line(editor_input)
-        if line:
-            return InputReader.parse_primary_key_groups([line])
