@@ -110,6 +110,7 @@ class FunctionNames(object):
     EDIT_CONSTRAINT = 'edit constraint'
     DELETE_CONSTRAINT = 'delete constraint'
     READ_LOG_TYPE = 'read log type'
+    EDIT_CONVERTER = 'edit converter'
 
 
 class DefaultContent(object):

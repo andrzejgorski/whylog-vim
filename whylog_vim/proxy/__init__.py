@@ -75,7 +75,7 @@ class WhylogProxy(object):
         self.log_types[line_source] = log_type
         self.editor.log_type = log_type
         self._state = States.EDITOR_NORMAL
-        self.editor.close_teacher_window()
+        self.editor.close_case_window()
         self._handle_action(action)
 
     def set_state(self, state):

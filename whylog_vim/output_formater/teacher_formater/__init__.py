@@ -76,7 +76,7 @@ class ParserFormater(TeacherProxyUsingFromater):
         for group in groups.keys():
             output.add(
                 ParserOutputs.GROUP_CONVERTER %
-                (group, groups[group].converter, groups[group].content)
+                (group, groups[group].converter_type, groups[group].content)
             )
             output.create_button(
                 partial(self.teacher_proxy.edit_converter, parser.line_id, group),
@@ -127,10 +127,12 @@ class TeacherFormater(TeacherProxyUsingFromater):
     def _format_causes(self, output, rule, effect_id):
         for line_id in six.iterkeys(rule.parsers):
             if line_id != effect_id:
-                self.parser.format_parser(output,
-                                          rule.parsers[line_id],
-                                          line_id,
-                                          effect=False,)
+                self.parser.format_parser(
+                    output,
+                    rule.parsers[line_id],
+                    line_id,
+                    effect=False,
+                )
 
     def format_rule(self, rule_intent, validation_result):
         output = OutputAggregator()
