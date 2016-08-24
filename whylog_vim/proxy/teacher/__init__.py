@@ -27,6 +27,7 @@ class TeacherProxy(MenuHandler):
         self.formater = TeacherFormater(self)
         self.get_next_parser_id = partial(next, count(0))
         self.get_next_constraints_id = partial(next, count(0))
+        self._return_offset = 0
 
     def _add_line(self, front_input, effect=False):
         id_ = self.get_next_parser_id()
@@ -50,11 +51,6 @@ class TeacherProxy(MenuHandler):
         if self.main_proxy.get_state() == EditorStates.TEACHER:
             self._return_cursor_to_position()
 
-    def read_input(self):
-        if self.read_function():
-            self.print_teacher()
-            self._return_cursor_to_position()
-
     def print_teacher(self):
         self.rule = self.teacher.get_rule()
         self.output = self.formater.format_rule(self.rule, None)
@@ -62,6 +58,7 @@ class TeacherProxy(MenuHandler):
         self.editor.create_teacher_window(self.output.get_content())
         self.editor.set_syntax_folding()
         self.main_proxy.set_state(EditorStates.TEACHER)
+        self._return_cursor_to_position()
 
     def _set_cursor_position(self):
         self._return_offset = self.editor.get_line_offset()

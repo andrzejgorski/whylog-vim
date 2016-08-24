@@ -36,7 +36,11 @@ class WhylogProxy(object):
         }
 
     def _read_input(self):
-        self.teacher.read_input()
+        # The read_funtion attribute of teacher can change very often.
+        # If _read_input function will not exist every changes
+        # should be applied to action_handler dict.
+        # Adding this funciton allows to not interfer to WhylogProxy by WhylogTeacher.
+        self.teacher.read_function()
 
     def try_to_set_log_type_automatic(self, action_after_set_log_type):
         """

@@ -23,7 +23,14 @@ class InputReader(object):
 class ConstraintReader(object):
     @classmethod
     def _parse_constraint(cls, lines):
-        constr_type = ConstraintInput.TYPE.match(lines[0]).group(1)
+        """
+        This funcion takes a VIM window buffor (the list of the text) which
+        defines a constraint of the constraint and return the constraint properties:
+            - constraint type
+            - constraint groups
+            - constraint params
+        """
+        constr_type = ConstraintInput.TYPE.match(lines[0]).group(Groups.GROUP1)
         groups = []
         are_params = False
         params = {}

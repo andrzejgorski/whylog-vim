@@ -3,7 +3,8 @@ from functools import partial
 import six
 from whylog.constraints.constraint_manager import ConstraintRegistry
 from whylog_vim.consts import (
-    Messages, ParserOutputs, WindowTypes, LogType, DefaultContent, FunctionNames, ConstraintsOutputs
+    Messages, ParserOutputs, WindowTypes, LogType, DefaultContent, FunctionNames,
+    ConstraintsOutputs, LineNames
 )
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
 from whylog_vim.output_formater.utils import convert_to_buttons_list
@@ -121,7 +122,7 @@ class InputMessages(object):
         output.add_commented(Messages.PRIMARY_KEY)
         cls._add_parser(output, parser)
         output.add_commented(Messages.ENDING)
-        output.add(', '.join([str(num) for num in parser.primary_key_groups]))
+        output.add(', '.join(str(num) for num in parser.primary_key_groups))
         return output
 
     @classmethod
@@ -134,11 +135,18 @@ class InputMessages(object):
 
     @classmethod
     def add_constraint(cls, parsers, constraint_name):
+        """
+        This function creates the output and adds example constraint to window.
+        The user can create his own constraint by editing example.
+        """
         output = cls._get_constraint_message(parsers, WindowTypes.INPUT)
         constraint = ConstraintRegistry.constraint_from_name(constraint_name)
+        # These lines add an example constraint which user can edit.
+        # The example constraint consist of
+        # group 1 of Effect and group 1 of cause_1.
         output.add(ConstraintsOutputs.TYPE % constraint_name)
-        output.add(ConstraintsOutputs.GROUP % ('effect', '1'))
-        output.add(ConstraintsOutputs.GROUP % ('cause_1', '1'))
+        output.add(ConstraintsOutputs.GROUP % (LineNames.EFFECT, '1'))
+        output.add(ConstraintsOutputs.GROUP % (LineNames.CAUSE % 1, '1'))
         params = constraint.PARAMS
         if params:
             output.add(ConstraintsOutputs.PARAMS_HEADER)

@@ -20,8 +20,7 @@ class MenuHandler(object):
         if content:
             front_input = FrontInput(None, content, None)
             self.teacher.add_line(parser.line_id, front_input, is_effect)
-            return True
-        return False
+            self.print_teacher()
 
     def edit_regex(self, parser):
         output = InputMessages.get_edit_regex_message(parser.line_content, parser.pattern)
@@ -32,8 +31,7 @@ class MenuHandler(object):
         content = TeacherReader.read_single_line(self.editor.get_input_content())
         if content:
             self.teacher.update_pattern(parser.line_id, content)
-            return True
-        return False
+            self.print_teacher()
 
     def delete_parser(self, parser):
         self.teacher.remove_line(parser.line_id)
@@ -49,7 +47,7 @@ class MenuHandler(object):
 
     def set_parser_log_type(self, parser, log_type):
         self.teacher.set_log_type(parser.line_id, log_type)
-        return True
+        self.print_teacher()
 
     def call_button(self):
         return self.output.call_button(self.editor.get_line_number())
@@ -74,12 +72,11 @@ class MenuHandler(object):
             self.read_function = self.read_constraint
         else:
             six.print_('Wrong name')
-        return False
 
     def read_constraint(self):
         constraint = ConstraintReader.create_constraint(self.editor.get_input_content())
         self.teacher.register_constraint(self.get_next_constraints_id(), constraint)
-        return True
+        self.print_teacher()
 
     def edit_constraint(self, constraint):
         self.teacher.remove_constraint(constraint.id_)
