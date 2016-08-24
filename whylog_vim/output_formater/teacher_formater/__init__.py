@@ -61,7 +61,11 @@ class ParserFormater(TeacherProxyUsingFromater):
 
     def _format_line_others(self, output, parser):
         output.add(ParserOutputs.OTHERS_HEADER)
-        output.add(ParserOutputs.LOG_TYPE % parser.log_type_name)
+        if parser.log_type_name:
+            log_type = parser.log_type_name.name
+        else:
+            log_type = None
+        output.add(ParserOutputs.LOG_TYPE % log_type)
         output.create_button(
             partial(self.teacher_proxy.edit_log_type, parser),
             (FunctionNames.EDIT_LOG_TYPE, parser.line_id)
@@ -98,12 +102,12 @@ class ConstraintsFormater(TeacherProxyUsingFromater):
         output.add(ConstraintsOutputs.TYPE % constraint.type)
         output.create_button(
             partial(self.teacher_proxy.edit_constraint, constraint),
-            (FunctionNames.EDIT_CONSTRAINT, constraint.self_id)
+            (FunctionNames.EDIT_CONSTRAINT, constraint.id_)
         )
         output.add(ConstraintsOutputs.DELETE_BUTTON)
         output.create_button(
             partial(self.teacher_proxy.delete_constraint, constraint),
-            (FunctionNames.DELETE_CONSTRAINT, constraint.self_id)
+            (FunctionNames.DELETE_CONSTRAINT, constraint.id_)
         )
         for group in constraint.groups:
             output.add(ConstraintsOutputs.GROUP % (get_parser_name(group[0]), group[1]))
@@ -114,7 +118,7 @@ class ConstraintsFormater(TeacherProxyUsingFromater):
     def _format_params(self, output, constraint):
         output.add(ConstraintsOutputs.PARAMS_HEADER)
         params = constraint.params
-        for param in six.iterkeys(params.keys):
+        for param in six.iterkeys(params):
             output.add(ConstraintsOutputs.PARAM % (param, params[param]))
 
 

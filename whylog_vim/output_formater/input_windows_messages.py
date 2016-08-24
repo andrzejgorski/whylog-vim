@@ -1,10 +1,13 @@
 from functools import partial
 
 import six
-from whylog_vim.consts import (  # isort:skip
-    Messages, ParserOutputs, WindowTypes, LogType, DefaultContent, FunctionNames  # isort:skip
-)  # isort:skip
+from whylog.constraints.constraint_manager import ConstraintRegistry
+from whylog_vim.consts import (
+    Messages, ParserOutputs, WindowTypes, LogType, DefaultContent, FunctionNames,
+    ConstraintsOutputs, LineNames
+)
 from whylog_vim.output_formater.output_aggregator import OutputAggregator
+from whylog_vim.output_formater.utils import convert_to_buttons_list
 
 
 class InputMessages(object):
@@ -25,8 +28,8 @@ class InputMessages(object):
         return output
 
     @classmethod
-    def get_log_types_message(cls, parser, log_types, read_function):
-        output = cls._create_prefix(WindowTypes.INPUT)
+    def _parser_add_log_type_messages(cls, parser, window):
+        output = cls._create_prefix(window)
         output.add_commented(Messages.LOGTYPE)
         output.add_commented(ParserOutputs.LINE_CONTENT % (parser.line_id, parser.line_content))
         output.add_commented(
@@ -35,53 +38,44 @@ class InputMessages(object):
         output.add_commented('')
         output.add_commented(Messages.SELECT_LOG_TYPE)
         output.add_commented(Messages.ENDING)
+        return output
+
+    @classmethod
+    def get_case_log_types_parser(cls, parser, log_types, read_function):
+        output = cls._parser_add_log_type_messages(parser, WindowTypes.CASE)
         cls._format_menu_for_log_type(output, log_types, read_function)
         return output
 
     @classmethod
-    def _add_parser(cls, output, parser):
-        output.add_commented(ParserOutputs.LINE_CONTENT % (parser.line_id, parser.line_content))
-        output.add_commented(
-            ParserOutputs.META % (parser.line_resource_location, parser.line_offset)
-        )
-        output.add_commented(parser.pattern)
-        for group in six.iterkeys(parser.groups):
-            output.add_commented(
-                ParserOutputs.GROUP_CONVERTER %
-                (group, parser.groups[group].converter, parser.groups[group].content)
-            )
-        output.add_commented('')
+    def _add_log_type_template(cls, output):
+        output.add(LogType.NAME)
+        output.add(LogType.HOST_PATTERN)
+        output.add(LogType.PATH_PATTERN)
+        output.add(LogType.SUPER_PARSER)
+        output.add(LogType.NAME)
 
     @classmethod
-    def get_primary_key_message(cls, parser):
-        output = cls._create_prefix(WindowTypes.INPUT)
-        output.add_commented(Messages.PRIMARY_KEY)
-        cls._add_parser(output, parser)
-        output.add_commented(Messages.ENDING)
+    def get_add_log_types_on_parser(cls, parser):
+        output = cls._parser_add_log_type_messages(parser, WindowTypes.INPUT)
+        cls._add_log_type_template(output)
         return output
 
     @classmethod
-    def get_constraint_message(cls, parsers):
-        output = cls._create_prefix(WindowTypes.INPUT)
-        for parser in parsers:
-            cls._add_parser(output, parser)
-        output.add_commented(Messages.ENDING)
+    def _main_add_log_type_messages(cls, window):
+        output = cls._create_prefix(window)
+        output.add_commented(Messages.SELECT_LOG_TYPE)
         return output
 
     @classmethod
-    def get_edit_line_message(cls, old_content):
-        output = cls._create_prefix(WindowTypes.INPUT)
-        output.add_commented(Messages.ENDING)
-        output.add(old_content)
+    def get_case_log_type_main(cls, log_types, read_function):
+        output = cls._main_add_log_type_messages(WindowTypes.CASE)
+        cls._format_menu_for_log_type(output, log_types, read_function)
         return output
 
     @classmethod
-    def get_edit_regex_message(cls, line_content, old_regex):
-        output = cls._create_prefix(WindowTypes.INPUT)
-        output.add_commented(Messages.CONTENT_OF_LINE)
-        output.add_commented(line_content)
-        output.add_commented(Messages.ENDING)
-        output.add(old_regex)
+    def get_add_log_type_main(cls, log_types, read_function):
+        output = cls._main_add_log_type_messages(WindowTypes.INPUT)
+        cls._add_log_type_template(output)
         return output
 
     @classmethod
@@ -109,8 +103,78 @@ class InputMessages(object):
             cls._format_log_type(output, log_type, read_function)
 
     @classmethod
-    def get_main_set_log_type_message(cls, log_types, read_function):
-        output = cls._create_prefix(WindowTypes.CASE)
-        output.add_commented(Messages.SELECT_LOG_TYPE)
-        cls._format_menu_for_log_type(output, log_types, read_function)
+    def _add_parser(cls, output, parser):
+        output.add_commented(ParserOutputs.LINE_CONTENT % (parser.line_id, parser.line_content))
+        output.add_commented(
+            ParserOutputs.META % (parser.line_resource_location, parser.line_offset)
+        )
+        output.add_commented(parser.pattern)
+        for group in six.iterkeys(parser.groups):
+            output.add_commented(
+                ParserOutputs.GROUP_CONVERTER %
+                (group, parser.groups[group].converter_type, parser.groups[group].content)
+            )
+        output.add_commented('')
+
+    @classmethod
+    def get_primary_key_message(cls, parser):
+        output = cls._create_prefix(WindowTypes.INPUT)
+        output.add_commented(Messages.PRIMARY_KEY)
+        cls._add_parser(output, parser)
+        output.add_commented(Messages.ENDING)
+        output.add(', '.join(str(num) for num in parser.primary_key_groups))
+        return output
+
+    @classmethod
+    def _get_constraint_message(cls, parsers, window):
+        output = cls._create_prefix(window)
+        for parser in parsers:
+            cls._add_parser(output, parser)
+        output.add_commented(Messages.ENDING)
+        return output
+
+    @classmethod
+    def add_constraint(cls, parsers, constraint_name):
+        """
+        This function creates the output and adds example constraint to window.
+        The user can create his own constraint by editing example.
+        """
+        output = cls._get_constraint_message(parsers, WindowTypes.INPUT)
+        constraint = ConstraintRegistry.constraint_from_name(constraint_name)
+        # These lines add an example constraint which user can edit.
+        # The example constraint consist of
+        # group 1 of Effect and group 1 of cause_1.
+        output.add(ConstraintsOutputs.TYPE % constraint_name)
+        output.add(ConstraintsOutputs.GROUP % (LineNames.EFFECT, '1'))
+        output.add(ConstraintsOutputs.GROUP % (LineNames.CAUSE % 1, '1'))
+        params = constraint.PARAMS
+        if params:
+            output.add(ConstraintsOutputs.PARAMS_HEADER)
+            for param in params:
+                output.add(ConstraintsOutputs.PARAM % (param, '<put value>'))
+        return output
+
+    @classmethod
+    def select_constraint(cls, parsers):
+        output = cls._get_constraint_message(parsers, WindowTypes.CASE)
+        constraints = ConstraintRegistry.CONSTRAINTS.keys()
+        buttons = convert_to_buttons_list(constraints)
+        for button in buttons:
+            output.add(button)
+        return output
+
+    @classmethod
+    def get_edit_line_message(cls, old_content):
+        output = cls._create_prefix(WindowTypes.INPUT)
+        output.add_commented(Messages.ENDING)
+        output.add(old_content)
+        return output
+
+    @classmethod
+    def get_edit_regex_message(cls, line_content, old_regex):
+        output = cls._create_prefix(WindowTypes.INPUT)
+        output.add_commented(Messages.CONTENT_OF_LINE)
+        output.add_commented(line_content)
+        output.add_commented(Messages.ENDING)
+        output.add(old_regex)
         return output

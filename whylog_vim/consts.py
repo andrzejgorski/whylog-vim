@@ -101,6 +101,7 @@ class ReadMessages(object):
 class FunctionNames(object):
     EDIT_LINE_CONTENT = 'edit line content'
     EDIT_REGEX = 'edit regex'
+    EDIT_CONVERTER = 'edit regex'
     COPY_PARSER = 'copy paser'
     DELETE_PARSER = 'delete paser'
     GUESS_REGEX = 'guess regex'

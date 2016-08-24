@@ -1,6 +1,4 @@
-from whylog.constraints import IdenticalConstraint
-from whylog.constraints.const import ConstraintType
-
+from whylog.constraints.constraint_manager import ConstraintRegistry
 from whylog_vim.input_reader.consts import RegexPatterns, ConstraintInput, Groups
 from whylog_vim.utils import get_id_from_name
 
@@ -23,26 +21,39 @@ class InputReader(object):
 
 
 class ConstraintReader(object):
-
-    CONSTRAINTS = {ConstraintType.IDENTICAL: IdenticalConstraint,}
-
     @classmethod
     def _parse_constraint(cls, lines):
-        constr_type = ConstraintInput.TYPE.match(lines[0]).group(1)
+        """
+        This funcion takes a VIM window buffor (the list of the text) which
+        defines a constraint of the constraint and return the constraint properties:
+            - constraint type
+            - constraint groups
+            - constraint params
+        """
+        constr_type = ConstraintInput.TYPE.match(lines[0]).group(Groups.GROUP1)
         groups = []
+        are_params = False
+        params = {}
         for line in lines[1:]:
-            match = ConstraintInput.GROUP.match(line)
-            if match:
-                groups.append(
-                    (get_id_from_name(match.group(Groups.GROUP1)), int(match.group(Groups.GROUP2)))
-                )
+            if not are_params:
+                match = ConstraintInput.GROUP.match(line)
+                if match:
+                    groups.append(
+                        (
+                            get_id_from_name(match.group(Groups.GROUP1)),
+                            int(match.group(Groups.GROUP2))
+                        )
+                    )
+                else:
+                    if ConstraintInput.PARAMS_HEADER.match(line):
+                        are_params = True
             else:
-                break
-        else:
-            return constr_type, groups, {}
-        return constr_type, groups, {}
+                match = ConstraintInput.PARAM.match(line)
+                if match:
+                    params[match.group(Groups.GROUP1)] = match.group(Groups.GROUP2)
+        return constr_type, groups, params
 
     @classmethod
     def create_constraint(cls, lines):
         constraint_type, groups, params = cls._parse_constraint(lines)
-        return cls.CONSTRAINTS[constraint_type](groups=groups, param_dict=params)
+        return ConstraintRegistry.CONSTRAINTS[constraint_type](groups=groups, param_dict=params)
