@@ -27,7 +27,7 @@ class TeacherProxy(MenuHandler):
         self.formater = TeacherFormater(self)
         self.get_next_parser_id = partial(next, count(0))
         self.get_next_constraints_id = partial(next, count(0))
-        self._return_offset = 0
+        self._return_offset = 1
 
     def _add_line(self, front_input, effect=False):
         id_ = self.get_next_parser_id()
