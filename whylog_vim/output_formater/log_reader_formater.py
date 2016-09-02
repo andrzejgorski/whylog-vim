@@ -4,10 +4,10 @@ from whylog_vim.output_formater.output_aggregator import OutputAggregator
 
 class LogReaderOutput(object):
     @classmethod
-    def _format_input_line(cls, output, front_input):
+    def _format_line(cls, output, front_input):
         output.add(
-            LogReader.LINE_HEADER % (LogReader.ITEM,
-                                     front_input.line_source,
+            LogReader.LINE_HEADER % (front_input.line_source.host,
+                                     front_input.line_source.path,
                                      front_input.offset,)
         )
         output.add(front_input.line_content)
@@ -15,7 +15,7 @@ class LogReaderOutput(object):
     @classmethod
     def format_investigation_result(cls, output, investigation_result):
         for line in investigation_result.lines:
-            cls._format_input_line(output, line)
+            cls._format_line(output, line)
         if investigation_result.constraints:
             output.add(LogReader.CONSTRAINT_LINKAGE % investigation_result.constraints_linkage)
             for constraint in investigation_result.constraints:
@@ -24,7 +24,8 @@ class LogReaderOutput(object):
     @classmethod
     def format_query(cls, front_input, query_output):
         output = OutputAggregator()
-        cls._format_input_line(output, front_input)
+        output.add(LogReader.ITEM_HEADER)
+        cls._format_line(output, front_input)
         if not query_output:
             output.add('')
             output.add_commented(LogReader.EMPTY_OUTPUT)
