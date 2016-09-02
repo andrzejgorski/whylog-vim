@@ -92,11 +92,23 @@ class MenuHandler(object):
     def guess_regex(self, parser_id):
         pass
 
-    def edit_converter(self, parser_id, group):
-        pass
+    def edit_converter(self, parser, group):
+        match = self.rule.parsers[parser].groups[group].content
+        self.output = InputMessages.get_converters(match)
+        self.main_proxy.create_case_window(self.output.get_content())
+        self.read_function = partial(self.set_converter, parser, group)
+
+    def set_converter(self, parser, group):
+        converter = self.editor.get_button_name()
+        self.teacher.set_converter(parser, group, converter)
+        self.print_teacher()
 
     def copy_parser(self, parser):
-        pass
+        front_input = FrontInput(
+            parser.line_offset, parser.line_content, parser.line_resource_location
+        )
+        self._add_line(front_input)
+        self.print_teacher()
 
     def abandon_rule(self):
         self.main_proxy.new_teacher()

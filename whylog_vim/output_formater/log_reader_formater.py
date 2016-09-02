@@ -6,9 +6,10 @@ class LogReaderOutput(object):
     @classmethod
     def _format_line(cls, output, front_input):
         output.add(
-            LogReader.LINE_HEADER % (front_input.line_source.host,
-                                     front_input.line_source.path,
-                                     front_input.offset,)
+            LogReader.LINE_HEADER %
+            (front_input.line_source.host,
+             front_input.line_source.path,
+             front_input.offset,)
         )
         output.add(front_input.line_content)
 
