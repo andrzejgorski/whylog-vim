@@ -112,6 +112,10 @@ class FunctionNames(object):
     DELETE_CONSTRAINT = 'delete constraint'
     READ_LOG_TYPE = 'read log type'
     EDIT_CONVERTER = 'edit converter'
+    ABANDON_RULE = 'abandon rule'
+    VERIFY = 'verify'
+    RETURN_TO_FILE = 'return to file'
+    SAVE = 'save'
 
 
 class DefaultContent(object):

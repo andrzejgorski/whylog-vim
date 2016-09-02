@@ -25,10 +25,6 @@ branches:
 
 matrix:
   include:
-    # jython
-    - python: 2.7
-      env: JYTHON=true
-
     # Source Code Analysis is slow.  We just run it once on
     # Python 2 and once on Python 3.
     - python: 2.7
@@ -46,6 +42,12 @@ matrix:
       os: osx
       language: generic
       env: OS_X_PYTHON_VERSION=python3
+
+  allow_failures:
+    # jython
+    - python: 2.7
+      env: JYTHON=true
+
 
 
 cache:

@@ -6,6 +6,7 @@ from whylog.constraints.constraint_manager import ConstraintRegistry
 from whylog_vim.input_reader.teacher_reader import TeacherReader
 from whylog_vim.output_formater.input_windows_messages import InputMessages
 from whylog_vim.input_reader import ConstraintReader
+from whylog_vim.consts import EditorStates
 
 
 class MenuHandler(object):
@@ -87,3 +88,27 @@ class MenuHandler(object):
     def delete_constraint(self, constraint):
         self.teacher.remove_constraint(constraint.id_)
         self.print_teacher()
+
+    def guess_regex(self, parser_id):
+        pass
+
+    def edit_converter(self, parser_id, group):
+        pass
+
+    def copy_parser(self, parser):
+        pass
+
+    def abandon_rule(self):
+        self.main_proxy.new_teacher()
+        self.editor.close_teacher_window()
+
+    def verify(self):
+        pass
+
+    def return_to_file(self):
+        self.main_proxy.set_state(EditorStates.ADD_CAUSE)
+        self.editor.close_teacher_window()
+
+    def save(self):
+        self.teacher.save()
+        self.editor.close_teacher_window()
