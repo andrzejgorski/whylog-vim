@@ -69,23 +69,14 @@ class WhylogWindowManager(object):
         self.windows = dict()
 
     def create_window(self, window_type, content, modifiable=False, size=None):
-        origin_filename = VimUIWrapper.get_filename()
-        self.origin_offset = VimUIWrapper.get_cursor_offset()
+        if not self.windows:
+            self.origin_filename = VimUIWrapper.get_filename()
+            self.origin_offset = VimUIWrapper.get_cursor_offset()
         self.windows[window_type] = Window(window_type, content, modifiable, size)
         for whylog_window in six.iterkeys(self.windows):
-            # origin_filename is the result of get_filepath which could
-            # takes form '$PATH/<whylog_window_name>'. Line below checks if suffix of
-            # is the name of the whylog_window.
-            if origin_filename == whylog_window:
-                # If the one whylog_window is open we wants to close it
-                # during creating new whylog_window.
+            if self.origin_filename == whylog_window:
                 del self.windows[whylog_window]
                 break
-        else:
-            # This code runs when none of whylog_windows was opened.
-            # It means that the origin_filename is the path to file,
-            # where whylog was run.
-            self.origin_filename = origin_filename
 
     @catch_key_error
     def get_window_content(self, window_type):

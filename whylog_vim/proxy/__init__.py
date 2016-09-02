@@ -17,7 +17,9 @@ class WhylogProxy(object):
         self.teacher = TeacherProxy(self.teacher_generator(), config, self.editor, self)
         self._state = States.EDITOR_NORMAL
         self.log_types = dict()
+        self.init_handlers()
 
+    def init_handlers(self):
         self.action_handler = {
             States.ASK_LOG_TYPE: (self.handle_log_type_menu, States.ASK_LOG_TYPE),
             States.EDITOR_NORMAL: (self.log_reader.new_query, States.LOG_READER),
@@ -30,6 +32,7 @@ class WhylogProxy(object):
             States.EDITOR_NORMAL: (self.teacher.new_lesson, States.ADD_CAUSE),
             States.ADD_CAUSE: (self.teacher.add_cause, States.TEACHER),
         }
+
         self.handlers = {
             ActionTypes.STANDARD: self.action_handler,
             ActionTypes.TEACHER: self.teach_handler,
@@ -112,6 +115,7 @@ class WhylogProxy(object):
     def new_teacher(self):
         self.teacher = TeacherProxy(self.teacher_generator(), self.config, self.editor, self)
         self._state = States.EDITOR_NORMAL
+        self.init_handlers()
 
     def create_input_window(self, content):
         self.editor.create_input_window(content)
