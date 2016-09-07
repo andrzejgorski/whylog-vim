@@ -30,6 +30,7 @@ syn match prefixes 'offset:'
 syn match prefixes 'log type:'
 syn match prefixes 'parser:'
 syn match prefixes 'params'
+syn match prefixes 'clues_groups'
 syn match prefixes 'line:'
 syn match prefixes 'group:'
 syn match prefixes 'host pattern:'
@@ -41,7 +42,7 @@ syn match prefixes 'group_converter \d\+:'
 syn match prefixes 'group \d\+:'
 syn match prefixes 'match:'
 
-syn match button '\[[^[^[]*\]'
+syn match button '^\[[^[^[]*\]$'
 
 syn region descBlock start='===' end='<<<' fold transparent contains=headers,prefixes,params,button,todo
 
