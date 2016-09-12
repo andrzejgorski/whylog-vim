@@ -84,3 +84,11 @@ class TeacherMenuTests(TestCase):
         self.assertEqual(
             self.whylog_proxy.teacher.rule.parsers[0].log_type_name, TestConsts.NEW_LOG_TYPE
         )
+
+    def tests_abandon_rule(self):
+        self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER)
+        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
+            FunctionNames.ABANDON_RULE
+        )]
+        self.whylog_proxy.action()
+        self.assertEqual(self.whylog_proxy.get_state(), EditorStates.EDITOR_NORMAL)
