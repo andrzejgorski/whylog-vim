@@ -3,13 +3,13 @@ from mock import call, patch
 from unittest2 import TestCase
 
 from whylog_vim.consts import EditorStates, FunctionNames, ReadMessages
-from whylog_vim.tests.tests_proxy.utils import TestConsts, create_mock_editor, create_whylog_proxy
+from whylog_vim.tests.tests_proxy.utils import TestConsts, MocksForProxy
 
 
 class TeacherMenuTests(TestCase):
     def setUp(self):
-        self.editor = create_mock_editor()
-        self.whylog_proxy = create_whylog_proxy(self.editor)
+        self.editor = MocksForProxy.create_mock_editor()
+        self.whylog_proxy = MocksForProxy.create_whylog_proxy(self.editor)
         self.whylog_proxy.teach()
         self.whylog_proxy.teach()
 
@@ -65,3 +65,22 @@ class TeacherMenuTests(TestCase):
         self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 1)
         # Check if effect parser is not deleted.
         self.assertEqual(next(six.iterkeys(self.whylog_proxy.teacher.rule.parsers)), 0)
+
+    @patch('whylog.config.abstract_config.AbstractConfig.get_all_log_types')
+    def tests_edit_log_type(self, get_all_log_types):
+        get_all_log_types.return_value = MocksForProxy.mock_log_types()
+        self.assertNotEqual(
+            self.whylog_proxy.teacher.rule.parsers[0].log_type_name, TestConsts.NEW_LOG_TYPE
+        )
+        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
+            FunctionNames.EDIT_LOG_TYPE,
+            0,
+        )]
+        self.whylog_proxy.action()
+        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
+            FunctionNames.READ_LOG_TYPE, TestConsts.NEW_LOG_TYPE
+        )]
+        self.whylog_proxy.action()
+        self.assertEqual(
+            self.whylog_proxy.teacher.rule.parsers[0].log_type_name, TestConsts.NEW_LOG_TYPE
+        )
