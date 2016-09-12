@@ -104,3 +104,13 @@ class TeacherMenuTests(TestCase):
         self.whylog_proxy.teach()
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER)
         self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 3)
+
+    @patch('whylog.teacher.Teacher.save')
+    def tests_save(self, save_function):
+        self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER)
+        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
+            FunctionNames.SAVE
+        )]
+        self.whylog_proxy.action()
+        self.assertEqual(self.whylog_proxy.get_state(), EditorStates.EDITOR_NORMAL)
+        self.assertTrue(save_function.called)
