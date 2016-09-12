@@ -92,3 +92,15 @@ class TeacherMenuTests(TestCase):
         )]
         self.whylog_proxy.action()
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.EDITOR_NORMAL)
+
+    def tests_return_to_file(self):
+        self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 2)
+        self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER)
+        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
+            FunctionNames.RETURN_TO_FILE
+        )]
+        self.whylog_proxy.action()
+        self.assertEqual(self.whylog_proxy.get_state(), EditorStates.ADD_CAUSE)
+        self.whylog_proxy.teach()
+        self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER)
+        self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 3)
