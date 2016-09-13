@@ -94,12 +94,12 @@ class MenuHandler(object):
 
     def edit_converter(self, parser, group):
         match = self.rule.parsers[parser].groups[group].content
-        self.output = InputMessages.get_converters(match)
+        read_function = partial(self.set_converter, parser, group)
+        self.output = InputMessages.get_converters(match, read_function)
         self.main_proxy.create_case_window(self.output.get_content())
-        self.read_function = partial(self.set_converter, parser, group)
+        self.read_function = self.call_button
 
-    def set_converter(self, parser, group):
-        converter = self.editor.get_button_name()
+    def set_converter(self, parser, group, converter):
         self.teacher.set_converter(parser, group, converter)
         self.print_teacher()
 

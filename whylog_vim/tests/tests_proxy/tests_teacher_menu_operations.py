@@ -2,6 +2,7 @@ import six
 from mock import call, patch
 from unittest2 import TestCase
 
+from whylog.converters import ConverterType
 from whylog_vim.consts import EditorStates, FunctionNames, ReadMessages
 from whylog_vim.tests.tests_proxy.utils import TestConsts, MocksForProxy
 
@@ -34,11 +35,14 @@ class TeacherMenuTests(TestCase):
         self.assertEqual(mock_print.call_args, call(ReadMessages.TOO_MANY_LINES))
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER_INPUT)
 
-    def tests_edit_regex(self):
+    def _set_up_regex(self):
         self._mock_editor_line_number((FunctionNames.EDIT_REGEX, 0))
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = [TestConsts.REGEX]
         self.whylog_proxy.action()
+
+    def tests_edit_regex(self):
+        self._set_up_regex()
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER)
         self.assertEqual(self.whylog_proxy.teacher.rule.parsers[0].pattern, TestConsts.REGEX + '$')
 
@@ -96,3 +100,20 @@ class TeacherMenuTests(TestCase):
         self.whylog_proxy.action()
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.EDITOR_NORMAL)
         self.assertTrue(save_function.called)
+
+    def tests_copy_parser(self):
+        self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 2)
+        self._mock_editor_line_number((FunctionNames.COPY_PARSER, 1))
+        self.whylog_proxy.action()
+        self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 3)
+        self.assertEqual(self.whylog_proxy.teacher.rule.parsers[1].line_content,
+                         self.whylog_proxy.teacher.rule.parsers[2].line_content)
+
+    def tests_edit_converter(self):
+        self._set_up_regex()
+        self.assertEqual(self.whylog_proxy.teacher.rule.parsers[0].groups[1].converter_type, ConverterType.TO_STRING)
+        self._mock_editor_line_number((FunctionNames.EDIT_CONVERTER, 0, 1))
+        self.whylog_proxy.action()
+        self._mock_editor_line_number((FunctionNames.SET_CONVERTER, ConverterType.TO_INT))
+        self.whylog_proxy.action()
+        self.assertEqual(self.whylog_proxy.teacher.rule.parsers[0].groups[1].converter_type, ConverterType.TO_INT)

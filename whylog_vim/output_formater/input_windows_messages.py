@@ -181,11 +181,14 @@ class InputMessages(object):
         return output
 
     @classmethod
-    def get_converters(cls, match):
+    def get_converters(cls, match, read_function):
         output = cls._create_prefix(WindowTypes.CASE)
         output.add_commented(Messages.CONVERTER % match)
         converters = CONVERTION_MAPPING.keys()
-        buttons = convert_to_buttons_list(converters)
-        for button in buttons:
-            output.add(button)
+        for converter_type in converters:
+            create_button_param = (
+                partial(read_function, converter_type), (FunctionNames.SET_CONVERTER, converter_type)
+            )
+            output.add('[%s]' % converter_type)
+            output.create_button(*create_button_param)
         return output
