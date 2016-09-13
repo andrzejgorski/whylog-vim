@@ -13,10 +13,11 @@ class TeacherMenuTests(TestCase):
         self.whylog_proxy.teach()
         self.whylog_proxy.teach()
 
+    def _mock_editor_line_number(self, key):
+        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[key]
+
     def tests_edit_content(self):
-        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.EDIT_LINE_CONTENT, 0
-        )]
+        self._mock_editor_line_number((FunctionNames.EDIT_LINE_CONTENT, 0))
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = ['some line']
         self.assertNotEqual(self.whylog_proxy.teacher.rule.parsers[0].line_content, 'some line')
@@ -26,9 +27,7 @@ class TeacherMenuTests(TestCase):
 
     @patch('six.print_')
     def tests_edit_content_to_many_lines_fail(self, mock_print):
-        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.EDIT_LINE_CONTENT, 0
-        )]
+        self._mock_editor_line_number((FunctionNames.EDIT_LINE_CONTENT, 0))
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = ['some line', 'and another']
         self.whylog_proxy.action()
@@ -36,9 +35,7 @@ class TeacherMenuTests(TestCase):
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER_INPUT)
 
     def tests_edit_regex(self):
-        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.EDIT_REGEX, 0
-        )]
+        self._mock_editor_line_number((FunctionNames.EDIT_REGEX, 0))
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = [TestConsts.REGEX]
         self.whylog_proxy.action()
@@ -47,9 +44,7 @@ class TeacherMenuTests(TestCase):
 
     @patch('six.print_')
     def tests_edit_regex_to_many_lines_fail(self, mock_print):
-        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.EDIT_REGEX, 0
-        )]
+        self._mock_editor_line_number((FunctionNames.EDIT_REGEX, 0))
         self.whylog_proxy.action()
         self.editor.get_input_content.return_value = [TestConsts.REGEX, 'and another']
         self.whylog_proxy.action()
@@ -57,9 +52,7 @@ class TeacherMenuTests(TestCase):
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER_INPUT)
 
     def tests_delete_parser(self):
-        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.DELETE_PARSER, 1
-        )]
+        self._mock_editor_line_number((FunctionNames.DELETE_PARSER, 1))
         self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 2)
         self.whylog_proxy.action()
         self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 1)
@@ -72,14 +65,9 @@ class TeacherMenuTests(TestCase):
         self.assertNotEqual(
             self.whylog_proxy.teacher.rule.parsers[0].log_type_name, TestConsts.NEW_LOG_TYPE
         )
-        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.EDIT_LOG_TYPE,
-            0,
-        )]
+        self._mock_editor_line_number((FunctionNames.EDIT_LOG_TYPE, 0))
         self.whylog_proxy.action()
-        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.READ_LOG_TYPE, TestConsts.NEW_LOG_TYPE
-        )]
+        self._mock_editor_line_number((FunctionNames.READ_LOG_TYPE, TestConsts.NEW_LOG_TYPE))
         self.whylog_proxy.action()
         self.assertEqual(
             self.whylog_proxy.teacher.rule.parsers[0].log_type_name, TestConsts.NEW_LOG_TYPE
@@ -87,18 +75,14 @@ class TeacherMenuTests(TestCase):
 
     def tests_abandon_rule(self):
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER)
-        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.ABANDON_RULE
-        )]
+        self._mock_editor_line_number((FunctionNames.ABANDON_RULE))
         self.whylog_proxy.action()
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.EDITOR_NORMAL)
 
     def tests_return_to_file(self):
         self.assertEqual(len(self.whylog_proxy.teacher.rule.parsers), 2)
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER)
-        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.RETURN_TO_FILE
-        )]
+        self._mock_editor_line_number((FunctionNames.RETURN_TO_FILE))
         self.whylog_proxy.action()
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.ADD_CAUSE)
         self.whylog_proxy.teach()
@@ -108,9 +92,7 @@ class TeacherMenuTests(TestCase):
     @patch('whylog.teacher.Teacher.save')
     def tests_save(self, save_function):
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.TEACHER)
-        self.editor.get_line_number.return_value = self.whylog_proxy.teacher.output.function_lines[(
-            FunctionNames.SAVE
-        )]
+        self._mock_editor_line_number((FunctionNames.SAVE))
         self.whylog_proxy.action()
         self.assertEqual(self.whylog_proxy.get_state(), EditorStates.EDITOR_NORMAL)
         self.assertTrue(save_function.called)
